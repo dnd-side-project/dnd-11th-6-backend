@@ -24,17 +24,27 @@ jobs:
       - name: 테스트 및 빌드하기
         run: ./gradlew clean build
 
-      - name: 빌드된 파일 이름 변경하기
-        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
-
-      - name: SCP로 EC2에 빌드된 파일 전송하기
-        uses: appleboy/scp-action@v0.1.7
+      - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: project.jar
-          target: /home/ubuntu/instagram-server/tobe
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: ECR에 로그인하기
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+
+      - name: Docker 이미지 생성
+        run: docker build -t dnd-11th-6-server .
+
+      - name: Docker 이미지에 Tag 붙이기
+        run: docker tag dnd-11th-6-server ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+
+      - name: ECR에 Docker 이미지 Push하기
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
 
       - name: SSH로 EC2에 접속하기
         uses: appleboy/ssh-action@v1.0.3
@@ -44,10 +54,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            rm -rf /home/ubuntu/instagram-server/current
-            mkdir /home/ubuntu/instagram-server/current
-            mv /home/ubuntu/instagram-server/tobe/project.jar /home/ubuntu/instagram-server/current/project.jar
-            cd /home/ubuntu/instagram-server/current
-            sudo fuser -k -n tcp 8080 || true
-            nohup java -jar project.jar > ./output.log 2>&1 & 
-            rm -rf /home/ubuntu/instagram-server/tobe
+            docker stop dnd-11th-6-server || true
+            docker rm dnd-11th-6-server || true
+            docker pull ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+            docker run -d --name dnd-11th-6-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
