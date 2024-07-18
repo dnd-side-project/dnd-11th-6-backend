@@ -34,9 +34,6 @@ jobs:
       - name: ECR에 로그인하기
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
-          region: us-east-1
 
       - name: Docker 이미지 생성
         run: docker build -t dnd-11th-6-server .
