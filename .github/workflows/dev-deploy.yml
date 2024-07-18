@@ -18,8 +18,8 @@ jobs:
           distribution: temurin
           java-version: 17
 
-#      - name: application.yml 파일 만들기
-#        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
+      #      - name: application.yml 파일 만들기
+      #        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
 
       - name: 테스트 및 빌드하기
         run: ./gradlew clean build
@@ -31,25 +31,21 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-#      - name: ECR에 로그인하기
-#        id: login-ecr
-#        uses: aws-actions/amazon-ecr-login@v2
-
-
-      - name: Docker 로그인
-        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
-
+      - name: ECR에 로그인하기
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
+          region: us-east-1
 
       - name: Docker 이미지 생성
         run: docker build -t dnd-11th-6-server .
 
       - name: Docker 이미지에 Tag 붙이기
-
-        run: docker tag dnd-11th-6-server ${{ secrets.ECR_REPOSITORY_URI }}/dnd-11th-6-server:latest
-
+        run: docker tag dnd-11th-6-server ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
 
       - name: ECR에 Docker 이미지 Push하기
-        run: docker push ${{ secrets.ECR_REPOSITORY_URI }}/dnd-11th-6-server:latest
+        run: docker push ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
 
       - name: SSH로 EC2에 접속하기
         uses: appleboy/ssh-action@v1.0.3
@@ -61,8 +57,5 @@ jobs:
           script: |
             docker stop dnd-11th-6-server || true
             docker rm dnd-11th-6-server || true
-            # docker pull ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
-            # docker run -d --name dnd-11th-6-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
-            
-            docker pull ${{ secrets.ECR_REPOSITORY_URI }}/dnd-11th-6-server:latest
-            docker run -d --name dnd-11th-6-server -p 8080:8080 ${{ secrets.ECR_REPOSITORY_URI }}/dnd-11th-6-server:latest
+            docker pull ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+            docker run -d --name dnd-11th-6-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
