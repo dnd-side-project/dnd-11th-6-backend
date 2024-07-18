@@ -37,7 +37,7 @@ jobs:
 
 
       - name: Docker 로그인
-        run: aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+        run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
 
 
       - name: Docker 이미지 생성
