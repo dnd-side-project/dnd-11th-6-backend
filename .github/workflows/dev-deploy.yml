@@ -31,20 +31,26 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: ECR에 로그인하기
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-        with:
-          registry-type: public
+        #- name: ECR에 로그인하기
+        # id: login-ecr
+        #uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Docker 로그인
+        run: aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.ECR_REPOSITORY_URI }}
+
 
       - name: Docker 이미지 생성
-        run: docker build -t dnd-11th-6-server .
+        run: docker build -t instagram-server .
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag dnd-11th-6-server ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+        # run: docker tag instagram-server ${{ steps.login-ecr.outputs.registry }}/instagram-server:latest
+
+        run: docker tag instagram-server ${{ secrets.ECR_REPOSITORY_URI }}/instagram-server:latest
+
 
       - name: ECR에 Docker 이미지 Push하기
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+        # run: docker push ${{ steps.login-ecr.outputs.registry }}/instagram-server:latest
+        run: docker push ${{ secrets.ECR_REPOSITORY_URI }}/instagram-server:latest
 
       - name: SSH로 EC2에 접속하기
         uses: appleboy/ssh-action@v1.0.3
@@ -54,7 +60,10 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            docker stop dnd-11th-6-server || true
-            docker rm dnd-11th-6-server || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
-            docker run -d --name dnd-11th-6-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+            docker stop instagram-server || true
+            docker rm instagram-server || true
+            # docker pull ${{ steps.login-ecr.outputs.registry }}/instagram-server:latest
+            # docker run -d --name instagram-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/instagram-server:latest
+            
+            docker pull ${{ secrets.ECR_REPOSITORY_URI }}/instagram-server:latest
+            docker run -d --name instagram-server -p 8080:8080 ${{ secrets.ECR_REPOSITORY_URI }}/instagram-server:latest
