@@ -49,13 +49,13 @@ jobs:
           docker push ${{ steps.login-ecr.outputs.registry }}/nginx:latest
 
       - name: Docker Compose 파일  업로드
-        uses: appleboy/scp-action@v0.1.1
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: ./docker-compose.yml
-          target: /home/${{ secrets.EC2_USERNAME }}/docker-compose.yml
+          target: /home/ubuntu/docker-compose.yml
 
       - name: SSH로 EC2에 접속하여 Docker Compose 실행
         uses: appleboy/ssh-action@v1.0.3
@@ -66,6 +66,6 @@ jobs:
           script_stop: true
           script: |
             export REGISTRY_URL=${{ steps.login-ecr.outputs.registry }}
-            docker-compose -f /home/${{ secrets.EC2_USERNAME }}/docker-compose.yml down || true
-            docker-compose -f /home/${{ secrets.EC2_USERNAME }}/docker-compose.yml pull
-            docker-compose -f /home/${{ secrets.EC2_USERNAME }}/docker-compose.yml up -d
+            docker-compose -f /home/ubuntu/docker-compose.yml down || true
+            docker-compose -f /home/ubuntu/docker-compose.yml pull
+            docker-compose -f /home/ubuntu/docker-compose.yml up -d
