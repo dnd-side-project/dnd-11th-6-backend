@@ -13,3 +13,6 @@ services:
     networks:
       - dnd
     restart: on-failure
+
+networks:
+  dnd:
