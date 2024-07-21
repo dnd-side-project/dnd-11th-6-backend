@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 services:
   nginx:
     image: "${REGISTRY_URL}/nginx:latest"
@@ -13,7 +13,3 @@ services:
     networks:
       - dnd
     restart: on-failure
-
-networks:
-  dnd:
-    name: dnd
