@@ -32,16 +32,32 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Docker 이미지 생성
+      - name: API 서버 Docker 이미지 생성
         run: docker build -t dnd-11th-6-server .
 
+      - name: nginx docker 이미지 생성
+        run: docker build -t nginx ./nginx
+
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag dnd-11th-6-server ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+        run: |
+          docker tag dnd-11th-6-server ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+          docker tag nginx ${{ steps.login-ecr.outputs.registry }}/nginx:latest
 
       - name: ECR에 Docker 이미지 Push하기
-        run: docker push ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+        run: |
+          docker push ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/nginx:latest
 
-      - name: SSH로 EC2에 접속하기
+      - name: Docker Compose 파일  업로드
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: ./docker-compose.yml
+          target: /home/ubuntu/docker-compose
+
+      - name: SSH로 EC2에 접속하여 Docker Compose 실행
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -49,7 +65,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            docker stop dnd-11th-6-server || true
-            docker rm dnd-11th-6-server || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
-            docker run -d --name dnd-11th-6-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
+            export REGISTRY_URL=${{ steps.login-ecr.outputs.registry }}
+            docker-compose -f /home/ubuntu/docker-compose/docker-compose.yml down || true
+            docker-compose -f /home/ubuntu/docker-compose/docker-compose.yml pull
+            docker-compose -f /home/ubuntu/docker-compose/docker-compose.yml up -d
