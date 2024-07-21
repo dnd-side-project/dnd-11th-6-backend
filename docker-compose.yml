@@ -2,12 +2,14 @@ version: '3.3'
 services:
   nginx:
     image: "${REGISTRY_URL}/nginx:latest"
+    container_name: nginx
     ports:
       - "80:80"
     networks:
       - dnd
   dnd-server:
     image: "${REGISTRY_URL}/dnd-11th-6-server:latest"
+    container_name: dnd
     ports:
       - "8080:8080"
     networks:
