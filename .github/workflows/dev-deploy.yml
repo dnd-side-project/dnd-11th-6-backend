@@ -3,7 +3,7 @@ name: Deploy To EC2
 on:
   push:
     branches:
-      - chore
+      - develop
 
 jobs:
   deploy:
@@ -28,10 +28,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-#      - name: ECR에 로그인하기
-#        id: login-ecr
-#        uses: aws-actions/amazon-ecr-login@v2
-
       - name: 도커 허브에 로그인
         uses: docker/login-action@v1
         with:
@@ -49,7 +45,7 @@ jobs:
           docker tag dnd-server ${{ secrets.DOCKER_HUB_USERNAME }}/dnd-server:latest
           docker tag nginx ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
 
-      - name: ECR에 Docker 이미지 Push하기
+      - name: Docker Hub에 Docker 이미지 Push하기
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/dnd-server:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
