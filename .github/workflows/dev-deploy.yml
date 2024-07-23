@@ -28,25 +28,31 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: ECR에 로그인하기
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+#      - name: ECR에 로그인하기
+#        id: login-ecr
+#        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: 도커 허브에 로그인
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: API 서버 Docker 이미지 생성
-        run: docker build -t dnd-11th-6-server .
+        run: docker build -t dnd-server .
 
       - name: nginx docker 이미지 생성
         run: docker build -t nginx ./nginx
 
       - name: Docker 이미지에 Tag 붙이기
         run: |
-          docker tag dnd-11th-6-server ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
-          docker tag nginx ${{ steps.login-ecr.outputs.registry }}/nginx:latest
+          docker tag dnd-server ${{ secrets.DOCKER_HUB_USERNAME }}/dnd-server:latest
+          docker tag nginx ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
 
       - name: ECR에 Docker 이미지 Push하기
         run: |
-          docker push ${{ steps.login-ecr.outputs.registry }}/dnd-11th-6-server:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/nginx:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/dnd-server:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/nginx:latest
 
       - name: Docker Compose 파일  업로드
         uses: appleboy/scp-action@v0.1.7
@@ -65,7 +71,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            export REGISTRY_URL=${{ steps.login-ecr.outputs.registry }}
+            export REGISTRY_URL=${{ secrets.DOCKER_HUB_USERNAME }}
             docker-compose -f /home/ubuntu/docker-compose/docker-compose.yml down || true
             docker-compose -f /home/ubuntu/docker-compose/docker-compose.yml pull
             docker-compose -f /home/ubuntu/docker-compose/docker-compose.yml up -d
