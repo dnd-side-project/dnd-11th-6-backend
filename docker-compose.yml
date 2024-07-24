@@ -10,8 +10,6 @@ services:
   dnd-server:
     image: "${REGISTRY_URL}/dnd-server:latest"
     container_name: dnd
-    ports:
-      - "8080:8080"
     networks:
       - dnd
     restart: on-failure
