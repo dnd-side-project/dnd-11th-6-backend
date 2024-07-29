@@ -1,4 +1,4 @@
-package com.dnd.dndphoto;
+package com.dnd.snappy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
