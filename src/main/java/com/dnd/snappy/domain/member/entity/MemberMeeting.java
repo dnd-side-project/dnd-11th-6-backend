@@ -9,15 +9,21 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder(toBuilder = true)
 public class MemberMeeting extends BaseEntity {
 
     @Column(nullable = false)
     private String nickname;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
