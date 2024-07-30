@@ -1,10 +1,10 @@
-package com.dnd.dndphoto;
+package com.dnd.snappy;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DndphotoApplicationTests {
+class SnappyApplicationTests {
 
 	@Test
 	void contextLoads() {

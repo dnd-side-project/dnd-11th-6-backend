@@ -7,8 +7,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SuperBuilder(toBuilder = true)
 public class Mission extends BaseEntity {
 
     private String content;
