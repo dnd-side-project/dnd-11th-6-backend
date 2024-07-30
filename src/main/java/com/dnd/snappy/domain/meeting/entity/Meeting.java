@@ -4,7 +4,9 @@ import com.dnd.snappy.domain.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Meeting extends BaseEntity {
 
@@ -33,5 +35,5 @@ public class Meeting extends BaseEntity {
     private String adminPassword;
 
     @Column(nullable = false)
-    private String linkCode;
+    private String meetingLink;
 }
