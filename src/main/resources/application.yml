@@ -48,7 +48,6 @@ spring:
         default_batch_fetch_size: 1000
         format_sql: true
         show_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
     defer-datasource-initialization: true
