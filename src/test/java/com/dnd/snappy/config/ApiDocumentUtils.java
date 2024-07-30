@@ -1,4 +1,4 @@
-package com.dnd.dndphoto.config;
+package com.dnd.snappy.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.restdocs.RestDocumentationContextProvider;

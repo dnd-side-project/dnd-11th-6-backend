@@ -31,4 +31,7 @@ public class Meeting extends BaseEntity {
 
     @Column(nullable = false)
     private String adminPassword;
+
+    @Column(nullable = false)
+    private String linkCode;
 }
