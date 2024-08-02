@@ -1,4 +1,4 @@
-package com.dnd.snappy.common.exception;
+package com.dnd.snappy.common.error.exception;
 
 import com.dnd.snappy.common.error.ErrorCodeInterface;
 import lombok.Getter;
