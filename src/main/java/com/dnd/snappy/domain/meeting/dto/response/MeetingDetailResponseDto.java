@@ -1,6 +1,7 @@
 package com.dnd.snappy.domain.meeting.dto.response;
 
 import com.dnd.snappy.domain.meeting.entity.Meeting;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 public record MeetingDetailResponseDto(
@@ -9,7 +10,9 @@ public record MeetingDetailResponseDto(
         String description,
         String thumbnailUrl,
         String symbolColor,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime startDate,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime endDate
 ) {
 

@@ -9,6 +9,7 @@ import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
@@ -25,8 +26,9 @@ class MeetingServiceTest {
     @InjectMocks
     private MeetingService meetingService;
 
+    @DisplayName("모임 링크를 통해 모임 상세 정보를 조회한다.")
     @Test
-    void 모임_링크를_통해_모임을_조회한다() {
+    void findByMeetingLink() {
         //given
         String meetingLink = "meetingLink";
         Meeting meeting = Meeting.builder()
@@ -51,8 +53,9 @@ class MeetingServiceTest {
                 .containsExactly(meeting.getId(), meeting.getName(), meeting.getDescription(), meeting.getThumbnailUrl(), meeting.getSymbolColor(), meeting.getStartDate(), meeting.getEndDate());
     }
 
+    @DisplayName("모임 링크에 해당하는 모임이 없다면 예외가 발생한다.")
     @Test
-    void 모임_링크에_해당하는_모임이_없는_경우_예외가_발생한다() {
+    void findByMeetingLink_notFound() {
         //given
         String meetingLink = "meetingLink";
 

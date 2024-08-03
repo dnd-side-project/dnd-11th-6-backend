@@ -68,7 +68,7 @@ class MeetingControllerTest extends RestDocsSupport {
                 );
     }
 
-    @DisplayName("모임 링크를 통해 모임 상세 정보를 조회한다.")
+    @DisplayName("모임 링크에 해당하는 모임이 없다면 예외가 발생한다.")
     @Test
     void findByMeetingLink_notFound() throws Exception {
         String meetingLink = "xzjdclas";
