@@ -1,0 +1,15 @@
+=== 모임 코드로 meeting 조회
+
+==== 성공
+Request
+include::{snippets}/meeting-controller-test/find-by-meeting-link/http-request.adoc[]
+include::{snippets}/meeting-controller-test/find-by-meeting-link/query-parameters.adoc[]
+
+Response
+include::{snippets}/meeting-controller-test/find-by-meeting-link/http-response.adoc[]
+include::{snippets}/meeting-controller-test/find-by-meeting-link/response-fields.adoc[]
+
+
+==== 실패
+`Query Parameter로 준 모임 코드에 해당하는 모임이 없을때 발생`
+include::{snippets}/meeting-controller-test/find-by-meeting-link_not-found/http-response.adoc[]
