@@ -12,25 +12,25 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@Import(RestDocsConfiguration.class)
-@Component
-public class ApiDocumentUtils {
-
-    @Autowired
-    private RestDocumentationResultHandler restDocs;
-
-    // TODO: 컨트롤러 단위 or 통합 테스트
-    public MockMvc mockMvcSetup(final WebApplicationContext context,
-                                final RestDocumentationContextProvider provider) {
-        return MockMvcBuilders.webAppContextSetup(context)
-                .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
-                .alwaysDo(MockMvcResultHandlers.print())
-                .alwaysDo(restDocs)
-                .addFilters(new CharacterEncodingFilter("UTF-8", true))
-                .build();
-    }
-
-    public RestDocumentationResultHandler restDocs() {
-        return restDocs;
-    }
-}
+//@Import(RestDocsConfiguration.class)
+//@Component
+//public class ApiDocumentUtils {
+//
+//    @Autowired
+//    private RestDocumentationResultHandler restDocs;
+//
+//    // TODO: 컨트롤러 단위 or 통합 테스트
+//    public MockMvc mockMvcSetup(final WebApplicationContext context,
+//                                final RestDocumentationContextProvider provider) {
+//        return MockMvcBuilders.webAppContextSetup(context)
+//                .apply(MockMvcRestDocumentation.documentationConfiguration(provider))
+//                .alwaysDo(MockMvcResultHandlers.print())
+//                .alwaysDo(restDocs)
+//                .addFilters(new CharacterEncodingFilter("UTF-8", true))
+//                .build();
+//    }
+//
+//    public RestDocumentationResultHandler restDocs() {
+//        return restDocs;
+//    }
+//}
