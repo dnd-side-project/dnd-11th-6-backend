@@ -34,8 +34,6 @@ public abstract class RestDocsSupport {
 
     protected MockMvc mockMvc;
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
-
     // TODO: 컨트롤러 단위 or 통합 테스트
     @BeforeEach
     void setUp(
@@ -50,8 +48,5 @@ public abstract class RestDocsSupport {
                 .build();
     }
 
-    protected Attributes.Attribute getDateTimeFormat() {
-        return key("format").value("yyyy-MM-dd HH:mm");
-    }
 
 }
