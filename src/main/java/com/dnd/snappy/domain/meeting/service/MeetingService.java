@@ -17,10 +17,14 @@ public class MeetingService {
 
     @Transactional(readOnly = true)
     public MeetingDetailResponseDto findByMeetingLink(String meetingLink) {
-        Meeting meeting = meetingRepository.findByMeetingLink(meetingLink)
-                .orElseThrow(() -> new NotFoundException(MeetingErrorCode.MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
+        Meeting meeting = findByMeetingLinkOrThrow(meetingLink);
 
         return new MeetingDetailResponseDto(meeting);
+    }
+
+    private Meeting findByMeetingLinkOrThrow(String meetingLink) {
+        return meetingRepository.findByMeetingLink(meetingLink)
+                .orElseThrow(() -> new NotFoundException(MeetingErrorCode.MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
     }
 
 }
