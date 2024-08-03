@@ -48,5 +48,8 @@ public abstract class RestDocsSupport {
                 .build();
     }
 
+    protected Attributes.Attribute getDateTimeFormat() {
+        return key("format").value("yyyy-MM-dd HH:mm");
+    }
 
 }
