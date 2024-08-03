@@ -1,14 +1,11 @@
-==== Request Fields
+===== Response Fields
 |===
-|Path|Type|Optional|Description
+|필드명|타입|양식|설명
 
 {{#fields}}
-
 |{{#tableCellContent}}`+{{path}}+`{{/tableCellContent}}
 |{{#tableCellContent}}`+{{type}}+`{{/tableCellContent}}
-|{{#tableCellContent}}{{#optional}}O{{/optional}}{{/tableCellContent}}
+|{{#tableCellContent}}{{#format}}{{.}}{{/format}}{{/tableCellContent}}
 |{{#tableCellContent}}{{description}}{{/tableCellContent}}
-
 {{/fields}}
-
 |===
