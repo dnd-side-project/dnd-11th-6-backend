@@ -41,4 +41,8 @@ public class Meeting extends BaseEntity {
 
     @Column(nullable = false)
     private String meetingLink;
+
+    public boolean isCorrectPassword(String password) {
+        return this.password.equals(password);
+    }
 }
