@@ -1,6 +1,7 @@
 package com.dnd.snappy.domain.meeting.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 
 import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
@@ -12,7 +13,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,7 +44,7 @@ class MeetingServiceTest {
                 .meetingLink(meetingLink)
                 .build();
 
-        BDDMockito.given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.of(meeting));
+        given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.of(meeting));
 
         //when
         MeetingDetailResponseDto meetingResponse = meetingService.findByMeetingLink(meetingLink);
@@ -59,12 +61,46 @@ class MeetingServiceTest {
         //given
         String meetingLink = "meetingLink";
 
-        BDDMockito.given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.empty());
+        given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.empty());
 
         //when //then
         assertThatThrownBy(() -> meetingService.findByMeetingLink(meetingLink))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageStartingWith(MeetingErrorCode.MEETING_LINK_NOT_FOUND.getMessage());
+    }
+
+    @DisplayName("모임의 비밀번호가 맞는지 확인 가능하다.")
+    @ParameterizedTest
+    @CsvSource({
+            "password, password, true",
+            "password, wrongPassword, false"
+    })
+    void isCorrectMeetingPassword(String password, String inputPassword, boolean expected) {
+        //given
+        Long meetingId = 1L;
+        Meeting meeting = Meeting.builder().id(meetingId).password(password).build();
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        //when
+        boolean result = meetingService.isCorrectMeetingPassword(meetingId, inputPassword);
+
+        //thenR
+        assertThat(result).isEqualTo(expected);
+    }
+
+    @DisplayName("모임 id에 해당하는 모임이 없다면 예외가 발생한다.")
+    @Test
+    void isCorrectMeetingPassword_notFound() {
+        //given
+        Long meetingId = 1L;
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.empty());
+
+        //when //then
+        assertThatThrownBy(() -> meetingService.isCorrectMeetingPassword(meetingId, "password"))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageStartingWith(MeetingErrorCode.MEETING_NOT_FOUND.getMessage());
     }
 
 }
