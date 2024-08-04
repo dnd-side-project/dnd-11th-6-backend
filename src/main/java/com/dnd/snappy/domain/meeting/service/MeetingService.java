@@ -2,6 +2,7 @@ package com.dnd.snappy.domain.meeting.service;
 
 import static com.dnd.snappy.domain.meeting.exception.MeetingErrorCode.*;
 
+import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
@@ -24,11 +25,17 @@ public class MeetingService {
     }
 
     @Transactional(readOnly = true)
-    public boolean isCorrectMeetingPassword(Long meetingId, String password) {
-        Meeting meeting = meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
+    public void validateMeetingPassword(Long meetingId, String password) {
+        Meeting meeting = findByMeetingIdOrThrow(meetingId);
 
-        return meeting.isCorrectPassword(password);
+        if(!meeting.isCorrectPassword(password)) {
+            throw new BusinessException(MEETING_INVALIDATE_PASSWORD);
+        }
+    }
+
+    private Meeting findByMeetingIdOrThrow(Long meetingId) {
+        return meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
     }
 
     private Meeting findByMeetingLinkOrThrow(String meetingLink) {
