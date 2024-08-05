@@ -34,6 +34,8 @@ public abstract class RestDocsSupport {
 
     protected MockMvc mockMvc;
 
+    protected ObjectMapper objectMapper = new ObjectMapper();
+
     // TODO: 컨트롤러 단위 or 통합 테스트
     @BeforeEach
     void setUp(

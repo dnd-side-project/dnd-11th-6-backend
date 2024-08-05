@@ -29,7 +29,7 @@ public class MeetingController {
     }
 
     @PostMapping("/{meetingId}/validate-password")
-    public ResponseEntity<ResponseDto<?>> isCorrectMeetingPassword(
+    public ResponseEntity<ResponseDto<?>> validateMeetingPassword(
             @PathVariable("meetingId") Long meetingId,
             @Valid @RequestBody PasswordValidationRequest passwordValidationRequest
     ) {
