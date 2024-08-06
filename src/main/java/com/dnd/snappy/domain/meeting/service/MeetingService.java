@@ -1,8 +1,9 @@
 package com.dnd.snappy.domain.meeting.service;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
-import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.common.error.exception.DuplicationException;
 import com.dnd.snappy.common.error.exception.NotFoundException;
+import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -33,39 +33,44 @@ public class MeetingService {
 
     @Transactional
     public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto) {
-        LocalDateTime now = LocalDateTime.now();
-
-        LocalDateTime endDate = validateStartAndEndDates(requestDto.startDate(), requestDto.endDate(), now);
-
         String meetingLink = generateMeetingLink();
-        MeetingLinkStatus meetingLinkStatus = MeetingLinkStatus.calculateStatus(requestDto.startDate(), endDate, now);
+        checkMeetingLinkDuplication(meetingLink);
+        MeetingLinkStatus meetingLinkStatus = MeetingLinkStatus.calculateStatus(requestDto.startDate(), requestDto.endDate(), LocalDateTime.now());
 
-        Meeting meeting = Meeting.toEntity(requestDto, meetingLink, meetingLinkStatus);
+        CreateMeetingEntityDto dto = createMeetingEntityDto(requestDto, meetingLink, meetingLinkStatus);
+        Meeting meeting = dto.toEntity();
+
+        meeting.validateStartAndEndDates();
         meetingRepository.save(meeting);
 
-        return new CreateMeetingResponseDto(meetingLink, requestDto.password(), meetingLinkStatus);
+        return new CreateMeetingResponseDto(meetingLink, meetingLinkStatus);
     }
 
-    private LocalDateTime validateStartAndEndDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime now) {
-        LocalDateTime tenDaysLater = now.plusDays(10);
-
-        Optional.ofNullable(startDate)
-                .filter(date -> !date.isBefore(now) && !date.isAfter(tenDaysLater))
-                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "시작일은 현재 시간 이후부터 10일 이내여야 합니다."));
-
-        if (endDate != null) {
-            Optional.of(endDate)
-                    .filter(date -> date.isAfter(startDate))
-                    .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다."));
+    private void checkMeetingLinkDuplication(String meetingLink) {
+        if (meetingRepository.existsByMeetingLink(meetingLink)) {
+            throw new DuplicationException(CommonErrorCode.DUPLICATION, "모임 링크가 중복되었습니다.");
         }
-
-        return endDate;
     }
 
     private String generateMeetingLink() {
         String uuid = UUID.randomUUID().toString();
         String shortUuid = uuid.replace("-", "").substring(0, 7);
         return "https://www.snappy.com/" + shortUuid;
+    }
+
+    private CreateMeetingEntityDto createMeetingEntityDto(CreateMeetingRequestDto requestDto, String meetingLink, MeetingLinkStatus meetingLinkStatus) {
+        return new CreateMeetingEntityDto(
+                requestDto.name(),
+                requestDto.startDate(),
+                requestDto.endDate(),
+                requestDto.description(),
+                null, // TODO: thumbnailUrl은 나중에 설정
+                requestDto.symbolColor(),
+                requestDto.password(),
+                requestDto.adminPassword(),
+                meetingLink,
+                meetingLinkStatus
+        );
     }
 
     private Meeting findByMeetingLinkOrThrow(String meetingLink) {

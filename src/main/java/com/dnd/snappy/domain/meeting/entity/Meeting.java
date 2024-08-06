@@ -1,10 +1,12 @@
 package com.dnd.snappy.domain.meeting.entity;
 
-import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.dnd.snappy.common.error.CommonErrorCode;
+import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.common.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -25,7 +27,7 @@ public class Meeting extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime startDate;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime endDate;
 
     @Column
@@ -50,24 +52,18 @@ public class Meeting extends BaseEntity {
     @Column(nullable = false)
     private MeetingLinkStatus status;
 
-    public static Meeting toEntity(CreateMeetingRequestDto requestDto, String meetingLink, MeetingLinkStatus status) {
-        // endDate 입력안하면 startDate에 24시간을 더한 값을 기본값으로 설정
-        LocalDateTime endDate = requestDto.endDate() != null ? requestDto.endDate() : requestDto.startDate().plusHours(24);
+    public void validateStartAndEndDates() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime tenDaysLater = now.plusDays(10);
 
-        return Meeting.builder()
-                .name(requestDto.name())
-                .description(requestDto.description())
-                .symbolColor(requestDto.symbolColor())
-                .startDate(requestDto.startDate())
-                .endDate(endDate)
-                .password(requestDto.password())
-                .adminPassword(requestDto.adminPassword())
-                .meetingLink(meetingLink)
-                .status(status)
-                .build();
+        Optional.ofNullable(startDate)
+                .filter(date -> !date.isBefore(now) && !date.isAfter(tenDaysLater))
+                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "시작일은 현재 시간 이후부터 10일 이내여야 합니다."));
+
+        Optional.of(endDate)
+                .filter(date -> date.isAfter(startDate))
+                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다."));
     }
 
 }
-
-
 

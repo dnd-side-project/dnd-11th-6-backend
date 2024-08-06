@@ -15,7 +15,6 @@ import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,6 @@ class MeetingControllerTest extends RestDocsSupport {
 
     @Autowired
     private MeetingRepository meetingRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @DisplayName("모임 링크를 통해 모임 상세 정보를 조회한다.")
     @Test
@@ -121,8 +117,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 "1234"
         );
 
-        System.out.println("++++requestDto = " + requestDto);
-
         mockMvc.perform(
                         post("/api/v1/meetings")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -146,7 +140,6 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
                                         fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크"),
-                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("모임 비밀번호"),
                                         fieldWithPath("data.status").type(JsonFieldType.STRING).description("모임 상태"),
                                         fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
                                 )
@@ -295,7 +288,6 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
                                         fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크"),
-                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("비밀번호"),
                                         fieldWithPath("data.status").type(JsonFieldType.STRING).description("링크 상태"),
                                         fieldWithPath("error").type(JsonFieldType.NULL).description("오류 정보")
                                 )

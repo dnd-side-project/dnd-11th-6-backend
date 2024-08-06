@@ -4,6 +4,5 @@ import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 
 public record CreateMeetingResponseDto(
         String meetingLink,
-        String password,
         MeetingLinkStatus status
 ) {}

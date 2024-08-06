@@ -94,16 +94,18 @@ class MeetingServiceTest {
                 "1234"
         );
 
+        when(meetingRepository.existsByMeetingLink(anyString())).thenReturn(false);
+
         // When
         CreateMeetingResponseDto responseDto = meetingService.createMeeting(requestDto);
 
         // Then
         assertNotNull(responseDto);
         assertThat(responseDto.meetingLink()).startsWith("https://www.snappy.com/");
-        assertEquals(requestDto.password(), responseDto.password());
         assertEquals(MeetingLinkStatus.INACTIVE, responseDto.status());
 
-        verify(meetingRepository, only()).save(any(Meeting.class));
+        verify(meetingRepository).existsByMeetingLink(anyString());
+        verify(meetingRepository).save(any(Meeting.class));
     }
 
     @DisplayName("시작일이 현재 시간 이전인 경우 예외 발생")
@@ -179,6 +181,4 @@ class MeetingServiceTest {
                 .isInstanceOf(BusinessException.class)
                 .hasMessageStartingWith(CommonErrorCode.BAD_REQUEST.getMessage());
     }
-
-
 }

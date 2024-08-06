@@ -8,4 +8,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
     Optional<Meeting> findByMeetingLink(String meetingLink);
 
+    boolean existsByMeetingLink(String meetingLink);
 }
