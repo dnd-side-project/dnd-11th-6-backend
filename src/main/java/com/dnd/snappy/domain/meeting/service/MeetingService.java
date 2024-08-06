@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -48,12 +49,14 @@ public class MeetingService {
     private LocalDateTime validateStartAndEndDates(LocalDateTime startDate, LocalDateTime endDate, LocalDateTime now) {
         LocalDateTime tenDaysLater = now.plusDays(10);
 
-        if (startDate.isBefore(now) || startDate.isAfter(tenDaysLater)) {
-            throw new BusinessException(CommonErrorCode.BAD_REQUEST, "시작일은 현재 시간 이후부터 10일 이내여야 합니다.");
-        }
+        Optional.ofNullable(startDate)
+                .filter(date -> !date.isBefore(now) && !date.isAfter(tenDaysLater))
+                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "시작일은 현재 시간 이후부터 10일 이내여야 합니다."));
 
-        if (endDate != null && (endDate.isBefore(startDate) || endDate.isEqual(startDate))) {
-            throw new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다.");
+        if (endDate != null) {
+            Optional.of(endDate)
+                    .filter(date -> date.isAfter(startDate))
+                    .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다."));
         }
 
         return endDate;
