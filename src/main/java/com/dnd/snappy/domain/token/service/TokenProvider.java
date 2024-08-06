@@ -1,9 +1,10 @@
-package com.dnd.snappy.domain.auth.service;
+package com.dnd.snappy.domain.token.service;
 
-import static com.dnd.snappy.domain.auth.service.TokenType.*;
+import static com.dnd.snappy.domain.token.service.TokenType.*;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.token.dto.Tokens;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -23,6 +24,13 @@ public class TokenProvider {
     private static final String MEMBER_ID = "memberId";
 
     private final JwtProperties jwtProperties;
+
+    public Tokens issueTokens(Long memberId) {
+        return new Tokens(
+                generateToken(memberId, jwtProperties.getAccessTokenExpireTime()),
+                generateToken(memberId, jwtProperties.getRefreshTokenExpireTime())
+        );
+    }
 
     public String issueToken(Long memberId, TokenType token) {
         Long expireTime = token == ACCESS_TOKEN ? jwtProperties.getAccessTokenExpireTime() : jwtProperties.getRefreshTokenExpireTime();

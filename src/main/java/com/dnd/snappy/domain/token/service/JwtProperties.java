@@ -1,4 +1,4 @@
-package com.dnd.snappy.domain.auth.service;
+package com.dnd.snappy.domain.token.service;
 
 import io.jsonwebtoken.security.Keys;
 import jakarta.validation.constraints.NotBlank;

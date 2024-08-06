@@ -13,6 +13,12 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class Member extends BaseEntity {
 
+    public static Member Id(Long memberId) {
+        return Member.builder()
+                .id(memberId)
+                .build();
+    }
+
     public static Member create() {
         return new Member();
     }

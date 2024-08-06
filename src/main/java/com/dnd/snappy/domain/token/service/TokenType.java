@@ -1,4 +1,4 @@
-package com.dnd.snappy.domain.auth.service;
+package com.dnd.snappy.domain.token.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
