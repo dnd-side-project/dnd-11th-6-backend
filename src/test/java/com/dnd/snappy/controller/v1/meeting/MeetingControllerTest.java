@@ -1,19 +1,25 @@
 package com.dnd.snappy.controller.v1.meeting;
 
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.support.RestDocsSupport;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +28,9 @@ class MeetingControllerTest extends RestDocsSupport {
 
     @Autowired
     private MeetingRepository meetingRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @DisplayName("모임 링크를 통해 모임 상세 정보를 조회한다.")
     @Test
@@ -37,6 +46,7 @@ class MeetingControllerTest extends RestDocsSupport {
                 .meetingLink(meetingLink)
                 .password("password")
                 .adminPassword("adminPassword")
+                .status(MeetingLinkStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -44,7 +54,7 @@ class MeetingControllerTest extends RestDocsSupport {
         meetingRepository.save(meeting);
 
         mockMvc.perform(
-                    get("/api/v1/meetings?meetingLink=" + meetingLink)
+                        get("/api/v1/meetings?meetingLink=" + meetingLink)
                 )
                 .andExpect(status().isOk())
                 .andDo(
@@ -92,4 +102,197 @@ class MeetingControllerTest extends RestDocsSupport {
                         )
                 );
     }
+
+    @DisplayName("새로운 모임을 생성한다.")
+    @Test
+    void createMeeting() throws Exception {
+        LocalDateTime startDate = LocalDateTime.of(2024, 8, 9, 17, 41);
+        LocalDateTime endDate = LocalDateTime.of(2024, 8, 10, 11, 0);
+
+        CreateMeetingRequestDto requestDto = new CreateMeetingRequestDto(
+        "DND",
+                "DND 모임 입니다.",
+                startDate,
+                endDate,
+                "#FFF",
+                "1234",
+                "1234"
+        );
+        System.out.println("++++requestDto = " + requestDto);
+
+        mockMvc.perform(
+                        post("/api/v1/meetings")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestDto))
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("name").description("모임 이름"),
+                                        fieldWithPath("description").description("모임 설명"),
+                                        fieldWithPath("startDate").description("모임 시작일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("endDate").description("모임 종료일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("symbolColor").description("모임 상징 색"),
+                                        fieldWithPath("password").description("비밀번호"),
+                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
+                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크"),
+                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("모임 비밀번호"),
+                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("모임 상태"),
+                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임 생성 시 시작일은 오늘부터 10일 이내여야 한다.")
+    @Test
+    void createMeeting_BAD_REQUEST_startDate() throws Exception {
+        LocalDateTime startDate = LocalDateTime.of(2024, 8, 29, 17, 41);
+        LocalDateTime endDate = LocalDateTime.of(2024, 8, 30, 11, 0);
+
+        // 시작일 검증 실패: 오늘부터 10일 이내가 아닌 경우
+        CreateMeetingRequestDto invalidStartDateDto = new CreateMeetingRequestDto(
+                "DND",
+                "DND 모임 입니다.",
+                startDate,
+                endDate,
+                "#FFF",
+                "1234",
+                "1234"
+        );
+
+        mockMvc.perform(
+                        post("/api/v1/meetings")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(invalidStartDateDto))
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("name").description("모임 이름"),
+                                        fieldWithPath("description").description("모임 설명"),
+                                        fieldWithPath("startDate").description("모임 시작일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("endDate").description("모임 종료일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("symbolColor").description("모임 상징 색"),
+                                        fieldWithPath("password").description("비밀번호"),
+                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("생성된 모임 정보 (실패 시 null)"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("오류 정보"),
+                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러 코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).optional().description("에러 메시지")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임 생성 시 종료일이 시작일 이전이면 안된다.")
+    @Test
+    void createMeeting_BAD_REQUEST_endDate() throws Exception {
+        LocalDateTime startDate = LocalDateTime.of(2024, 8, 9, 17, 41);
+        LocalDateTime endDate = LocalDateTime.of(2024, 8, 4, 11, 0);
+
+        CreateMeetingRequestDto invalidEndDateDto = new CreateMeetingRequestDto(
+                "팀 회의",
+                "이번 주 프로젝트 진행 상황 공유",
+                startDate,
+                endDate,
+                "#FF5733",
+                "1234",
+                "1234"
+        );
+
+        mockMvc.perform(
+                        post("/api/v1/meetings")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(invalidEndDateDto))
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("name").description("모임 이름"),
+                                        fieldWithPath("description").description("모임 설명"),
+                                        fieldWithPath("startDate").description("모임 시작일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("endDate").description("모임 종료일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("symbolColor").description("모임 상징 색"),
+                                        fieldWithPath("password").description("비밀번호"),
+                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("생성된 모임 정보 (실패 시 null)"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("오류 정보"),
+                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러 코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).optional().description("에러 메시지")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임 시작일 이전에 모임 링크 상태는 INACTIVE(비활성화)이다.")
+    @Test
+    public void calculateStatus_INACTIVE() throws Exception {
+        LocalDateTime startDate = LocalDateTime.of(2024, 8, 8, 12, 0);
+        LocalDateTime endDate = LocalDateTime.of(2024, 8, 9, 12, 0);
+
+        CreateMeetingRequestDto inactiveLinkDto = new CreateMeetingRequestDto(
+                "DND",
+                "상태가 INACTIVE인 경우",
+                startDate,
+                endDate,
+                "#FF5733",
+                "1234",
+                "1234"
+        );
+
+        mockMvc.perform(
+                        post("/api/v1/meetings")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(inactiveLinkDto))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.status").value("INACTIVE"))
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("name").description("모임 이름"),
+                                        fieldWithPath("description").description("모임 설명"),
+                                        fieldWithPath("startDate").description("모임 시작일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("endDate").description("모임 종료일")
+                                                .attributes(getDateTimeFormat()),
+                                        fieldWithPath("symbolColor").description("모임 상징 색"),
+                                        fieldWithPath("password").description("비밀번호"),
+                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
+                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크"),
+                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("비밀번호"),
+                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("링크 상태"),
+                                        fieldWithPath("error").type(JsonFieldType.NULL).description("오류 정보")
+                                )
+                        )
+                );
+    }
+
+
 }

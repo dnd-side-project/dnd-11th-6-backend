@@ -1,0 +1,25 @@
+=== 모임 생성
+==== 성공
+Request
+include::{snippets}/meeting-controller-test/create-meeting/http-request.adoc[]
+include::{snippets}/meeting-controller-test/create-meeting/request-fields.adoc[]
+
+Response
+include::{snippets}/meeting-controller-test/create-meeting/http-response.adoc[]
+include::{snippets}/meeting-controller-test/create-meeting/response-fields.adoc[]
+
+
+==== 예외
+===== a. 시작일은 오늘을 기준으로 10일 이내가 아니면 예외가 발생한다.
+include::{snippets}/meeting-controller-test/create-meeting_bad_request_start-date/http-response.adoc[]
+===== b. 종료일은 시작일 이내로 설정 시 예외가 발생한다.
+include::{snippets}/meeting-controller-test/create-meeting_bad_request_end-date/http-response.adoc[]
+
+==== 참고
+==== 모임 상태 설명
+- `INACTIVE 비활성화`: 모임 시작일 이전 상태.
+- `ACTIVE 활성화`: 모임이 시작된 후 종료일 + 7일까지의 상태.
+- `INVALID 유효하지 않음`: 종료일 + 7일이 지난 후의 상태.
+
+===== a. 모임 시작일 이전에 모임 링크 상태는 INACTIVE(비활성화)이다.
+include::{snippets}/meeting-controller-test/calculate-status_inactive/http-response.adoc[]
