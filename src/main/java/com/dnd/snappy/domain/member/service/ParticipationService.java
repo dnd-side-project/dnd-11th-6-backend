@@ -4,7 +4,6 @@ import com.dnd.snappy.domain.token.dto.Tokens;
 import com.dnd.snappy.domain.member.dto.response.ParticipationResponseDto;
 import com.dnd.snappy.domain.member.entity.Role;
 import com.dnd.snappy.domain.token.service.TokenService;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,11 +19,14 @@ public class ParticipationService {
     private final TokenService tokenService;
 
     @Transactional
-    public ParticipationResponseDto participate(Long memberId, Long meetingId, String nickname, Role role) {
-        // memberId가 없을때 -> 지금 진행하고 있는 모임이 없을경우(access token or refresh token이 없을때?)
-        memberId = Optional.ofNullable(memberId)
-                .map(memberService::findMemberById)
-                .orElseGet(memberService::createMember);
+    public ParticipationResponseDto participate(
+            String refreshToken,
+            Long meetingId,
+            String nickname,
+            Role role
+    ) {
+        // memberId가 없을때: refresh token 이 없거나, 만료됐을때
+        Long memberId = getMemberId(refreshToken);
         memberMeetingService.joinMeeting(memberId, meetingId, nickname, role);
         Tokens tokens = tokenService.createTokens(memberId);
 
@@ -33,5 +35,11 @@ public class ParticipationService {
                 tokens.accessToken(),
                 tokens.refreshToken()
         );
+    }
+
+    private Long getMemberId(String refreshToken) {
+        return tokenService.extractToken(refreshToken)
+                .map(memberService::findMemberById)
+                .orElseGet(memberService::createMember);
     }
 }

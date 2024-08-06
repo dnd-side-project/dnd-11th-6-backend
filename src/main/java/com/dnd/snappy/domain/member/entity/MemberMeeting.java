@@ -40,9 +40,8 @@ public class MemberMeeting extends BaseEntity {
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
 
-
-
     public static MemberMeeting create(String nickname, Member member, Meeting meeting, Role role) {
+        System.out.println("role = " + role);
         return MemberMeeting.builder()
                 .nickname(nickname)
                 .role(role)
