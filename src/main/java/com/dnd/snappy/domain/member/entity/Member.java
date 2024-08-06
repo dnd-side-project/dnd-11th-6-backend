@@ -13,4 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class Member extends BaseEntity {
 
+    public static Member create() {
+        return new Member();
+    }
 }

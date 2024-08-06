@@ -20,7 +20,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class MemberMeeting extends BaseEntity {
 
-    @Column(nullable = false)
+    public static final int MAX_SHOOT_COUNT = 10;
+
+    @Column(nullable = false, length = 8)
     private String nickname;
 
     @Column(nullable = false)
@@ -38,4 +40,15 @@ public class MemberMeeting extends BaseEntity {
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
 
+
+
+    public static MemberMeeting create(String nickname, Member member, Meeting meeting, Role role) {
+        return MemberMeeting.builder()
+                .nickname(nickname)
+                .role(role)
+                .shootCount(MAX_SHOOT_COUNT)
+                .meeting(meeting)
+                .member(member)
+                .build();
+    }
 }
