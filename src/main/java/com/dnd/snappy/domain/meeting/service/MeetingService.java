@@ -49,11 +49,11 @@ public class MeetingService {
         LocalDateTime tenDaysLater = now.plusDays(10);
 
         if (startDate.isBefore(now) || startDate.isAfter(tenDaysLater)) {
-            throw new BusinessException(CommonErrorCode.INVALID_DATE, "시작일은 현재 시간 이후부터 10일 이내여야 합니다.");
+            throw new BusinessException(CommonErrorCode.BAD_REQUEST, "시작일은 현재 시간 이후부터 10일 이내여야 합니다.");
         }
 
         if (endDate != null && (endDate.isBefore(startDate) || endDate.isEqual(startDate))) {
-            throw new BusinessException(CommonErrorCode.INVALID_DATE, "종료일은 시작일 이후여야 합니다.");
+            throw new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다.");
         }
 
         return endDate;
