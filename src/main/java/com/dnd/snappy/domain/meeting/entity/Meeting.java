@@ -8,8 +8,6 @@ import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,10 +46,6 @@ public class Meeting extends BaseEntity {
     @Column(nullable = false)
     private String meetingLink;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private MeetingLinkStatus status;
-
     public void validateStartAndEndDates() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime tenDaysLater = now.plusDays(10);
@@ -65,5 +59,8 @@ public class Meeting extends BaseEntity {
                 .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다."));
     }
 
+    public MeetingLinkStatus checkLinkStatus() {
+        return MeetingLinkStatus.checkLinkStatus(startDate, endDate, LocalDateTime.now());
+    }
 }
 

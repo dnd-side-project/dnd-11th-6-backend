@@ -6,10 +6,8 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
-import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.support.RestDocsSupport;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
@@ -42,7 +40,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 .meetingLink(meetingLink)
                 .password("password")
                 .adminPassword("adminPassword")
-                .status(MeetingLinkStatus.ACTIVE)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -68,6 +65,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.symbolColor").type(JsonFieldType.STRING).description("모임 상징 색"),
                                         fieldWithPath("data.startDate").type(JsonFieldType.STRING).attributes(getDateTimeFormat()).description("모임 시작일"),
                                         fieldWithPath("data.endDate").type(JsonFieldType.STRING).attributes(getDateTimeFormat()).description("모임 종료일"),
+                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("모임 링크 상태"),
                                         fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
                                 )
                         )
@@ -140,7 +138,6 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
                                         fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크"),
-                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("모임 상태"),
                                         fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
                                 )
                         )
@@ -245,55 +242,5 @@ class MeetingControllerTest extends RestDocsSupport {
                         )
                 );
     }
-
-    @DisplayName("모임 시작일 이전에 모임 링크 상태는 INACTIVE(비활성화)이다.")
-    @Test
-    public void calculateStatus_INACTIVE() throws Exception {
-        // 현재 날짜 기준으로 5일 후 시작일, 종료일은 시작일 다음 날로 설정
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startDate = now.plusDays(5);
-        LocalDateTime endDate = startDate.plusDays(1);
-
-        CreateMeetingRequestDto inactiveLinkDto = new CreateMeetingRequestDto(
-                "DND",
-                "상태가 INACTIVE인 경우",
-                startDate,
-                endDate,
-                "#FF5733",
-                "1234",
-                "1234"
-        );
-
-        mockMvc.perform(
-                        post("/api/v1/meetings")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(inactiveLinkDto))
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.status").value("INACTIVE"))
-                .andDo(
-                        restDocs.document(
-                                requestFields(
-                                        fieldWithPath("name").description("모임 이름"),
-                                        fieldWithPath("description").description("모임 설명"),
-                                        fieldWithPath("startDate").description("모임 시작일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("endDate").description("모임 종료일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("symbolColor").description("모임 상징 색"),
-                                        fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
-                                ),
-                                responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
-                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크"),
-                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("링크 상태"),
-                                        fieldWithPath("error").type(JsonFieldType.NULL).description("오류 정보")
-                                )
-                        )
-                );
-    }
-
 
 }

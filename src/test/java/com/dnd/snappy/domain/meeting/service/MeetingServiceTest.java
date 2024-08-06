@@ -1,7 +1,6 @@
 package com.dnd.snappy.domain.meeting.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -13,7 +12,6 @@ import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
-import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import java.time.LocalDateTime;
@@ -102,7 +100,6 @@ class MeetingServiceTest {
         // Then
         assertNotNull(responseDto);
         assertThat(responseDto.meetingLink()).startsWith("https://www.snappy.com/");
-        assertEquals(MeetingLinkStatus.INACTIVE, responseDto.status());
 
         verify(meetingRepository).existsByMeetingLink(anyString());
         verify(meetingRepository).save(any(Meeting.class));

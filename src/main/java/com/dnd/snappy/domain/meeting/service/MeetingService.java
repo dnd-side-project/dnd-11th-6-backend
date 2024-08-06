@@ -8,14 +8,12 @@ import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
-import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -37,15 +35,14 @@ public class MeetingService {
     public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto) {
         String meetingLink = generateMeetingLink();
         checkMeetingLinkDuplication(meetingLink);
-        MeetingLinkStatus meetingLinkStatus = MeetingLinkStatus.calculateStatus(requestDto.startDate(), requestDto.endDate(), LocalDateTime.now());
 
-        CreateMeetingEntityDto dto = createMeetingEntityDto(requestDto, meetingLink, meetingLinkStatus);
+        CreateMeetingEntityDto dto = createMeetingEntityDto(requestDto, meetingLink);
         Meeting meeting = dto.toEntity();
 
         meeting.validateStartAndEndDates();
         meetingRepository.save(meeting);
 
-        return new CreateMeetingResponseDto(meetingLink, meetingLinkStatus);
+        return new CreateMeetingResponseDto(meetingLink);
     }
 
     private void checkMeetingLinkDuplication(String meetingLink) {
@@ -60,7 +57,7 @@ public class MeetingService {
         return LINK_PREFIX + shortUuid;
     }
 
-    private CreateMeetingEntityDto createMeetingEntityDto(CreateMeetingRequestDto requestDto, String meetingLink, MeetingLinkStatus meetingLinkStatus) {
+    private CreateMeetingEntityDto createMeetingEntityDto(CreateMeetingRequestDto requestDto, String meetingLink) {
         return new CreateMeetingEntityDto(
                 requestDto.name(),
                 requestDto.startDate(),
@@ -70,8 +67,7 @@ public class MeetingService {
                 requestDto.symbolColor(),
                 requestDto.password(),
                 requestDto.adminPassword(),
-                meetingLink,
-                meetingLinkStatus
+                meetingLink
         );
     }
 
@@ -81,6 +77,4 @@ public class MeetingService {
     }
 
 }
-
-
 

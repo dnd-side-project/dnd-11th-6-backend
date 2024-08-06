@@ -1,7 +1,6 @@
 package com.dnd.snappy.domain.meeting.dto.request;
 
 import com.dnd.snappy.domain.meeting.entity.Meeting;
-import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 
 import java.time.LocalDateTime;
 
@@ -14,9 +13,9 @@ public record CreateMeetingEntityDto(
         String symbolColor,
         String password,
         String adminPassword,
-        String meetingLink,
-        MeetingLinkStatus status
+        String meetingLink
 ) {
+
     public Meeting toEntity() {
         LocalDateTime defaultEndDate = endDate != null ? endDate : startDate.plusHours(24);
         return Meeting.builder()
@@ -29,7 +28,6 @@ public record CreateMeetingEntityDto(
                 .password(password)
                 .adminPassword(adminPassword)
                 .meetingLink(meetingLink)
-                .status(status)
                 .build();
     }
 }

@@ -16,10 +16,7 @@ include::{snippets}/meeting-controller-test/create-meeting_bad_request_start-dat
 include::{snippets}/meeting-controller-test/create-meeting_bad_request_end-date/http-response.adoc[]
 
 ==== 참고
-==== 모임 상태 설명
+==== 모임 링크 상태 설명
 - `INACTIVE 비활성화`: 모임 시작일 이전 상태.
 - `ACTIVE 활성화`: 모임이 시작된 후 종료일 + 7일까지의 상태.
 - `INVALID 유효하지 않음`: 종료일 + 7일이 지난 후의 상태.
-
-===== a. 모임 시작일 이전에 모임 링크 상태는 INACTIVE(비활성화)이다.
-include::{snippets}/meeting-controller-test/calculate-status_inactive/http-response.adoc[]
