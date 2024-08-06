@@ -22,6 +22,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MeetingService {
 
+    private static final String LINK_PREFIX = "https://www.snappy.com/";
+
     private final MeetingRepository meetingRepository;
 
     @Transactional(readOnly = true)
@@ -55,7 +57,7 @@ public class MeetingService {
     private String generateMeetingLink() {
         String uuid = UUID.randomUUID().toString();
         String shortUuid = uuid.replace("-", "").substring(0, 7);
-        return "https://www.snappy.com/" + shortUuid;
+        return LINK_PREFIX + shortUuid;
     }
 
     private CreateMeetingEntityDto createMeetingEntityDto(CreateMeetingRequestDto requestDto, String meetingLink, MeetingLinkStatus meetingLinkStatus) {
