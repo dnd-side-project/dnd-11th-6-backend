@@ -106,11 +106,13 @@ class MeetingControllerTest extends RestDocsSupport {
     @DisplayName("새로운 모임을 생성한다.")
     @Test
     void createMeeting() throws Exception {
-        LocalDateTime startDate = LocalDateTime.of(2024, 8, 9, 17, 41);
-        LocalDateTime endDate = LocalDateTime.of(2024, 8, 10, 11, 0);
+        // 현재 날짜 기준으로 2일 후 시작일, 3일 후 종료일 설정
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = now.plusDays(2);
+        LocalDateTime endDate = startDate.plusDays(1);
 
         CreateMeetingRequestDto requestDto = new CreateMeetingRequestDto(
-        "DND",
+                "DND",
                 "DND 모임 입니다.",
                 startDate,
                 endDate,
@@ -118,6 +120,7 @@ class MeetingControllerTest extends RestDocsSupport {
                 "1234",
                 "1234"
         );
+
         System.out.println("++++requestDto = " + requestDto);
 
         mockMvc.perform(
@@ -154,8 +157,10 @@ class MeetingControllerTest extends RestDocsSupport {
     @DisplayName("모임 생성 시 시작일은 오늘부터 10일 이내여야 한다.")
     @Test
     void createMeeting_BAD_REQUEST_startDate() throws Exception {
-        LocalDateTime startDate = LocalDateTime.of(2024, 8, 29, 17, 41);
-        LocalDateTime endDate = LocalDateTime.of(2024, 8, 30, 11, 0);
+        // 현재 날짜 기준으로 11일 후 시작일, 12일 후 종료일 설정
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = now.plusDays(11);
+        LocalDateTime endDate = startDate.plusDays(1);
 
         // 시작일 검증 실패: 오늘부터 10일 이내가 아닌 경우
         CreateMeetingRequestDto invalidStartDateDto = new CreateMeetingRequestDto(
@@ -202,8 +207,10 @@ class MeetingControllerTest extends RestDocsSupport {
     @DisplayName("모임 생성 시 종료일이 시작일 이전이면 안된다.")
     @Test
     void createMeeting_BAD_REQUEST_endDate() throws Exception {
-        LocalDateTime startDate = LocalDateTime.of(2024, 8, 9, 17, 41);
-        LocalDateTime endDate = LocalDateTime.of(2024, 8, 4, 11, 0);
+        // 현재 날짜 기준으로 5일 후 시작일, 시작일 1일 전을 종료일로 설정
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = now.plusDays(5);
+        LocalDateTime endDate = startDate.minusDays(1);
 
         CreateMeetingRequestDto invalidEndDateDto = new CreateMeetingRequestDto(
                 "팀 회의",
@@ -249,8 +256,10 @@ class MeetingControllerTest extends RestDocsSupport {
     @DisplayName("모임 시작일 이전에 모임 링크 상태는 INACTIVE(비활성화)이다.")
     @Test
     public void calculateStatus_INACTIVE() throws Exception {
-        LocalDateTime startDate = LocalDateTime.of(2024, 8, 8, 12, 0);
-        LocalDateTime endDate = LocalDateTime.of(2024, 8, 9, 12, 0);
+        // 현재 날짜 기준으로 5일 후 시작일, 종료일은 시작일 다음 날로 설정
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = now.plusDays(5);
+        LocalDateTime endDate = startDate.plusDays(1);
 
         CreateMeetingRequestDto inactiveLinkDto = new CreateMeetingRequestDto(
                 "DND",
