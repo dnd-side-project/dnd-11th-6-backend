@@ -61,3 +61,8 @@ spring:
       ddl-auto: create
     defer-datasource-initialization: true
 
+jwt:
+  secretKey: ghdsjkghjksdhdawuidhkjasbfhjkxvbjhsdgvjkafjawoldjkawopdjawpdjawpidj
+  access-token-expire-time: 1800000 # 30분
+  refresh-token-expire-time: 3600000 # 1시간
+
