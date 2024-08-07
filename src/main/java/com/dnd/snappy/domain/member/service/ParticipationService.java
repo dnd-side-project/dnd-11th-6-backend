@@ -38,7 +38,7 @@ public class ParticipationService {
     }
 
     private Long getMemberId(String refreshToken) {
-        return tokenService.extractToken(refreshToken)
+        return tokenService.extractTokenIgnoringExpiration(refreshToken)
                 .map(memberService::findMemberById)
                 .orElseGet(memberService::createMember);
     }

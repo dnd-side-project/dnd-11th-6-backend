@@ -56,6 +56,11 @@ public class TokenProvider {
         return claims.get(MEMBER_ID, Long.class);
     }
 
+    public Long extractPayloadIgnoringExpiration(String token) {
+        Claims claims = extractClaimsIgnoringExpiration(token);
+        return claims.get(MEMBER_ID, Long.class);
+    }
+
     private Claims extractClaims(String token) {
         try {
             return getJwtParser().parseSignedClaims(token).getPayload();
@@ -63,6 +68,19 @@ public class TokenProvider {
         catch (ExpiredJwtException e) {
             log.warn("[TokenProvider - ExpiredJwtException] {} ", e.getMessage());
             throw new BusinessException(CommonErrorCode.JWT_EXPIRED_ERROR);
+        }
+        catch (JwtException | IllegalArgumentException e) {
+            log.warn("[TokenProvider - JwtException or IllegalArgumentException] {} ", e.getMessage());
+            throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR);
+        }
+    }
+
+    private Claims extractClaimsIgnoringExpiration(String token) {
+        try {
+            return getJwtParser().parseSignedClaims(token).getPayload();
+        }
+        catch (ExpiredJwtException e) {
+            return e.getClaims();
         }
         catch (JwtException | IllegalArgumentException e) {
             log.warn("[TokenProvider - JwtException or IllegalArgumentException] {} ", e.getMessage());

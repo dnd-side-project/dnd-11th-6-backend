@@ -24,16 +24,10 @@ public class TokenService {
         return tokens;
     }
 
-    public Optional<Long> extractToken(String token) {
+    public Optional<Long> extractTokenIgnoringExpiration(String token) {
         if(token != null) {
-            try {
-                Long memberId = tokenProvider.extractPayload(token);
-                return Optional.of(memberId);
-            } catch (BusinessException e) {
-                //토큰 만료 된 경우
-                // 토큰이 만료된 경우라면 memberId값 빼오기 이때 비밀번호도 맞는지 확인해줘야할듯
-                // 단순히 memberId값만 빼온다면 공격자가
-            }
+            Long memberId = tokenProvider.extractPayloadIgnoringExpiration(token);
+            return Optional.of(memberId);
         }
 
         return Optional.empty();
