@@ -1,4 +1,4 @@
-package com.dnd.snappy.domain.token.service;
+package com.dnd.snappy.controller;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
@@ -31,7 +31,7 @@ public class JwtTokenExtractor {
         return Optional.empty();
     }
 
-    private static boolean isValid(String refreshToken) {
-        return StringUtils.hasText(refreshToken) && refreshToken.startsWith(PREFIX_BEARER);
+    private static boolean isValid(String accessToken) {
+        return StringUtils.hasText(accessToken) && accessToken.startsWith(PREFIX_BEARER);
     }
 }
