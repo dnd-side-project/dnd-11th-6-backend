@@ -22,7 +22,7 @@ spring:
     password: '${custom.db.password}'
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
