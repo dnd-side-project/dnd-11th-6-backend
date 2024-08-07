@@ -1,10 +1,8 @@
 package com.dnd.snappy.domain.token.service;
 
-import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.token.dto.Tokens;
 import com.dnd.snappy.domain.token.entity.RefreshToken;
 import com.dnd.snappy.domain.token.repository.RefreshTokenRedisRepository;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +22,7 @@ public class TokenService {
         return tokens;
     }
 
-    public Optional<Long> extractTokenIgnoringExpiration(String token) {
-        if(token != null) {
-            Long memberId = tokenProvider.extractPayloadIgnoringExpiration(token);
-            return Optional.of(memberId);
-        }
-
-        return Optional.empty();
+    public Long extractTokenIgnoringExpiration(String token) {
+        return tokenProvider.extractPayloadIgnoringExpiration(token);
     }
 }

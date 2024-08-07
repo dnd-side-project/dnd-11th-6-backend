@@ -1,8 +1,5 @@
 package com.dnd.snappy.domain.member.service;
 
-import static com.dnd.snappy.domain.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
-
-import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.member.entity.Member;
 import com.dnd.snappy.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-
-    @Transactional(readOnly = true)
-    public Long findMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND, memberId))
-                .getId();
-    }
 
     @Transactional
     public Long createMember() {
