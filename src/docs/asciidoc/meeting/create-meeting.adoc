@@ -19,6 +19,10 @@ include::{snippets}/meeting-controller-test/create-meeting_bad_request_end-date/
 
 ==== 참고
 ==== 모임 상태 설명
-- `INACTIVE 비활성화`: 모임 시작일 이전 상태.
-- `ACTIVE 활성화`: 모임이 시작된 후 종료일 + 7일까지의 상태.
-- `INVALID 유효하지 않음`: 종료일 + 7일이 지난 후의 상태.
+===== [링크 활성화]
+* **PENDING 대기중**: 시작일 전 (입장만 가능)
+* **IN_PROGRESS 진행 중**: 시작일 ~ 종료일 (사진 촬영, 미션 제출 등 가능)
+* **COMPLETED 종료**: 종료일 ~ +7일 (사진 다운로드만 가능)
+
+===== [링크 비활성화]
+* **EXPIRED 만료**: 종료일 +7일 후
