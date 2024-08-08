@@ -77,7 +77,7 @@ public class Meeting extends BaseEntity {
         }
     }
 
-    public MeetingLinkStatus getMeetingLinkStatus(LocalDateTime startDate, LocalDateTime endDate) {
+    public MeetingLinkStatus getMeetingLinkStatus() {
         LocalDateTime now = LocalDateTime.now();
 
         if (now.isBefore(startDate)) {
