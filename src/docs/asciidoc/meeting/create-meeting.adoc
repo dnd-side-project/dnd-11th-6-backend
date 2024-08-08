@@ -1,0 +1,28 @@
+=== 모임 생성
+==== 성공
+Request
+include::{snippets}/meeting-controller-test/create-meeting/http-request.adoc[]
+include::{snippets}/meeting-controller-test/create-meeting/request-fields.adoc[]
+
+Response
+include::{snippets}/meeting-controller-test/create-meeting/http-response.adoc[]
+include::{snippets}/meeting-controller-test/create-meeting/response-fields.adoc[]
+
+
+==== 예외
+===== a. 모임 생성 시 필수 입력값을 입력하지 않으면 예외 메시지를 던진다.
+include::{snippets}/meeting-controller-test/create-meeting_validation_error/http-response.adoc[]
+===== b. 시작일은 오늘을 기준으로 10일 이내가 아니면 예외가 발생한다.
+include::{snippets}/meeting-controller-test/create-meeting_bad_request_start-date/http-response.adoc[]
+===== c. 종료일은 시작일 이내로 설정 시 예외가 발생한다.
+include::{snippets}/meeting-controller-test/create-meeting_bad_request_end-date/http-response.adoc[]
+
+==== 참고
+==== 모임 상태 설명
+===== [링크 활성화]
+* **PENDING 대기중**: 시작일 전 (입장만 가능)
+* **IN_PROGRESS 진행 중**: 시작일 ~ 종료일 (사진 촬영, 미션 제출 등 가능)
+* **COMPLETED 종료**: 종료일 ~ +7일 (사진 다운로드만 가능)
+
+===== [링크 비활성화]
+* **EXPIRED 만료**: 종료일 +7일 후

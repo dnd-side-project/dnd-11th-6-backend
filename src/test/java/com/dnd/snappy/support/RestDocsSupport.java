@@ -32,9 +32,10 @@ public abstract class RestDocsSupport {
     @Autowired
     protected RestDocumentationResultHandler restDocs;
 
-    protected MockMvc mockMvc;
+    @Autowired
+    protected ObjectMapper objectMapper;
 
-    protected ObjectMapper objectMapper = new ObjectMapper();
+    protected MockMvc mockMvc;
 
     // TODO: 컨트롤러 단위 or 통합 테스트
     @BeforeEach

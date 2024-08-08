@@ -2,3 +2,5 @@
 == 모임 API
 
 include::find-by-meeting-link.adoc[]
+
+include::create-meeting.adoc[]

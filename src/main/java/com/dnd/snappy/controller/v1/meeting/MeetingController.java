@@ -2,6 +2,8 @@ package com.dnd.snappy.controller.v1.meeting;
 
 import com.dnd.snappy.common.dto.ResponseDto;
 import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
+import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.service.MeetingService;
 import jakarta.validation.Valid;
@@ -36,4 +38,11 @@ public class MeetingController {
         meetingService.validateMeetingPassword(meetingId, passwordValidationRequest.password());
         return ResponseDto.ok();
     }
+
+    @PostMapping
+    public ResponseEntity<ResponseDto<CreateMeetingResponseDto>> createMeeting(@Valid @RequestBody CreateMeetingRequestDto requestDto) {
+        var response = meetingService.createMeeting(requestDto);
+        return ResponseDto.ok(response);
+    }
 }
+
