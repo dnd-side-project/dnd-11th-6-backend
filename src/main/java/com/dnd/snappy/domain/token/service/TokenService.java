@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final static Long REFRESH_TOKEN_TTL = 3600L; //1시간
+    public final static Long REFRESH_TOKEN_TTL = 3600L; //1시간
 
     private final TokenProvider tokenProvider;
 
