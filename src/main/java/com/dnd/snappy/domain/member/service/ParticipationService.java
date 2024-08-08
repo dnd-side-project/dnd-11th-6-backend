@@ -26,7 +26,6 @@ public class ParticipationService {
             String nickname,
             Role role
     ) {
-        // memberId가 없을때: refresh token 이 없거나, 만료됐을때
         Long memberId = getMemberId(accessToken);
         memberMeetingService.joinMeeting(memberId, meetingId, nickname, role);
         Tokens tokens = tokenService.createTokens(memberId);
