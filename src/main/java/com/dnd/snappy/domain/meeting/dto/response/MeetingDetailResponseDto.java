@@ -1,6 +1,7 @@
 package com.dnd.snappy.domain.meeting.dto.response;
 
 import com.dnd.snappy.domain.meeting.entity.Meeting;
+import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
@@ -13,7 +14,8 @@ public record MeetingDetailResponseDto(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime startDate,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
-        LocalDateTime endDate
+        LocalDateTime endDate,
+        MeetingLinkStatus status
 ) {
 
     public MeetingDetailResponseDto(Meeting meeting) {
@@ -24,7 +26,9 @@ public record MeetingDetailResponseDto(
                 meeting.getThumbnailUrl(),
                 meeting.getSymbolColor(),
                 meeting.getStartDate(),
-                meeting.getEndDate()
+                meeting.getEndDate(),
+                meeting.getMeetingLinkStatus()
         );
     }
 }
+
