@@ -128,7 +128,8 @@ class MeetingControllerTest extends RestDocsSupport {
         mockMvc.perform(
                         RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/validate-password", meeting.getId())
                                 .content(objectMapper.writeValueAsString(passwordValidationRequest))
-                                .contentType(MediaType.APPLICATION_JSON))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isOk())
                 .andDo(
                         restDocs.document(

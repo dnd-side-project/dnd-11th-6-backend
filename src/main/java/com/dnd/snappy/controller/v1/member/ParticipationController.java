@@ -2,7 +2,7 @@ package com.dnd.snappy.controller.v1.member;
 
 import com.dnd.snappy.common.dto.ResponseDto;
 import com.dnd.snappy.controller.CookieManager;
-import com.dnd.snappy.controller.v1.member.request.ParticipationRequestDto;
+import com.dnd.snappy.controller.v1.member.request.ParticipationRequest;
 import com.dnd.snappy.controller.v1.member.response.ParticipationResponse;
 import com.dnd.snappy.domain.member.service.ParticipationService;
 import com.dnd.snappy.controller.JwtTokenExtractor;
@@ -32,7 +32,7 @@ public class ParticipationController {
     @PostMapping("/members")
     public ResponseEntity<ResponseDto<ParticipationResponse>> participateMeeting(
             @PathVariable Long meetingId,
-            @Valid @RequestBody ParticipationRequestDto participationRequestDto,
+            @Valid @RequestBody ParticipationRequest participationRequestDto,
             HttpServletRequest request
     ) {
 
