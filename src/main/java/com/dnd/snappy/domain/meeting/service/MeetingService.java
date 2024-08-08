@@ -58,7 +58,7 @@ public class MeetingService {
 
     private void checkMeetingLinkDuplication(String meetingLink) {
         if (meetingRepository.existsByMeetingLink(meetingLink)) {
-            throw new DuplicationException(CommonErrorCode.DUPLICATION, "모임 링크가 중복되었습니다.");
+            throw new DuplicationException(MeetingErrorCode.DUPLICATION, "모임 링크가 중복되었습니다.");
         }
     }
 

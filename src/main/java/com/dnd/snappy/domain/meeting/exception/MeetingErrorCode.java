@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum MeetingErrorCode implements ErrorCodeInterface {
     MEETING_LINK_NOT_FOUND(HttpStatus.NOT_FOUND, "MEETING_LINK_NOT_FOUND", "요청된 모임 링크를 찾을 수 없습니다."),
+    DUPLICATION(HttpStatus.CONFLICT, "COMMON_DUPLICATION", "중복된 리소스가 존재합니다."),
+    VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "유효성 검사 실패했습니다."),
     ;
 
     private final HttpStatus status;

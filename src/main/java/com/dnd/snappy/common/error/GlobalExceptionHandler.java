@@ -3,6 +3,7 @@ package com.dnd.snappy.common.error;
 import com.dnd.snappy.common.dto.ResponseDto;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.common.error.exception.S3Exception;
+import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.joining(", "));
 
-        ErrorCode errorCode = CommonErrorCode.VALIDATION_ERROR.toErrorCode();
+        ErrorCode errorCode = MeetingErrorCode.VALIDATION_ERROR.toErrorCode();
         errorCode.appendMessage(errorMessage);
 
         log.error("ValidationException: {} {}", errorCode, request.getRequestURL());
