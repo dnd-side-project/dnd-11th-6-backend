@@ -14,6 +14,7 @@ import com.dnd.snappy.domain.snap.service.SnapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -36,11 +37,11 @@ public class MeetingService {
     }
 
     @Transactional
-    public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto) {
+    public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto, MultipartFile thumbnail) {
         String meetingLink = generateMeetingLink();
         checkMeetingLinkDuplication(meetingLink);
 
-        String thumbnailUrl = getThumbnailUrl(requestDto);
+        String thumbnailUrl = getThumbnailUrl(thumbnail);
 
         CreateMeetingEntityDto dto = createMeetingEntityDto(requestDto, meetingLink, thumbnailUrl);
         Meeting meeting = Meeting.create(dto);
@@ -67,10 +68,11 @@ public class MeetingService {
         return LINK_PREFIX + shortUuid;
     }
 
-    private String getThumbnailUrl(CreateMeetingRequestDto requestDto) {
-        return requestDto.thumbnail()
-                .map(snapService::upload)
-                .orElse(DEFAULT_THUMBNAIL_URL);
+    private String getThumbnailUrl(MultipartFile thumbnail) {
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+            return snapService.upload(thumbnail);
+        }
+        return DEFAULT_THUMBNAIL_URL;
     }
 
     private CreateMeetingEntityDto createMeetingEntityDto(CreateMeetingRequestDto requestDto, String meetingLink, String thumbnailUrl) {

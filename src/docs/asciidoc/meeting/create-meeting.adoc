@@ -1,13 +1,21 @@
 === 모임 생성
 ==== 성공
-Request
+=== 요청 형식
+
+요청은 `multipart/form-data` 형식을 사용하여 JSON 데이터와 파일을 함께 전송합니다.
+
+- **`name=meeting`**: 모임 정보를 포함하는 JSON 데이터입니다.
+
+- **`name=thumbnail`**: 모임의 썸네일 이미지 파일 (선택 사항입니다).
+
 include::{snippets}/meeting-controller-test/create-meeting/http-request.adoc[]
+include::{snippets}/meeting-controller-test/create-meeting/request-parts.adoc[]
+include::{snippets}/meeting-controller-test/create-meeting/request-body.adoc[]
 include::{snippets}/meeting-controller-test/create-meeting/request-fields.adoc[]
 
 Response
 include::{snippets}/meeting-controller-test/create-meeting/http-response.adoc[]
 include::{snippets}/meeting-controller-test/create-meeting/response-fields.adoc[]
-
 
 ==== 예외
 ===== a. 모임 생성 시 필수 입력값을 입력하지 않으면 예외 메시지를 던진다.
