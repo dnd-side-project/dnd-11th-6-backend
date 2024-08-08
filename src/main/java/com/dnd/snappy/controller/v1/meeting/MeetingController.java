@@ -24,7 +24,7 @@ public class MeetingController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto<CreateMeetingResponseDto>> createMeeting(@Valid @RequestBody CreateMeetingRequestDto requestDto) {
+    public ResponseEntity<ResponseDto<CreateMeetingResponseDto>> createMeeting(@Valid @ModelAttribute CreateMeetingRequestDto requestDto) {
         var response = meetingService.createMeeting(requestDto);
         return ResponseDto.ok(response);
     }

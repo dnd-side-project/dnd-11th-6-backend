@@ -2,6 +2,7 @@ package com.dnd.snappy.common.error;
 
 import com.dnd.snappy.common.dto.ResponseDto;
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.common.error.exception.S3Exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,15 @@ public class GlobalExceptionHandler {
 
         log.error("ValidationException: {} {}", errorCode, request.getRequestURL());
         return ResponseDto.fail(errorCode);
+    }
+
+    @ExceptionHandler(S3Exception.class)
+    protected ResponseEntity<ResponseDto<?>> handleS3Exception(
+            final S3Exception e,
+            final HttpServletRequest request
+    ) {
+        log.error("S3Exception: {} {}", e.getErrorCode(), request.getRequestURL());
+        return ResponseDto.fail(e.getErrorCode());
     }
 
 }

@@ -10,6 +10,7 @@ import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
+import com.dnd.snappy.domain.snap.service.SnapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +22,11 @@ import java.util.UUID;
 public class MeetingService {
 
     private static final String LINK_PREFIX = "https://www.snappy.com/";
+    private static final String DEFAULT_THUMBNAIL_URL = "https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/2024-08-04-2949758670_vN4YhHsL_3b0eb2d73a46652651648d805e4f3e859e776c0a.jpg";
 
     private final MeetingRepository meetingRepository;
+
+    private final SnapService snapService;
 
     @Transactional(readOnly = true)
     public MeetingDetailResponseDto findByMeetingLink(String meetingLink) {
@@ -36,12 +40,19 @@ public class MeetingService {
         String meetingLink = generateMeetingLink();
         checkMeetingLinkDuplication(meetingLink);
 
-        CreateMeetingEntityDto dto = createMeetingEntityDto(requestDto, meetingLink);
+        String thumbnailUrl = getThumbnailUrl(requestDto);
+
+        CreateMeetingEntityDto dto = createMeetingEntityDto(requestDto, meetingLink, thumbnailUrl);
         Meeting meeting = Meeting.create(dto);
 
         meetingRepository.save(meeting);
 
         return new CreateMeetingResponseDto(meetingLink);
+    }
+
+    private Meeting findByMeetingLinkOrThrow(String meetingLink) {
+        return meetingRepository.findByMeetingLink(meetingLink)
+                .orElseThrow(() -> new NotFoundException(MeetingErrorCode.MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
     }
 
     private void checkMeetingLinkDuplication(String meetingLink) {
@@ -56,24 +67,24 @@ public class MeetingService {
         return LINK_PREFIX + shortUuid;
     }
 
-    private CreateMeetingEntityDto createMeetingEntityDto(CreateMeetingRequestDto requestDto, String meetingLink) {
+    private String getThumbnailUrl(CreateMeetingRequestDto requestDto) {
+        return requestDto.thumbnail()
+                .map(snapService::upload)
+                .orElse(DEFAULT_THUMBNAIL_URL);
+    }
+
+    private CreateMeetingEntityDto createMeetingEntityDto(CreateMeetingRequestDto requestDto, String meetingLink, String thumbnailUrl) {
         return new CreateMeetingEntityDto(
                 requestDto.name(),
                 requestDto.startDate(),
                 requestDto.endDate(),
                 requestDto.description(),
-                null, // TODO: thumbnailUrl은 나중에 설정
+                thumbnailUrl,
                 requestDto.symbolColor(),
                 requestDto.password(),
                 requestDto.adminPassword(),
                 meetingLink
         );
     }
-
-    private Meeting findByMeetingLinkOrThrow(String meetingLink) {
-        return meetingRepository.findByMeetingLink(meetingLink)
-                .orElseThrow(() -> new NotFoundException(MeetingErrorCode.MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
-    }
-
 }
 
