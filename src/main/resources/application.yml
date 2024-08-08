@@ -51,3 +51,19 @@ spring:
     hibernate:
       ddl-auto: create
     defer-datasource-initialization: true
+
+---
+# S3 설정
+cloud:
+  aws:
+    credentials:
+      accessKey: '${accessKey}'
+      secretKey: '${secretKey}'
+    s3:
+      bucketName: '${bucketName}'
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+
+

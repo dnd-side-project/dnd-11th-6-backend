@@ -1,4 +1,4 @@
-package com.dnd.snappy.domain.photo.entity;
+package com.dnd.snappy.domain.snap.entity;
 
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
@@ -18,10 +18,10 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder(toBuilder = true)
-public class Photo extends BaseEntity {
+public class Snap extends BaseEntity {
 
-    @Column(name = "photo_url")
-    private String photoUrl;
+    @Column(name = "snap_url")
+    private String snapUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

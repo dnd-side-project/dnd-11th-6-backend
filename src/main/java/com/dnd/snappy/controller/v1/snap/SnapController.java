@@ -1,15 +1,15 @@
-package com.dnd.snappy.controller.v1.photo;
+package com.dnd.snappy.controller.v1.snap;
 
-import com.dnd.snappy.domain.photo.service.PhotoService;
+import com.dnd.snappy.domain.snap.service.SnapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/photos")
+@RequestMapping("/api/v1/snaps")
 @RequiredArgsConstructor
-public class PhotoController {
+public class SnapController {
 
-    private final PhotoService photoService;
+    private final SnapService snapService;
 
 }
