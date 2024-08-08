@@ -37,9 +37,8 @@ public class MeetingService {
         checkMeetingLinkDuplication(meetingLink);
 
         CreateMeetingEntityDto dto = createMeetingEntityDto(requestDto, meetingLink);
-        Meeting meeting = dto.toEntity();
+        Meeting meeting = Meeting.create(dto);
 
-        meeting.validateStartAndEndDates();
         meetingRepository.save(meeting);
 
         return new CreateMeetingResponseDto(meetingLink);

@@ -78,7 +78,7 @@ class MeetingServiceTest {
     @Test
     void createMeeting() {
         // Given
-        LocalDateTime now = LocalDateTime.of(2024, 8, 6, 10, 0);
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDate = now.plusDays(1);
         LocalDateTime endDate = startDate.plusHours(1);
 
@@ -109,7 +109,7 @@ class MeetingServiceTest {
     @Test
     void createMeeting_BAD_REQUEST_startDate() {
         // Given
-        LocalDateTime now = LocalDateTime.of(2024, 8, 6, 10, 0);
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDate = now.minusDays(1);
         LocalDateTime endDate = now.plusHours(1);
 
@@ -134,7 +134,7 @@ class MeetingServiceTest {
     @Test
     void createMeeting_BAD_REQUEST_tenDaysLater() {
         // Given
-        LocalDateTime now = LocalDateTime.of(2024, 8, 6, 10, 0);
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDate = now.plusDays(11);
         LocalDateTime endDate = startDate.plusHours(1);
 
@@ -159,7 +159,7 @@ class MeetingServiceTest {
     @Test
     void createMeeting_BAD_REQUEST_endDate() {
         // Given
-        LocalDateTime now = LocalDateTime.of(2024, 8, 6, 10, 0);
+        LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDate = now.plusDays(1);
         LocalDateTime endDate = startDate.minusHours(1);
 

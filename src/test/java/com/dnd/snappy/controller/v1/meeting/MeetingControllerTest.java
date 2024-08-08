@@ -202,6 +202,7 @@ class MeetingControllerTest extends RestDocsSupport {
         LocalDateTime startDate = now.plusDays(5);
         LocalDateTime endDate = startDate.minusDays(1);
 
+
         CreateMeetingRequestDto invalidEndDateDto = new CreateMeetingRequestDto(
                 "팀 회의",
                 "이번 주 프로젝트 진행 상황 공유",
@@ -243,4 +244,43 @@ class MeetingControllerTest extends RestDocsSupport {
                 );
     }
 
+    @DisplayName("모임 생성 시 필수 입력값을 입력하지 않으면 예외 메시지를 던진다.")
+    @Test
+    void createMeeting_VALIDATION_ERROR() throws Exception {
+        // Given: 유효하지 않은 요청 DTO
+        CreateMeetingRequestDto invalidRequest = new CreateMeetingRequestDto(
+                "",
+                "",
+                LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(2),
+                "",
+                "1234",
+                "1234"
+        );
+
+        mockMvc.perform(post("/api/v1/meetings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                requestFields(
+                                        fieldWithPath("name").description("모임명"),
+                                        fieldWithPath("description").description("모임 설명"),
+                                        fieldWithPath("startDate").description("시작일"),
+                                        fieldWithPath("endDate").description("종료일"),
+                                        fieldWithPath("symbolColor").description("컬러칩 코드"),
+                                        fieldWithPath("password").description("비밀번호"),
+                                        fieldWithPath("adminPassword").description("모임장 비밀번호")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").description("요청 성공 여부"),
+                                        fieldWithPath("data").description("응답 데이터"),
+                                        fieldWithPath("error").description("에러 정보"),
+                                        fieldWithPath("error.status").description("HTTP 상태 코드"),
+                                        fieldWithPath("error.code").description("에러 코드"),
+                                        fieldWithPath("error.message").description("에러 메시지")
+                                )
+                ));
+    }
 }

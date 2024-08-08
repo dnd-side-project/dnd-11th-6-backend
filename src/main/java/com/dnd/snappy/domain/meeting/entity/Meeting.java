@@ -3,6 +3,7 @@ package com.dnd.snappy.domain.meeting.entity;
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.common.BaseEntity;
+import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
@@ -46,7 +47,24 @@ public class Meeting extends BaseEntity {
     @Column(nullable = false)
     private String meetingLink;
 
-    public void validateStartAndEndDates() {
+    public static Meeting create(CreateMeetingEntityDto dto) {
+        LocalDateTime endDate = dto.endDate() != null ? dto.endDate() : dto.startDate().plusDays(1);
+        validateStartAndEndDates(dto.startDate(), dto.endDate());
+
+        return Meeting.builder()
+                .name(dto.name())
+                .startDate(dto.startDate())
+                .endDate(endDate)
+                .description(dto.description())
+                .thumbnailUrl(dto.thumbnailUrl())
+                .symbolColor(dto.symbolColor())
+                .password(dto.password())
+                .adminPassword(dto.adminPassword())
+                .meetingLink(dto.meetingLink())
+                .build();
+    }
+
+    private static void validateStartAndEndDates(LocalDateTime startDate, LocalDateTime endDate) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime tenDaysLater = now.plusDays(10);
 
@@ -54,13 +72,23 @@ public class Meeting extends BaseEntity {
                 .filter(date -> !date.isBefore(now) && !date.isAfter(tenDaysLater))
                 .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "시작일은 현재 시간 이후부터 10일 이내여야 합니다."));
 
-        Optional.of(endDate)
-                .filter(date -> date.isAfter(startDate))
-                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다."));
+        if (endDate != null && !endDate.isAfter(startDate)) {
+            throw new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 합니다.");
+        }
     }
 
-    public MeetingLinkStatus checkLinkStatus() {
-        return MeetingLinkStatus.checkLinkStatus(startDate, endDate, LocalDateTime.now());
+    public MeetingLinkStatus getMeetingLinkStatus(LocalDateTime startDate, LocalDateTime endDate) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if (now.isBefore(startDate)) {
+            return MeetingLinkStatus.PENDING;
+        } else if (now.isAfter(endDate) && now.isBefore(endDate.plusDays(7))) {
+            return MeetingLinkStatus.COMPLETED;
+        } else if (now.isAfter(endDate.plusDays(7))) {
+            return MeetingLinkStatus.EXPIRED;
+        } else {
+            return MeetingLinkStatus.IN_PROGRESS;
+        }
     }
+
 }
-

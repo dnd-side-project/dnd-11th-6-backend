@@ -27,7 +27,7 @@ public record MeetingDetailResponseDto(
                 meeting.getSymbolColor(),
                 meeting.getStartDate(),
                 meeting.getEndDate(),
-                meeting.checkLinkStatus()
+                meeting.getMeetingLinkStatus(meeting.getStartDate(), meeting.getEndDate())
         );
     }
 }

@@ -5,6 +5,7 @@ import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.service.MeetingService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class MeetingController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto<CreateMeetingResponseDto>> createMeeting(@RequestBody CreateMeetingRequestDto requestDto) {
+    public ResponseEntity<ResponseDto<CreateMeetingResponseDto>> createMeeting(@Valid @RequestBody CreateMeetingRequestDto requestDto) {
         var response = meetingService.createMeeting(requestDto);
         return ResponseDto.ok(response);
     }
