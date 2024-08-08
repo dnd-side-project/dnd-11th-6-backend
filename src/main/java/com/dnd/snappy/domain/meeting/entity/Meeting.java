@@ -47,11 +47,6 @@ public class Meeting extends BaseEntity {
     @Column(nullable = false)
     private String meetingLink;
 
-
-    public boolean isCorrectPassword(String password) {
-        return this.password.equals(password);
-    }
-
     public static Meeting create(CreateMeetingEntityDto dto) {
         LocalDateTime endDate = dto.endDate() != null ? dto.endDate() : dto.startDate().plusDays(1);
         validateStartAndEndDates(dto.startDate(), dto.endDate());
@@ -94,6 +89,10 @@ public class Meeting extends BaseEntity {
         } else {
             return MeetingLinkStatus.IN_PROGRESS;
         }
+    }
+
+    public boolean isCorrectPassword(String password) {
+        return this.password.equals(password);
     }
 
 }

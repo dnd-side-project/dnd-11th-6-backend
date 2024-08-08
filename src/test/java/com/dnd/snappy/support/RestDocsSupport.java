@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
@@ -27,13 +28,16 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @SpringBootTest
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
 @Import(RestDocsConfiguration.class)
-public abstract class RestDocsSupport {
+public abstract class RestDocsSupport extends AbstractContainerBase {
 
     @Autowired
     protected RestDocumentationResultHandler restDocs;
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Autowired
+    protected RedisTemplate<String, String> redisTemplate;
 
     protected MockMvc mockMvc;
 
@@ -49,7 +53,14 @@ public abstract class RestDocsSupport {
                 .alwaysDo(restDocs)
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+
+        cleanCache();
     }
+
+    protected void cleanCache() {
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
+    }
+
 
     protected Attributes.Attribute getDateTimeFormat() {
         return key("format").value("yyyy-MM-dd HH:mm");
