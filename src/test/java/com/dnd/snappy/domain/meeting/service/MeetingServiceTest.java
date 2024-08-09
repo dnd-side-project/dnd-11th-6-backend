@@ -20,6 +20,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -116,6 +118,28 @@ class MeetingServiceTest {
         assertThatThrownBy(() -> meetingService.validateMeetingPassword(meetingId, "wrongPassword"))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageStartingWith(MeetingErrorCode.MEETING_INVALIDATE_PASSWORD.getMessage());
+    }
+
+    @DisplayName("모임의 관리자 인증키가 맞지 않다면 예외가 발생한다.")
+    @ParameterizedTest
+    @CsvSource({
+            "wrong password, leaderAuthKey",
+            "password, wrong leaderAuthKey"
+    })
+    void isCorrectMeetingPassword_invalidLeaderAuthKey(String requestPassword, String requestLeaderAuthKey) {
+        //given
+        Long meetingId = 1L;
+        String password = "password";
+        String leaderAuthKey = "leaderAuthKey";
+        Meeting meeting = Meeting.builder().id(meetingId).password(password).leaderAuthKey(leaderAuthKey).build();
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        //when //then
+        assertThatThrownBy(() -> meetingService.validateMeetingLeaderAuthKey(meetingId, requestPassword, requestLeaderAuthKey))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageStartingWith(MeetingErrorCode.MEETING_INVALIDATE_PASSWORD.getMessage());
+
     }
 
     @DisplayName("모임을 생성한다.")

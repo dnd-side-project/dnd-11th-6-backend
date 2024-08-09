@@ -10,6 +10,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.queryPar
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dnd.snappy.controller.v1.meeting.request.LeaderAuthKeyValidationRequest;
 import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.support.RestDocsSupport;
@@ -44,7 +45,7 @@ class MeetingControllerTest extends RestDocsSupport {
                 .endDate(LocalDateTime.now().plusDays(1))
                 .meetingLink(meetingLink)
                 .password("password")
-                .adminPassword("adminPassword")
+                .leaderAuthKey("leaderAuthKey")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -116,7 +117,7 @@ class MeetingControllerTest extends RestDocsSupport {
                 .endDate(LocalDateTime.now().plusDays(1))
                 .meetingLink("meetingLink")
                 .password(password)
-                .adminPassword("adminPassword")
+                .leaderAuthKey("leaderAuthKey")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -143,6 +144,202 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
                                         fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임의 비밀번호가 유효하지 않다면 예외가 발생한다.")
+    @Test
+    void validateMeetingPassword_invalidatePassword() throws Exception {
+        //given
+        String password = "password";
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .meetingLink("meetingLink")
+                .password(password)
+                .leaderAuthKey("leaderAuthKey")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        meeting = meetingRepository.save(meeting);
+
+        PasswordValidationRequest passwordValidationRequest = new PasswordValidationRequest("wrongPassword");
+
+        //when //then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/validate-password", meeting.getId())
+                                .content(objectMapper.writeValueAsString(passwordValidationRequest))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("모임 비밀번호")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임의 관리자 인증키가 맞는지 확인한다.")
+    @Test
+    void validateMeetingLeaderAuthKey() throws Exception {
+        //given
+        String password = "password";
+        String leaderAuthKey = "leaderAuthKey";
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .meetingLink("meetingLink")
+                .password(password)
+                .leaderAuthKey(leaderAuthKey)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        meeting = meetingRepository.save(meeting);
+
+        LeaderAuthKeyValidationRequest request = new LeaderAuthKeyValidationRequest(password, leaderAuthKey);
+
+        //when //then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/validate-password/leader", meeting.getId())
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("모임 비밀번호"),
+                                        fieldWithPath("leaderAuthKey").type(JsonFieldType.STRING).description("관리자 인증키")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
+                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임의 비밀번호가 유효하지 않다면 예외가 발생한다.")
+    @Test
+    void validateMeetingLeaderAuthKey_invalidatePassword() throws Exception {
+        //given
+        String password = "password";
+        String leaderAuthKey = "leaderAuthKey";
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .meetingLink("meetingLink")
+                .password(password)
+                .leaderAuthKey(leaderAuthKey)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        meeting = meetingRepository.save(meeting);
+
+        LeaderAuthKeyValidationRequest request = new LeaderAuthKeyValidationRequest("wrong password", leaderAuthKey);
+
+        //when //then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/validate-password/leader", meeting.getId())
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("모임 비밀번호"),
+                                        fieldWithPath("leaderAuthKey").type(JsonFieldType.STRING).description("관리자 인증키")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임의 관리자 인증키가 유효하지 않다면 예외가 발생한다.")
+    @Test
+    void validateMeetingLeaderAuthKey_invalidateLeaderAuthKey() throws Exception {
+        //given
+        String password = "password";
+        String leaderAuthKey = "leaderAuthKey";
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .meetingLink("meetingLink")
+                .password(password)
+                .leaderAuthKey(leaderAuthKey)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        meeting = meetingRepository.save(meeting);
+
+        LeaderAuthKeyValidationRequest request = new LeaderAuthKeyValidationRequest(password, "wrong leaderAuthKey");
+
+        //when //then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/validate-password/leader", meeting.getId())
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                requestFields(
+                                        fieldWithPath("password").type(JsonFieldType.STRING).description("모임 비밀번호"),
+                                        fieldWithPath("leaderAuthKey").type(JsonFieldType.STRING).description("관리자 인증키")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
                                 )
                         )
                 );
@@ -183,7 +380,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                                 .attributes(getDateTimeFormat()),
                                         fieldWithPath("symbolColor").description("모임 상징 색"),
                                         fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
+                                        fieldWithPath("leaderAuthKey").description("관리자 비밀번호")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -194,55 +391,6 @@ class MeetingControllerTest extends RestDocsSupport {
                         )
                 );
     }
-
-    @DisplayName("모임의 비밀번호가 유효하지 않다면 예외가 발생한다.")
-    @Test
-    void validateMeetingPassword_invalidatePassword() throws Exception {
-        //given
-        String password = "password";
-        Meeting meeting = Meeting.builder()
-                .name("DND")
-                .description("DND 모임 입니다.")
-                .symbolColor("#FFF")
-                .thumbnailUrl("thumbnailUrl")
-                .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now().plusDays(1))
-                .meetingLink("meetingLink")
-                .password(password)
-                .adminPassword("adminPassword")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        meeting = meetingRepository.save(meeting);
-
-        PasswordValidationRequest passwordValidationRequest = new PasswordValidationRequest("wrongPassword");
-
-        //when //then
-        mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/validate-password", meeting.getId())
-                                .content(objectMapper.writeValueAsString(passwordValidationRequest))
-                                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andDo(
-                        restDocs.document(
-                                pathParameters(
-                                        parameterWithName("meetingId").description("모임 ID")
-                                ),
-                                requestFields(
-                                        fieldWithPath("password").type(JsonFieldType.STRING).description("모임 비밀번호")
-                                ),
-                                responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
-                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
-                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
-                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
-                                )
-                        )
-                );
-    }
-
 
     @DisplayName("모임 생성 시 시작일은 오늘부터 10일 이내여야 한다.")
     @Test
@@ -280,7 +428,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                                 .attributes(getDateTimeFormat()),
                                         fieldWithPath("symbolColor").description("모임 상징 색"),
                                         fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
+                                        fieldWithPath("leaderAuthKey").description("관리자 비밀번호")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -330,7 +478,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                                 .attributes(getDateTimeFormat()),
                                         fieldWithPath("symbolColor").description("모임 상징 색"),
                                         fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("adminPassword").description("관리자 비밀번호")
+                                        fieldWithPath("leaderAuthKey").description("관리자 비밀번호")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -371,7 +519,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("endDate").description("종료일"),
                                         fieldWithPath("symbolColor").description("컬러칩 코드"),
                                         fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("adminPassword").description("모임장 비밀번호")
+                                        fieldWithPath("leaderAuthKey").description("모임장 비밀번호")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").description("요청 성공 여부"),

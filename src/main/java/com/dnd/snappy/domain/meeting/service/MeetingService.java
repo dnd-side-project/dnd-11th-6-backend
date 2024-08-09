@@ -43,6 +43,15 @@ public class MeetingService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public void validateMeetingLeaderAuthKey(Long meetingId, String password, String leaderAuthKey) {
+        Meeting meeting = findByMeetingIdOrThrow(meetingId);
+
+        if(!meeting.isLeaderAuthKeyValid(password, leaderAuthKey)) {
+            throw new BusinessException(MEETING_INVALIDATE_PASSWORD);
+        }
+    }
+
     private Meeting findByMeetingIdOrThrow(Long meetingId) {
         return meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
@@ -82,7 +91,7 @@ public class MeetingService {
                 null, // TODO: thumbnailUrl은 나중에 설정
                 requestDto.symbolColor(),
                 requestDto.password(),
-                requestDto.adminPassword(),
+                requestDto.leaderAuthKey(),
                 meetingLink
         );
     }

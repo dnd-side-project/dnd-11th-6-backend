@@ -42,7 +42,7 @@ public class Meeting extends BaseEntity {
     private String password;
 
     @Column(nullable = false)
-    private String adminPassword;
+    private String leaderAuthKey;
 
     @Column(nullable = false)
     private String meetingLink;
@@ -59,7 +59,7 @@ public class Meeting extends BaseEntity {
                 .thumbnailUrl(dto.thumbnailUrl())
                 .symbolColor(dto.symbolColor())
                 .password(dto.password())
-                .adminPassword(dto.adminPassword())
+                .leaderAuthKey(dto.leaderAuthKey())
                 .meetingLink(dto.meetingLink())
                 .build();
     }
@@ -93,6 +93,10 @@ public class Meeting extends BaseEntity {
 
     public boolean isCorrectPassword(String password) {
         return this.password.equals(password);
+    }
+
+    public boolean isLeaderAuthKeyValid(String password, String leaderAuthKey) {
+        return isCorrectPassword(password) && this.leaderAuthKey.equals(leaderAuthKey);
     }
 
     public boolean canJoinMeeting() {

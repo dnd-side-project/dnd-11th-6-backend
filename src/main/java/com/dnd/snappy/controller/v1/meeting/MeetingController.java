@@ -1,6 +1,7 @@
 package com.dnd.snappy.controller.v1.meeting;
 
 import com.dnd.snappy.common.dto.ResponseDto;
+import com.dnd.snappy.controller.v1.meeting.request.LeaderAuthKeyValidationRequest;
 import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
@@ -36,6 +37,15 @@ public class MeetingController {
             @Valid @RequestBody PasswordValidationRequest passwordValidationRequest
     ) {
         meetingService.validateMeetingPassword(meetingId, passwordValidationRequest.password());
+        return ResponseDto.ok();
+    }
+
+    @PostMapping("/{meetingId}/validate-password/leader")
+    public ResponseEntity<ResponseDto<?>> validateMeetingAuthKey(
+            @PathVariable("meetingId") Long meetingId,
+            @Valid @RequestBody LeaderAuthKeyValidationRequest leaderAuthKeyValidationRequest
+    ) {
+        meetingService.validateMeetingLeaderAuthKey(meetingId, leaderAuthKeyValidationRequest.password(), leaderAuthKeyValidationRequest.leaderAuthKey());
         return ResponseDto.ok();
     }
 

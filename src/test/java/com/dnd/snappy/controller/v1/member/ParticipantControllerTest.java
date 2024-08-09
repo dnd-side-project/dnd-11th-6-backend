@@ -224,7 +224,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                 .endDate(endDate)
                 .meetingLink("meetingLink")
                 .password("password")
-                .adminPassword("adminPassword")
+                .leaderAuthKey("adminPassword")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();

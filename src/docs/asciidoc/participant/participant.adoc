@@ -1,3 +1,4 @@
 [[참여자-API]]
 == 참여자 API
 
+include::join-meeting.adoc[]

@@ -10,6 +10,6 @@ public record CreateMeetingEntityDto(
         String thumbnailUrl,
         String symbolColor,
         String password,
-        String adminPassword,
+        String leaderAuthKey,
         String meetingLink
 ) { }

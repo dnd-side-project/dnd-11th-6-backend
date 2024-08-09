@@ -9,3 +9,5 @@ endif::[]
 :toclevels: 3
 
 include::meeting/meeting.adoc[]
+
+include::participant/participant.adoc[]
