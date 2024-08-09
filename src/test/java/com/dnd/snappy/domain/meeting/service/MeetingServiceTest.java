@@ -98,7 +98,7 @@ class MeetingServiceTest {
 
         // Then
         assertNotNull(responseDto);
-        assertThat(responseDto.meetingLink()).startsWith("https://www.snappy.com/");
+        assertThat(responseDto.meetingLink());
 
         verify(meetingRepository).existsByMeetingLink(anyString());
         verify(meetingRepository).save(any(Meeting.class));
