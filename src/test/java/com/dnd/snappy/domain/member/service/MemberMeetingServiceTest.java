@@ -104,4 +104,27 @@ class MemberMeetingServiceTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageContaining(MeetingErrorCode.MEETING_NOT_FOUND.getMessage());
     }
+
+    @DisplayName("모임이 끝났을때 참여한다면 예외가 발생한다.")
+    @Test
+    void join_finish_meeting_throw_exception() {
+        //given
+        Long memberId = 1L;
+        Long meetingId = 2L;
+        String nickname = "nick";
+        Role role = Role.MEMBER;
+        Meeting meeting = Meeting.builder()
+                .id(meetingId)
+                .startDate(LocalDateTime.now().minusDays(3))
+                .endDate(LocalDateTime.now().minusNanos(1))
+                .build();
+        given(memberMeetingRepository.existsByMemberIdAndMeetingId(memberId, meetingId)).willReturn(false);
+        given(memberMeetingRepository.existsByNicknameAndMeetingId(nickname, meetingId)).willReturn(false);
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        //when //then
+        assertThatThrownBy(() -> memberMeetingService.joinMeeting(memberId, meetingId, nickname, role))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageContaining(MeetingErrorCode.MEETING_JOIN_DENIED.getMessage());
+    }
 }

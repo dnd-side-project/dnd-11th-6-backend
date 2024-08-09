@@ -51,7 +51,7 @@ class ParticipationControllerTest extends RestDocsSupport {
     @Test
     void participateMeeting() throws Exception {
         //given
-        Meeting meeting = appendMeeting();
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
 
         //when & then
@@ -111,7 +111,7 @@ class ParticipationControllerTest extends RestDocsSupport {
     @Test
     void already_participate_meeting_throw_exception() throws Exception {
         //given
-        Meeting meeting = appendMeeting();
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Member member = appendMember();
         appendMemberMeeting(meeting, member, "nick");
         String accessToken = tokenProvider.issueToken(member.getId(), TokenType.ACCESS_TOKEN);
@@ -136,7 +136,7 @@ class ParticipationControllerTest extends RestDocsSupport {
     @Test
     void duplicated_nickname_in_meeting_throw_exception() throws Exception {
         //given
-        Meeting meeting = appendMeeting();
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Member member = appendMember();
         appendMemberMeeting(meeting, member, "nick");
 
@@ -160,7 +160,7 @@ class ParticipationControllerTest extends RestDocsSupport {
     @Test
     void invalid_token_throw_exception() throws Exception {
         //given
-        Meeting meeting = appendMeeting();
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Member member = appendMember();
         appendMemberMeeting(meeting, member, "nick");
         ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
@@ -180,6 +180,27 @@ class ParticipationControllerTest extends RestDocsSupport {
                 );
     }
 
+    @DisplayName("모임이 끝났을때 참여하면 예외가 발생한다.")
+    @Test
+    void join_finish_meeting_throw_exception() throws Exception {
+        //given
+        Meeting meeting = appendMeeting(LocalDateTime.now().minusDays(2), LocalDateTime.now().minusNanos(1));
+        ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
+
+        //when & then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/members", meeting.getId())
+                                .content(objectMapper.writeValueAsString(participationRequest))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden())
+                .andDo(
+                        restDocs.document(
+                                getErrorResponseFields()
+                        )
+                );
+    }
+
     private ResponseFieldsSnippet getErrorResponseFields() {
         return responseFields(
                 fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -192,14 +213,14 @@ class ParticipationControllerTest extends RestDocsSupport {
     }
 
 
-    private Meeting appendMeeting() {
+    private Meeting appendMeeting(LocalDateTime startDate, LocalDateTime endDate) {
         Meeting meeting = Meeting.builder()
                 .name("DND")
                 .description("DND 모임 입니다.")
                 .symbolColor("#FFF")
                 .thumbnailUrl("thumbnailUrl")
-                .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now().plusDays(1))
+                .startDate(startDate)
+                .endDate(endDate)
                 .meetingLink("meetingLink")
                 .password("password")
                 .adminPassword("adminPassword")

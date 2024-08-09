@@ -57,7 +57,7 @@ public abstract class RestDocsSupport extends AbstractContainerBase {
         cleanCache();
     }
 
-    protected void cleanCache() {
+    private void cleanCache() {
         redisTemplate.getConnectionFactory().getConnection().flushAll();
     }
 

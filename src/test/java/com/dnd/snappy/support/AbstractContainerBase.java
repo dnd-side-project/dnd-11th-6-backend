@@ -9,8 +9,8 @@ public abstract class AbstractContainerBase {
 
     private final static int REDIS_PORT = 6379;
     private static final DockerImageName REDIS_DOCKER_IMAGE = DockerImageName
-            .parse("redis:6.0.2")
-            .asCompatibleSubstituteFor("redis:6.0.2");
+            .parse("redis:7.4.0-alpine")
+            .asCompatibleSubstituteFor("redis:7.4.0-alpine");
 
     static final RedisContainer REDIS_CONTAINER;
 
