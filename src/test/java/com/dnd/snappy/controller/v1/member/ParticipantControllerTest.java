@@ -15,10 +15,10 @@ import com.dnd.snappy.controller.v1.member.request.ParticipationRequest;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.member.entity.Member;
-import com.dnd.snappy.domain.member.entity.MemberMeeting;
+import com.dnd.snappy.domain.member.entity.Participant;
 import com.dnd.snappy.domain.member.entity.Role;
-import com.dnd.snappy.domain.member.repository.MemberMeetingRepository;
 import com.dnd.snappy.domain.member.repository.MemberRepository;
+import com.dnd.snappy.domain.member.repository.ParticipantRepository;
 import com.dnd.snappy.domain.token.service.TokenProvider;
 import com.dnd.snappy.domain.token.service.TokenType;
 import com.dnd.snappy.support.RestDocsSupport;
@@ -33,13 +33,13 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-class ParticipationControllerTest extends RestDocsSupport {
+class ParticipantControllerTest extends RestDocsSupport {
 
     @Autowired
     private MeetingRepository meetingRepository;
 
     @Autowired
-    private MemberMeetingRepository memberMeetingRepository;
+    private ParticipantRepository participantRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -56,7 +56,7 @@ class ParticipationControllerTest extends RestDocsSupport {
 
         //when & then
         mockMvc.perform(
-                RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/members", meeting.getId())
+                RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", meeting.getId())
                         .content(objectMapper.writeValueAsString(participationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         )
@@ -95,7 +95,7 @@ class ParticipationControllerTest extends RestDocsSupport {
 
         //when & then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/members", 1L)
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", 1L)
                                 .content(objectMapper.writeValueAsString(participationRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -119,7 +119,7 @@ class ParticipationControllerTest extends RestDocsSupport {
 
         //when & then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/members", meeting.getId())
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", meeting.getId())
                                 .header("Authorization", String.format("Bearer %s", accessToken))
                                 .content(objectMapper.writeValueAsString(participationRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -144,7 +144,7 @@ class ParticipationControllerTest extends RestDocsSupport {
 
         //when & then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/members", meeting.getId())
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", meeting.getId())
                                 .content(objectMapper.writeValueAsString(participationRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -167,7 +167,7 @@ class ParticipationControllerTest extends RestDocsSupport {
 
         //when & then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/members", meeting.getId())
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", meeting.getId())
                                 .header("Authorization", String.format("Bearer %s", "invalid-accessToken"))
                                 .content(objectMapper.writeValueAsString(participationRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -189,7 +189,7 @@ class ParticipationControllerTest extends RestDocsSupport {
 
         //when & then
         mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/members", meeting.getId())
+                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", meeting.getId())
                                 .content(objectMapper.writeValueAsString(participationRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -235,8 +235,8 @@ class ParticipationControllerTest extends RestDocsSupport {
         return memberRepository.save(member);
     }
 
-    private MemberMeeting appendMemberMeeting(Meeting meeting, Member member, String nickname) {
-        MemberMeeting memberMeeting = MemberMeeting.builder()
+    private Participant appendMemberMeeting(Meeting meeting, Member member, String nickname) {
+        Participant memberMeeting = Participant.builder()
                 .nickname(nickname)
                 .role(Role.LEADER)
                 .shootCount(10)
@@ -244,6 +244,6 @@ class ParticipationControllerTest extends RestDocsSupport {
                 .member(member)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now()).build();
-        return memberMeetingRepository.save(memberMeeting);
+        return participantRepository.save(memberMeeting);
     }
 }

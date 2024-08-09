@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/meetings/{meetingId}")
+@RequestMapping("/api/v1/meetings/{meetingId}/participants")
 @RequiredArgsConstructor
-public class ParticipationController {
+public class ParticipantController {
 
     private final ParticipationService participationService;
 
@@ -29,7 +29,7 @@ public class ParticipationController {
 
     private final CookieManager cookieManager;
 
-    @PostMapping("/members")
+    @PostMapping
     public ResponseEntity<ResponseDto<ParticipationResponse>> participateMeeting(
             @PathVariable Long meetingId,
             @Valid @RequestBody ParticipationRequest participationRequestDto,

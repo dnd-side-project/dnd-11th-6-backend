@@ -15,7 +15,7 @@ public class ParticipationService {
 
     private final MemberService memberService;
 
-    private final MemberMeetingService memberMeetingService;
+    private final ParticipantService participantService;
 
     private final TokenService tokenService;
 
@@ -27,7 +27,7 @@ public class ParticipationService {
             Role role
     ) {
         Long memberId = getMemberId(accessToken);
-        memberMeetingService.joinMeeting(memberId, meetingId, nickname, role);
+        participantService.joinMeeting(memberId, meetingId, nickname, role);
         Tokens tokens = tokenService.createTokens(memberId);
 
         return new ParticipationResponseDto(

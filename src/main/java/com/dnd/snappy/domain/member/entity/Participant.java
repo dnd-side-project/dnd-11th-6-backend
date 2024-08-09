@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder(toBuilder = true)
-public class MemberMeeting extends BaseEntity {
+public class Participant extends BaseEntity {
 
     public static final int MAX_SHOOT_COUNT = 10;
 
@@ -40,9 +40,9 @@ public class MemberMeeting extends BaseEntity {
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
 
-    public static MemberMeeting create(String nickname, Member member, Meeting meeting, Role role) {
+    public static Participant create(String nickname, Member member, Meeting meeting, Role role) {
         System.out.println("role = " + role);
-        return MemberMeeting.builder()
+        return Participant.builder()
                 .nickname(nickname)
                 .role(role)
                 .shootCount(MAX_SHOOT_COUNT)

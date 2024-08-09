@@ -25,7 +25,7 @@ class ParticipationServiceTest {
     private MemberService memberService;
 
     @Mock
-    private MemberMeetingService memberMeetingService;
+    private ParticipantService participantService;
 
     @Mock
     private TokenService tokenService;
@@ -49,7 +49,7 @@ class ParticipationServiceTest {
 
         //then
         Assertions.assertThat(result).isEqualTo(new ParticipationResponseDto(memberId, tokens.accessToken(), tokens.refreshToken()));
-        verify(memberMeetingService, timeout(1)).joinMeeting(memberId, meetingId, nickname, role);
+        verify(participantService, timeout(1)).joinMeeting(memberId, meetingId, nickname, role);
     }
 
     @DisplayName("accessToken가 존재할때 모임에 참여시 member를 생성하지 않는다.")
@@ -72,6 +72,6 @@ class ParticipationServiceTest {
         //then
         Assertions.assertThat(result).isEqualTo(new ParticipationResponseDto(memberId, tokens.accessToken(), tokens.refreshToken()));
         verify(memberService, times(0)).createMember();
-        verify(memberMeetingService, timeout(1)).joinMeeting(memberId, meetingId, nickname, role);
+        verify(participantService, timeout(1)).joinMeeting(memberId, meetingId, nickname, role);
     }
 }
