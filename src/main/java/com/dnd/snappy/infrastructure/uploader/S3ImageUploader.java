@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.util.IOUtils;
+import com.dnd.snappy.common.error.exception.ImageException;
+import com.dnd.snappy.infrastructure.exception.ImageErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class S3ImageUploader implements ImageUploader {
     @Override
     public String upload(MultipartFile file) {
         if (file.isEmpty() || file.getOriginalFilename() == null) {
-            throw new RuntimeException("파일이 비어있거나 이름이 없습니다.");
+            throw new ImageException(ImageErrorCode.EMPTY_FILE_EXCEPTION);
         }
         validateFileExtension(file.getOriginalFilename());
         return uploadFileToS3(file);
@@ -41,7 +43,7 @@ public class S3ImageUploader implements ImageUploader {
         String extension = getFileExtension(filename);
 
         if (!allowedExtensions.contains(extension)) {
-            throw new RuntimeException("유효하지 않은 파일 확장자입니다.");
+            throw new ImageException(ImageErrorCode.INVALID_FILE_EXTENSION);
         }
     }
 
@@ -60,7 +62,7 @@ public class S3ImageUploader implements ImageUploader {
             amazonS3.putObject(putObjectRequest);
 
         } catch (IOException e) {
-            throw new RuntimeException("S3 업로드 중 오류가 발생했습니다.");
+            throw new ImageException(ImageErrorCode.IO_EXCEPTION_ON_UPLOAD);
         }
 
         return amazonS3.getUrl(bucketName, s3FileName).toString();
@@ -69,7 +71,11 @@ public class S3ImageUploader implements ImageUploader {
     @Override
     public void delete(String fileUrl) {
         String key = getKeyFromFileUrl(fileUrl);
-        amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+        try {
+            amazonS3.deleteObject(new DeleteObjectRequest(bucketName, key));
+        } catch (Exception e) {
+            throw new ImageException(ImageErrorCode.IO_EXCEPTION_ON_DELETE);
+        }
     }
 
     private String getKeyFromFileUrl(String fileUrl) {
@@ -77,7 +83,7 @@ public class S3ImageUploader implements ImageUploader {
             URL url = new URL(fileUrl);
             return url.getPath().substring(1); // 맨 앞의 '/' 제거
         } catch (Exception e) {
-            throw new RuntimeException("파일 URL에서 키를 가져오는 중 오류가 발생했습니다.");
+            throw new ImageException(ImageErrorCode.IO_EXCEPTION_ON_DELETE);
         }
     }
 
