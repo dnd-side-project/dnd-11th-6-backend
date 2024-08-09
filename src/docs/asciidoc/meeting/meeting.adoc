@@ -4,3 +4,7 @@
 include::find-by-meeting-link.adoc[]
 
 include::create-meeting.adoc[]
+
+include::validate-meeting-password.adoc[]
+
+include::validate-meeting-password-leader.adoc[]
