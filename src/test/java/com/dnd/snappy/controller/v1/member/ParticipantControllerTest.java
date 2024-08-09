@@ -3,6 +3,7 @@ package com.dnd.snappy.controller.v1.member;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
@@ -63,7 +64,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
-                                responseHeaders(
+                                requestHeaders(
                                         headerWithName("Authorization").optional().description("Bearer accessToken")
                                 ),
                                 pathParameters(
