@@ -148,7 +148,7 @@ class ParticipationControllerTest extends RestDocsSupport {
                                 .content(objectMapper.writeValueAsString(participationRequest))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andDo(
                         restDocs.document(
                                 getErrorResponseFields()

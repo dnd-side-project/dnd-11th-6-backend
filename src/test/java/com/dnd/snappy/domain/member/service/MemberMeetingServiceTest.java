@@ -1,6 +1,7 @@
 package com.dnd.snappy.domain.member.service;
 
-import static com.dnd.snappy.domain.member.exception.MemberErrorCode.*;
+import static com.dnd.snappy.domain.member.exception.ParticipantErrorCode.ALREADY_PARTICIPATE_MEETING;
+import static com.dnd.snappy.domain.member.exception.ParticipantErrorCode.DUPLICATED_NICKNAME;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -12,6 +13,7 @@ import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.member.entity.MemberMeeting;
 import com.dnd.snappy.domain.member.entity.Role;
 import com.dnd.snappy.domain.member.repository.MemberMeetingRepository;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +42,7 @@ class MemberMeetingServiceTest {
         Long meetingId = 2L;
         String nickname = "nick";
         Role role = Role.MEMBER;
-        Meeting meeting = Meeting.builder().id(meetingId).build();
+        Meeting meeting = Meeting.builder().id(meetingId).startDate(LocalDateTime.now()).endDate(LocalDateTime.now().plusDays(1)).build();
         given(memberMeetingRepository.existsByMemberIdAndMeetingId(memberId, meetingId)).willReturn(false);
         given(memberMeetingRepository.existsByNicknameAndMeetingId(nickname, meetingId)).willReturn(false);
         given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));

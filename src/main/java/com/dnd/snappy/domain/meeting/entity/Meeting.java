@@ -95,4 +95,9 @@ public class Meeting extends BaseEntity {
         return this.password.equals(password);
     }
 
+    public boolean canJoinMeeting() {
+        MeetingLinkStatus currStatus = getMeetingLinkStatus();
+        return currStatus == MeetingLinkStatus.PENDING || currStatus == MeetingLinkStatus.IN_PROGRESS;
+    }
+
 }

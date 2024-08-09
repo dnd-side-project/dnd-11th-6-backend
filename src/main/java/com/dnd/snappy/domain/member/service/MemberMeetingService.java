@@ -1,7 +1,8 @@
 package com.dnd.snappy.domain.member.service;
 
 import static com.dnd.snappy.domain.meeting.exception.MeetingErrorCode.*;
-import static com.dnd.snappy.domain.member.exception.MemberErrorCode.*;
+import static com.dnd.snappy.domain.member.exception.ParticipantErrorCode.ALREADY_PARTICIPATE_MEETING;
+import static com.dnd.snappy.domain.member.exception.ParticipantErrorCode.DUPLICATED_NICKNAME;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.common.error.exception.NotFoundException;
@@ -29,6 +30,10 @@ public class MemberMeetingService {
 
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND));
+        if(!meeting.canJoinMeeting()) {
+            throw new BusinessException(MEETING_JOIN_DENIED);
+        }
+
         MemberMeeting memberMeeting = MemberMeeting.create(nickname, Member.Id(memberId), meeting, role);
         memberMeetingRepository.save(memberMeeting);
     }
