@@ -41,7 +41,6 @@ public class Participant extends BaseEntity {
     private Meeting meeting;
 
     public static Participant create(String nickname, Member member, Meeting meeting, Role role) {
-        System.out.println("role = " + role);
         return Participant.builder()
                 .nickname(nickname)
                 .role(role)
