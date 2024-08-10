@@ -11,18 +11,17 @@
 include::{snippets}/meeting-controller-test/create-meeting/http-request.adoc[]
 include::{snippets}/meeting-controller-test/create-meeting/request-parts.adoc[]
 include::{snippets}/meeting-controller-test/create-meeting/request-body.adoc[]
-include::{snippets}/meeting-controller-test/create-meeting/request-fields.adoc[]
 
 Response
 include::{snippets}/meeting-controller-test/create-meeting/http-response.adoc[]
 include::{snippets}/meeting-controller-test/create-meeting/response-fields.adoc[]
 
 ==== 예외
-===== a. 모임 생성 시 필수 입력값을 입력하지 않으면 예외 메시지를 던진다.
+===== a. 모임 생성 시 필수 입력값을 입력하지 않으면 예외 메시지를 반환합니다.
 include::{snippets}/meeting-controller-test/create-meeting_validation_error/http-response.adoc[]
-===== b. 시작일은 오늘을 기준으로 10일 이내가 아니면 예외가 발생한다.
+===== b. 시작일은 오늘을 기준으로 10일 이내가 아니면 예외가 발생합니다.
 include::{snippets}/meeting-controller-test/create-meeting_bad_request_start-date/http-response.adoc[]
-===== c. 종료일은 시작일 이내로 설정 시 예외가 발생한다.
+===== c. 종료일은 시작일 이내로 설정 시 예외가 발생합니다.
 include::{snippets}/meeting-controller-test/create-meeting_bad_request_end-date/http-response.adoc[]
 
 ==== 참고

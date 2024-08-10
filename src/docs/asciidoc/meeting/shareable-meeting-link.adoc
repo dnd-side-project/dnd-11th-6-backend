@@ -1,0 +1,15 @@
+=== 모임 링크 공유하기
+
+==== 성공
+Request
+include::{snippets}/meeting-controller-test/get-shareable-meeting-link_-success/http-request.adoc[]
+include::{snippets}/meeting-controller-test/get-shareable-meeting-link_-success/path-parameters.adoc[]
+
+Response
+include::{snippets}/meeting-controller-test/get-shareable-meeting-link_-success/http-response.adoc[]
+include::{snippets}/meeting-controller-test/get-shareable-meeting-link_-success/response-fields.adoc[]
+
+==== 실패
+===== `모임의 ID에 해당하는 모임이 없는 경우`
+include::{snippets}/meeting-controller-test/find-by-meeting-id-or-throw_meeting_not_found/http-response.adoc[]
+

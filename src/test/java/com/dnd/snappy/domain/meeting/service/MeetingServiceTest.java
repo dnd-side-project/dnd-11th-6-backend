@@ -12,6 +12,7 @@ import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
+import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
@@ -243,5 +244,47 @@ class MeetingServiceTest {
         assertThatThrownBy(() -> meetingService.createMeeting(requestDto, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageStartingWith(CommonErrorCode.BAD_REQUEST.getMessage());
+    }
+
+    @DisplayName("모임 ID로 모임 링크를 조회한다.")
+    @Test
+    void getShareableMeetingLink() {
+        // given
+        Long meetingId = 1L;
+        String meetingLink = "05289e9";
+        Meeting meeting = Meeting.builder()
+                .id(meetingId)
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .meetingLink(meetingLink)
+                .build();
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        // when
+        ShareMeetingLinkResponseDto response = meetingService.getShareableMeetingLink(meetingId);
+
+        // then
+        assertThat(response)
+                .extracting("meetingLink")
+                .isEqualTo(meetingLink);
+    }
+
+    @DisplayName("모임 ID에 해당하는 모임이 없다면 예외가 발생한다.")
+    @Test
+    void findByMeetingIdOrThrow_MEETING_NOT_FOUND() {
+        // given
+        Long meetingId = 999L;
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> meetingService.getShareableMeetingLink(meetingId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageStartingWith(MeetingErrorCode.MEETING_NOT_FOUND.getMessage());
     }
 }

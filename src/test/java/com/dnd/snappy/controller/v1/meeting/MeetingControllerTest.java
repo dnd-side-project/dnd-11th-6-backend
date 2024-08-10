@@ -519,5 +519,72 @@ class MeetingControllerTest extends RestDocsSupport {
                         )
                 );
     }
+
+    @DisplayName("모임 ID로 모임 링크를 조회한다.")
+    @Test
+    void getShareableMeetingLink_Success() throws Exception {
+        // Given
+        String meetingLink = "05289e9";
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(1))
+                .meetingLink(meetingLink)
+                .password("password")
+                .leaderAuthKey("leaderAuthKey")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        meeting = meetingRepository.save(meeting);
+
+        // When & Then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/share", meeting.getId())
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(parameterWithName("meetingId").description("모임 ID")),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("모임 링크"),
+                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임 ID에 해당하는 모임이 없다면 예외가 발생한다.")
+    @Test
+    void findByMeetingIdOrThrow_MEETING_NOT_FOUND() throws Exception {
+        // Given
+        Long meetingId = 999L;
+
+        // When & Then
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/share", meetingId)
+                )
+                .andExpect(status().isNotFound())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                responseFields(
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("공유 가능한 모임 링크"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                )
+                        )
+                );
+    }
+
 }
 
