@@ -1,5 +1,5 @@
 package com.dnd.snappy.domain.meeting.dto.response;
 
-public record ShareMeetingLinkResponDto(
+public record ShareMeetingLinkResponseDto(
         String meetingLink
 ) { }

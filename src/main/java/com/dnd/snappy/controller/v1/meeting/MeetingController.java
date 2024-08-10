@@ -6,7 +6,7 @@ import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
-import com.dnd.snappy.domain.meeting.dto.response.ShareableLinkResponseDto;
+import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.service.MeetingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +63,7 @@ public class MeetingController {
     }
 
     @GetMapping("/{meetingId}/share")
-    public ResponseEntity<ResponseDto<ShareableLinkResponseDto>> getShareableMeetingLink(
+    public ResponseEntity<ResponseDto<ShareMeetingLinkResponseDto>> getShareableMeetingLink(
             @PathVariable Long meetingId) {
         var response = meetingService.getShareableMeetingLink(meetingId);
         return ResponseDto.ok(response);

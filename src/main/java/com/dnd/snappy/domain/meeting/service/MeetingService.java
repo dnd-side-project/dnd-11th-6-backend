@@ -9,7 +9,7 @@ import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
-import com.dnd.snappy.domain.meeting.dto.response.ShareableLinkResponseDto;
+import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.infrastructure.uploader.ImageUploader;
@@ -68,10 +68,10 @@ public class MeetingService {
     }
 
     @Transactional(readOnly = true)
-    public ShareableLinkResponseDto getShareableMeetingLink(Long meetingId) {
+    public ShareMeetingLinkResponseDto getShareableMeetingLink(Long meetingId) {
         Meeting meeting = findByMeetingIdOrThrow(meetingId);
         String meetingLink = meeting.getMeetingLink();
-        return new ShareableLinkResponseDto(meetingLink);
+        return new ShareMeetingLinkResponseDto(meetingLink);
     }
 
     private Meeting findByMeetingLinkOrThrow(String meetingLink) {
