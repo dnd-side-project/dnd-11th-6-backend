@@ -3,10 +3,11 @@ package com.dnd.snappy.controller.v1.meeting;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,6 +17,8 @@ import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.support.RestDocsSupport;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
+
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -348,7 +353,6 @@ class MeetingControllerTest extends RestDocsSupport {
     @DisplayName("새로운 모임을 생성한다.")
     @Test
     void createMeeting() throws Exception {
-        // 현재 날짜 기준으로 2일 후 시작일, 3일 후 종료일 설정
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startDate = now.plusDays(2);
         LocalDateTime endDate = startDate.plusDays(1);
@@ -363,24 +367,20 @@ class MeetingControllerTest extends RestDocsSupport {
                 "1234"
         );
 
-        mockMvc.perform(
-                        post("/api/v1/meetings")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(requestDto))
-                )
+        String meetingJson = objectMapper.writeValueAsString(requestDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/meetings")
+                        .file(new MockMultipartFile("meeting", "meeting.json", MediaType.APPLICATION_JSON_VALUE, meetingJson.getBytes(StandardCharsets.UTF_8)))
+                        .file("thumbnail", new byte[0])
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8"))
                 .andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
-                                requestFields(
-                                        fieldWithPath("name").description("모임 이름"),
-                                        fieldWithPath("description").description("모임 설명"),
-                                        fieldWithPath("startDate").description("모임 시작일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("endDate").description("모임 종료일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("symbolColor").description("모임 상징 색"),
-                                        fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("leaderAuthKey").description("관리자 비밀번호")
+                                requestParts(
+                                        partWithName("meeting").description("모임 정보 JSON"),
+                                        partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -400,7 +400,6 @@ class MeetingControllerTest extends RestDocsSupport {
         LocalDateTime startDate = now.plusDays(11);
         LocalDateTime endDate = startDate.plusDays(1);
 
-        // 시작일 검증 실패: 오늘부터 10일 이내가 아닌 경우
         CreateMeetingRequestDto invalidStartDateDto = new CreateMeetingRequestDto(
                 "DND",
                 "DND 모임 입니다.",
@@ -411,24 +410,19 @@ class MeetingControllerTest extends RestDocsSupport {
                 "1234"
         );
 
-        mockMvc.perform(
-                        post("/api/v1/meetings")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(invalidStartDateDto))
-                )
+        String meetingJson = objectMapper.writeValueAsString(invalidStartDateDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/meetings")
+                        .file(new MockMultipartFile("meeting", "meeting.json", MediaType.APPLICATION_JSON_VALUE, meetingJson.getBytes(StandardCharsets.UTF_8)))
+                        .file("thumbnail", new byte[0])
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(
                         restDocs.document(
-                                requestFields(
-                                        fieldWithPath("name").description("모임 이름"),
-                                        fieldWithPath("description").description("모임 설명"),
-                                        fieldWithPath("startDate").description("모임 시작일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("endDate").description("모임 종료일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("symbolColor").description("모임 상징 색"),
-                                        fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("leaderAuthKey").description("관리자 비밀번호")
+                                requestParts(
+                                        partWithName("meeting").description("모임 정보 JSON"),
+                                        partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -450,7 +444,6 @@ class MeetingControllerTest extends RestDocsSupport {
         LocalDateTime startDate = now.plusDays(5);
         LocalDateTime endDate = startDate.minusDays(1);
 
-
         CreateMeetingRequestDto invalidEndDateDto = new CreateMeetingRequestDto(
                 "팀 회의",
                 "이번 주 프로젝트 진행 상황 공유",
@@ -461,24 +454,19 @@ class MeetingControllerTest extends RestDocsSupport {
                 "1234"
         );
 
-        mockMvc.perform(
-                        post("/api/v1/meetings")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(invalidEndDateDto))
-                )
+        String meetingJson = objectMapper.writeValueAsString(invalidEndDateDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/meetings")
+                        .file(new MockMultipartFile("meeting", "meeting.json", MediaType.APPLICATION_JSON_VALUE, meetingJson.getBytes(StandardCharsets.UTF_8)))
+                        .file("thumbnail", new byte[0])
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(
                         restDocs.document(
-                                requestFields(
-                                        fieldWithPath("name").description("모임 이름"),
-                                        fieldWithPath("description").description("모임 설명"),
-                                        fieldWithPath("startDate").description("모임 시작일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("endDate").description("모임 종료일")
-                                                .attributes(getDateTimeFormat()),
-                                        fieldWithPath("symbolColor").description("모임 상징 색"),
-                                        fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("leaderAuthKey").description("관리자 비밀번호")
+                                requestParts(
+                                        partWithName("meeting").description("모임 정보 JSON"),
+                                        partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -495,7 +483,7 @@ class MeetingControllerTest extends RestDocsSupport {
     @DisplayName("모임 생성 시 필수 입력값을 입력하지 않으면 예외 메시지를 던진다.")
     @Test
     void createMeeting_VALIDATION_ERROR() throws Exception {
-        // Given: 유효하지 않은 요청 DTO
+        // Given: 유효하지 않은 요청 DTO (필수 입력값이 비어있음)
         CreateMeetingRequestDto invalidRequest = new CreateMeetingRequestDto(
                 "",
                 "",
@@ -506,29 +494,30 @@ class MeetingControllerTest extends RestDocsSupport {
                 "1234"
         );
 
-        mockMvc.perform(post("/api/v1/meetings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
+        String meetingJson = objectMapper.writeValueAsString(invalidRequest);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/meetings")
+                        .file(new MockMultipartFile("meeting", "meeting.json", MediaType.APPLICATION_JSON_VALUE, meetingJson.getBytes(StandardCharsets.UTF_8)))
+                        .file("thumbnail", new byte[0])
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andDo(
                         restDocs.document(
-                                requestFields(
-                                        fieldWithPath("name").description("모임명"),
-                                        fieldWithPath("description").description("모임 설명"),
-                                        fieldWithPath("startDate").description("시작일"),
-                                        fieldWithPath("endDate").description("종료일"),
-                                        fieldWithPath("symbolColor").description("컬러칩 코드"),
-                                        fieldWithPath("password").description("비밀번호"),
-                                        fieldWithPath("leaderAuthKey").description("모임장 비밀번호")
+                                requestParts(
+                                        partWithName("meeting").description("모임 정보 JSON"),
+                                        partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").description("요청 성공 여부"),
-                                        fieldWithPath("data").description("응답 데이터"),
-                                        fieldWithPath("error").description("에러 정보"),
-                                        fieldWithPath("error.status").description("HTTP 상태 코드"),
-                                        fieldWithPath("error.code").description("에러 코드"),
-                                        fieldWithPath("error.message").description("에러 메시지")
+                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (실패 시 null)"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러 정보"),
+                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러 코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).optional().description("에러 메시지")
                                 )
-                ));
+                        )
+                );
     }
 }
+

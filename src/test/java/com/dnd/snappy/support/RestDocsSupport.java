@@ -3,11 +3,15 @@ package com.dnd.snappy.support;
 import static org.springframework.restdocs.snippet.Attributes.key;
 
 import com.dnd.snappy.config.RestDocsConfiguration;
+import com.dnd.snappy.infrastructure.uploader.ImageUploader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.restdocs.RestDocumentationContextProvider;
@@ -26,7 +30,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 @ActiveProfiles("test")
 @SpringBootTest
-@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@ExtendWith({RestDocumentationExtension.class})
 @Import(RestDocsConfiguration.class)
 public abstract class RestDocsSupport extends AbstractContainerBase {
 
@@ -40,6 +44,9 @@ public abstract class RestDocsSupport extends AbstractContainerBase {
     protected RedisTemplate<String, String> redisTemplate;
 
     protected MockMvc mockMvc;
+
+    @MockBean
+    protected ImageUploader imageUploader;
 
     // TODO: 컨트롤러 단위 or 통합 테스트
     @BeforeEach

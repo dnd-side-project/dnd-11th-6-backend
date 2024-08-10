@@ -22,7 +22,7 @@ spring:
     password: '${custom.db.password}'
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -39,6 +39,19 @@ jwt:
   secretKey: '${custom.jwt.secretKey}'
   access-token-expire-time: 1800000 # 30분
   refresh-token-expire-time: 3600000 # 1시간
+
+# S3 설정
+cloud:
+  aws:
+    credentials:
+      accessKey: '${accessKey}'
+      secretKey: '${secretKey}'
+    s3:
+      bucketName: '${bucketName}'
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 
 ---
 spring:
@@ -65,4 +78,5 @@ jwt:
   secretKey: ghdsjkghjksdhdawuidhkjasbfhjkxvbjhsdgvjkafjawoldjkawopdjawpdjawpidj
   access-token-expire-time: 1800000 # 30분
   refresh-token-expire-time: 3600000 # 1시간
+
 

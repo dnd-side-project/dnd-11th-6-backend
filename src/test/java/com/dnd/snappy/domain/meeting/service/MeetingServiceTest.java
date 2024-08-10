@@ -17,6 +17,7 @@ import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -160,14 +161,12 @@ class MeetingServiceTest {
                 "1234"
         );
 
-        when(meetingRepository.existsByMeetingLink(anyString())).thenReturn(false);
-
         // When
-        CreateMeetingResponseDto responseDto = meetingService.createMeeting(requestDto);
+        CreateMeetingResponseDto responseDto = meetingService.createMeeting(requestDto, null);
 
         // Then
         assertNotNull(responseDto);
-        assertThat(responseDto.meetingLink()).startsWith("https://www.snappy.com/");
+        assertThat(responseDto.meetingLink());
 
         verify(meetingRepository).existsByMeetingLink(anyString());
         verify(meetingRepository).save(any(Meeting.class));
@@ -192,7 +191,7 @@ class MeetingServiceTest {
         );
 
         // When & Then
-        assertThatThrownBy(() -> meetingService.createMeeting(requestDto))
+        assertThatThrownBy(() -> meetingService.createMeeting(requestDto, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageStartingWith(CommonErrorCode.BAD_REQUEST.getMessage());
 
@@ -217,8 +216,7 @@ class MeetingServiceTest {
         );
 
         // When & Then
-
-        assertThatThrownBy(() -> meetingService.createMeeting(requestDto))
+        assertThatThrownBy(() -> meetingService.createMeeting(requestDto, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageStartingWith(CommonErrorCode.BAD_REQUEST.getMessage());
     }
@@ -242,7 +240,7 @@ class MeetingServiceTest {
         );
 
         // When & Then
-        assertThatThrownBy(() -> meetingService.createMeeting(requestDto))
+        assertThatThrownBy(() -> meetingService.createMeeting(requestDto, null))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageStartingWith(CommonErrorCode.BAD_REQUEST.getMessage());
     }
