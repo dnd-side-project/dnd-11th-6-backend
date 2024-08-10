@@ -7,9 +7,20 @@ services:
       - "80:80"
     networks:
       - dnd
+    restart: on-failure
+
   dnd-server:
     image: "${REGISTRY_URL}/dnd-server:latest"
     container_name: dnd
+    networks:
+      - dnd
+    restart: on-failure
+
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
     networks:
       - dnd
     restart: on-failure
