@@ -1,5 +1,10 @@
 package com.dnd.snappy.domain.meeting.service;
 
+
+import static com.dnd.snappy.domain.meeting.exception.MeetingErrorCode.*;
+
+import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.DuplicationException;
 import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
@@ -7,7 +12,6 @@ import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
-import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.infrastructure.uploader.ImageUploader;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +36,30 @@ public class MeetingService {
         return new MeetingDetailResponseDto(meeting);
     }
 
+
+    @Transactional(readOnly = true)
+    public void validateMeetingPassword(Long meetingId, String password) {
+        Meeting meeting = findByMeetingIdOrThrow(meetingId);
+
+        if(!meeting.isCorrectPassword(password)) {
+            throw new BusinessException(MEETING_INVALIDATE_PASSWORD);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public void validateMeetingLeaderAuthKey(Long meetingId, String password, String leaderAuthKey) {
+        Meeting meeting = findByMeetingIdOrThrow(meetingId);
+
+        if(!meeting.isLeaderAuthKeyValid(password, leaderAuthKey)) {
+            throw new BusinessException(MEETING_INVALIDATE_PASSWORD);
+        }
+    }
+
+    private Meeting findByMeetingIdOrThrow(Long meetingId) {
+        return meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
+    }
+
     @Transactional
     public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto, MultipartFile thumbnail) {
         String meetingLinkUuid = generateMeetingLink();
@@ -48,12 +76,12 @@ public class MeetingService {
 
     private Meeting findByMeetingLinkOrThrow(String meetingLink) {
         return meetingRepository.findByMeetingLink(meetingLink)
-                .orElseThrow(() -> new NotFoundException(MeetingErrorCode.MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
+                .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
     }
 
     private void checkMeetingLinkDuplication(String meetingLink) {
         if (meetingRepository.existsByMeetingLink(meetingLink)) {
-            throw new DuplicationException(MeetingErrorCode.DUPLICATION_MEETING_LINK);
+            throw new DuplicationException(DUPLICATION_MEETING_LINK);
         }
     }
 

@@ -10,7 +10,7 @@ public record CreateMeetingEntityDto(
         String thumbnailUrl,
         String symbolColor,
         String password,
-        String adminPassword,
+        String leaderAuthKey,
         String meetingLink
 ) {
     public static CreateMeetingEntityDto of(CreateMeetingRequestDto requestDto, String thumbnailUrl, String meetingLink) {
@@ -22,7 +22,7 @@ public record CreateMeetingEntityDto(
                 thumbnailUrl,
                 requestDto.symbolColor(),
                 requestDto.password(),
-                requestDto.adminPassword(),
+                requestDto.leaderAuthKey(),
                 meetingLink
         );
     }

@@ -32,5 +32,5 @@ public record CreateMeetingRequestDto(
 
         @NotBlank(message = "모임장 비밀번호는 필수 입력값입니다.")
         @Size(max = 4, message = "모임장 비밀번호는 4글자 이내여야 합니다.")
-        String adminPassword
+        String leaderAuthKey
 ) { }

@@ -1,0 +1,44 @@
+=== 모임 참가
+==== 성공
+===== Request
+include::{snippets}/participant-controller-test/participate-meeting/http-request.adoc[]
+include::{snippets}/participant-controller-test/participate-meeting/path-parameters.adoc[]
+===== Request Header
+include::{snippets}/participant-controller-test/participate-meeting/request-headers.adoc[]
+===== `Authorization Header 처리:`
+- Authorization Header는 필수값이 아닙니다.
+- 요청 시, Authorization 헤더는 Bearer accessToken값 형식으로 전달해주세요.
+- 단, accessToken 값이 없는 경우(사용자가 처음 모임에 참여하는 경우) Authorization 헤더를 포함하지 마세요.
+- 기한이 만료된 accessToken도 가능합니다.
+
+===== `두개 이상의 모임 참여 시 Authorization Header 처리`
+- 사용자가 두 개 이상의 모임에 참여할 경우, 헤더에 해당 모임에서 받은 accessToken 값을 반드시 포함해주세요.
+- 만약 두 개 이상의 모임에 참여하면서 헤더에 accessToken 값을 전달하지 않으면, 사용자는 이전에 참여한 모임에 더 이상 접근할 수 없습니다.
+
+===== Request Body
+include::{snippets}/participant-controller-test/participate-meeting/request-body.adoc[]
+include::{snippets}/participant-controller-test/participate-meeting/request-fields.adoc[]
+
+===== Response
+include::{snippets}/participant-controller-test/participate-meeting/http-response.adoc[]
+include::{snippets}/participant-controller-test/participate-meeting/response-fields.adoc[]
+===== Response Cookie
+include::{snippets}/participant-controller-test/participate-meeting/response-cookies.adoc[]
+
+==== 실패
+`참여하기 원하는 모임이 없다면 예외가 발생`
+include::{snippets}/participant-controller-test/participate_not_exist_meeting/http-response.adoc[]
+
+`이미 참여중인 모임이라면 예외가 발생`
+include::{snippets}/participant-controller-test/already_participate_meeting_throw_exception/http-response.adoc[]
+
+`모임에 중복된 닉네임이 있다면 예외가 발생`
+include::{snippets}/participant-controller-test/duplicated_nickname_in_meeting_throw_exception/http-response.adoc[]
+
+`유효하지 않은 access token을 전달한다면 예외가 발생`
+
+- 유효하지 않다는 것은 null값이거나 jwt토큰 형식이 아닌경우입니다.
+include::{snippets}/participant-controller-test/invalid_token_throw_exception/http-response.adoc[]
+
+`모임이 끝났을때 참여하면 예외가 발생`
+include::{snippets}/participant-controller-test/join_finish_meeting_throw_exception/http-response.adoc[]

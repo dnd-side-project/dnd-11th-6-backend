@@ -1,9 +1,10 @@
 package com.dnd.snappy.domain.meeting.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.BDDMockito.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
@@ -20,7 +21,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.BDDMockito;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -50,7 +52,7 @@ class MeetingServiceTest {
                 .meetingLink(meetingLink)
                 .build();
 
-        BDDMockito.given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.of(meeting));
+        given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.of(meeting));
 
         //when
         MeetingDetailResponseDto meetingResponse = meetingService.findByMeetingLink(meetingLink);
@@ -67,12 +69,78 @@ class MeetingServiceTest {
         //given
         String meetingLink = "meetingLink";
 
-        BDDMockito.given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.empty());
+        given(meetingRepository.findByMeetingLink(meetingLink)).willReturn(Optional.empty());
 
         //when //then
         assertThatThrownBy(() -> meetingService.findByMeetingLink(meetingLink))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageStartingWith(MeetingErrorCode.MEETING_LINK_NOT_FOUND.getMessage());
+    }
+
+    @DisplayName("모임의 비밀번호가 맞는지 확인 가능하다.")
+    @Test
+    void isCorrectMeetingPassword() {
+        //given
+        Long meetingId = 1L;
+        String password = "password";
+        Meeting meeting = Meeting.builder().id(meetingId).password(password).build();
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        //when //then
+        assertDoesNotThrow(() -> meetingService.validateMeetingPassword(meetingId, password));
+    }
+
+    @DisplayName("모임 id에 해당하는 모임이 없다면 예외가 발생한다.")
+    @Test
+    void isCorrectMeetingPassword_notFound() {
+        //given
+        Long meetingId = 1L;
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.empty());
+
+        //when //then
+        assertThatThrownBy(() -> meetingService.validateMeetingPassword(meetingId, "password"))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageStartingWith(MeetingErrorCode.MEETING_NOT_FOUND.getMessage());
+    }
+
+    @DisplayName("모임의 비밀번호가 맞지 않다면 예외가 발생한다.")
+    @Test
+    void isCorrectMeetingPassword_invalidPassword() {
+        //given
+        Long meetingId = 1L;
+        String password = "password";
+        Meeting meeting = Meeting.builder().id(meetingId).password(password).build();
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        //when //then
+        assertThatThrownBy(() -> meetingService.validateMeetingPassword(meetingId, "wrongPassword"))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageStartingWith(MeetingErrorCode.MEETING_INVALIDATE_PASSWORD.getMessage());
+    }
+
+    @DisplayName("모임의 관리자 인증키가 맞지 않다면 예외가 발생한다.")
+    @ParameterizedTest
+    @CsvSource({
+            "wrong password, leaderAuthKey",
+            "password, wrong leaderAuthKey"
+    })
+    void isCorrectMeetingPassword_invalidLeaderAuthKey(String requestPassword, String requestLeaderAuthKey) {
+        //given
+        Long meetingId = 1L;
+        String password = "password";
+        String leaderAuthKey = "leaderAuthKey";
+        Meeting meeting = Meeting.builder().id(meetingId).password(password).leaderAuthKey(leaderAuthKey).build();
+
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        //when //then
+        assertThatThrownBy(() -> meetingService.validateMeetingLeaderAuthKey(meetingId, requestPassword, requestLeaderAuthKey))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageStartingWith(MeetingErrorCode.MEETING_INVALIDATE_PASSWORD.getMessage());
+
     }
 
     @DisplayName("모임을 생성한다.")
