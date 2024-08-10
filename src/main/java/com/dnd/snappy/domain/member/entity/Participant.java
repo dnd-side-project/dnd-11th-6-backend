@@ -40,13 +40,13 @@ public class Participant extends BaseEntity {
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
 
-    public static Participant create(String nickname, Member member, Meeting meeting, Role role) {
+    public static Participant create(String nickname, Role role, Member member, Meeting meeting) {
         return Participant.builder()
                 .nickname(nickname)
                 .role(role)
-                .shootCount(MAX_SHOOT_COUNT)
                 .meeting(meeting)
                 .member(member)
+                .shootCount(MAX_SHOOT_COUNT)
                 .build();
     }
 }
