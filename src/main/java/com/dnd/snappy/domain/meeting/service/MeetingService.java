@@ -1,16 +1,15 @@
 package com.dnd.snappy.domain.meeting.service;
 
-
 import static com.dnd.snappy.domain.meeting.exception.MeetingErrorCode.*;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
-import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.DuplicationException;
 import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
+import com.dnd.snappy.domain.meeting.dto.response.ShareableLinkResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.infrastructure.uploader.ImageUploader;
@@ -36,7 +35,6 @@ public class MeetingService {
         return new MeetingDetailResponseDto(meeting);
     }
 
-
     @Transactional(readOnly = true)
     public void validateMeetingPassword(Long meetingId, String password) {
         Meeting meeting = findByMeetingIdOrThrow(meetingId);
@@ -55,11 +53,6 @@ public class MeetingService {
         }
     }
 
-    private Meeting findByMeetingIdOrThrow(Long meetingId) {
-        return meetingRepository.findById(meetingId)
-                .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
-    }
-
     @Transactional
     public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto, MultipartFile thumbnail) {
         String meetingLinkUuid = generateMeetingLink();
@@ -74,9 +67,21 @@ public class MeetingService {
         return new CreateMeetingResponseDto(meetingLinkUuid);
     }
 
+    @Transactional(readOnly = true)
+    public ShareableLinkResponseDto getShareableMeetingLink(Long meetingId) {
+        Meeting meeting = findByMeetingIdOrThrow(meetingId);
+        String meetingLink = meeting.getMeetingLink();
+        return new ShareableLinkResponseDto(meetingLink);
+    }
+
     private Meeting findByMeetingLinkOrThrow(String meetingLink) {
         return meetingRepository.findByMeetingLink(meetingLink)
                 .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
+    }
+
+    private Meeting findByMeetingIdOrThrow(Long meetingId) {
+        return meetingRepository.findById(meetingId)
+                .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
     }
 
     private void checkMeetingLinkDuplication(String meetingLink) {
