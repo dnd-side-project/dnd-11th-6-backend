@@ -53,7 +53,7 @@ class ParticipantControllerTest extends RestDocsSupport {
     void participateMeeting() throws Exception {
         //given
         Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
-        ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
+        ParticipationRequest participationRequest = new ParticipationRequest("123456", Role.LEADER);
 
         //when & then
         mockMvc.perform(
@@ -92,7 +92,7 @@ class ParticipantControllerTest extends RestDocsSupport {
     @Test
     void participate_not_exist_meeting() throws Exception {
         //given
-        ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
+        ParticipationRequest participationRequest = new ParticipationRequest("123456", Role.LEADER);
 
         //when & then
         mockMvc.perform(
@@ -164,7 +164,7 @@ class ParticipantControllerTest extends RestDocsSupport {
         Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Member member = appendMember();
         appendMemberMeeting(meeting, member, "nick");
-        ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
+        ParticipationRequest participationRequest = new ParticipationRequest("123456", Role.LEADER);
 
         //when & then
         mockMvc.perform(
@@ -186,7 +186,7 @@ class ParticipantControllerTest extends RestDocsSupport {
     void join_finish_meeting_throw_exception() throws Exception {
         //given
         Meeting meeting = appendMeeting(LocalDateTime.now().minusDays(2), LocalDateTime.now().minusNanos(1));
-        ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
+        ParticipationRequest participationRequest = new ParticipationRequest("123456", Role.LEADER);
 
         //when & then
         mockMvc.perform(

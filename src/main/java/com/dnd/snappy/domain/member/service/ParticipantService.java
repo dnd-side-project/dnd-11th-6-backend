@@ -33,7 +33,7 @@ public class ParticipantService {
             throw new BusinessException(MEETING_JOIN_DENIED);
         }
 
-        Participant memberMeeting = Participant.create(nickname, Member.Id(memberId), meeting, role);
+        Participant memberMeeting = Participant.create(nickname, role, Member.Id(memberId), meeting);
         participantRepository.save(memberMeeting);
     }
 
