@@ -12,4 +12,19 @@ public record CreateMeetingEntityDto(
         String password,
         String adminPassword,
         String meetingLink
-) { }
+) {
+    public static CreateMeetingEntityDto of(CreateMeetingRequestDto requestDto, String thumbnailUrl, String meetingLink) {
+        return new CreateMeetingEntityDto(
+                requestDto.name(),
+                requestDto.startDate(),
+                requestDto.endDate(),
+                requestDto.description(),
+                thumbnailUrl,
+                requestDto.symbolColor(),
+                requestDto.password(),
+                requestDto.adminPassword(),
+                meetingLink
+        );
+    }
+}
+

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/meetings")
@@ -18,15 +19,18 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @GetMapping
-    public ResponseEntity<ResponseDto<MeetingDetailResponseDto>> findByMeetingLink(@RequestParam("meetingLink") String meetingLink) {
+    public ResponseEntity<ResponseDto<MeetingDetailResponseDto>> findByMeetingLink(
+            @RequestParam("meetingLink") String meetingLink) {
         var response = meetingService.findByMeetingLink(meetingLink);
         return ResponseDto.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto<CreateMeetingResponseDto>> createMeeting(@Valid @RequestBody CreateMeetingRequestDto requestDto) {
-        var response = meetingService.createMeeting(requestDto);
+    public ResponseEntity<ResponseDto<CreateMeetingResponseDto>> createMeeting(
+            @RequestPart("meeting") @Valid CreateMeetingRequestDto requestDto,
+            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail) {
+
+        var response = meetingService.createMeeting(requestDto, thumbnail);
         return ResponseDto.ok(response);
     }
 }
-
