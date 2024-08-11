@@ -16,9 +16,9 @@ public class TokenService {
 
     private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-    public Tokens createTokens(Long memberId) {
-        Tokens tokens = tokenProvider.issueTokens(memberId);
-        refreshTokenRedisRepository.save(RefreshToken.create(memberId, tokens.refreshToken(), REFRESH_TOKEN_TTL));
+    public Tokens createTokens(Long participantId) {
+        Tokens tokens = tokenProvider.issueTokens(participantId);
+        refreshTokenRedisRepository.save(RefreshToken.create(participantId, tokens.refreshToken(), REFRESH_TOKEN_TTL));
         return tokens;
     }
 

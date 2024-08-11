@@ -1,6 +1,6 @@
-package com.dnd.snappy.controller.v1.member.request;
+package com.dnd.snappy.controller.v1.participant.request;
 
-import com.dnd.snappy.domain.member.entity.Role;
+import com.dnd.snappy.domain.participant.entity.Role;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

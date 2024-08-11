@@ -1,4 +1,4 @@
-package com.dnd.snappy.domain.member.entity;
+package com.dnd.snappy.domain.participant.entity;
 
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
@@ -33,19 +33,14 @@ public class Participant extends BaseEntity {
     private Integer shootCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id")
     private Meeting meeting;
 
-    public static Participant create(String nickname, Role role, Member member, Meeting meeting) {
+    public static Participant create(String nickname, Role role, Meeting meeting) {
         return Participant.builder()
                 .nickname(nickname)
                 .role(role)
                 .meeting(meeting)
-                .member(member)
                 .shootCount(MAX_SHOOT_COUNT)
                 .build();
     }

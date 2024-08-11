@@ -1,10 +1,9 @@
-package com.dnd.snappy.controller.v1.member;
+package com.dnd.snappy.controller.v1.participant;
 
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
-import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -12,16 +11,12 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.dnd.snappy.controller.v1.member.request.ParticipationRequest;
+import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
-import com.dnd.snappy.domain.member.entity.Member;
-import com.dnd.snappy.domain.member.entity.Participant;
-import com.dnd.snappy.domain.member.entity.Role;
-import com.dnd.snappy.domain.member.repository.MemberRepository;
-import com.dnd.snappy.domain.member.repository.ParticipantRepository;
-import com.dnd.snappy.domain.token.service.TokenProvider;
-import com.dnd.snappy.domain.token.service.TokenType;
+import com.dnd.snappy.domain.participant.entity.Participant;
+import com.dnd.snappy.domain.participant.entity.Role;
+import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
 import com.dnd.snappy.support.RestDocsSupport;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -41,12 +36,6 @@ class ParticipantControllerTest extends RestDocsSupport {
 
     @Autowired
     private ParticipantRepository participantRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private TokenProvider tokenProvider;
 
     @DisplayName("사용자는 모임에 참여할 수 있다.")
     @Test
@@ -77,7 +66,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
-                                        fieldWithPath("data.memberId").type(JsonFieldType.NUMBER).description("모임에 참여하는 memberId"),
+                                        fieldWithPath("data.participantId").type(JsonFieldType.NUMBER).description("참여자 id"),
                                         fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("인증에 사용하는 accessToken"),
                                         fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
                                 ),
@@ -108,38 +97,12 @@ class ParticipantControllerTest extends RestDocsSupport {
                 );
     }
 
-    @DisplayName("이미 참여중인 모임이라면 예외가 발생한다.")
-    @Test
-    void already_participate_meeting_throw_exception() throws Exception {
-        //given
-        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
-        Member member = appendMember();
-        appendMemberMeeting(meeting, member, "nick");
-        String accessToken = tokenProvider.issueToken(member.getId(), TokenType.ACCESS_TOKEN);
-        ParticipationRequest participationRequest = new ParticipationRequest("nickname", Role.LEADER);
-
-        //when & then
-        mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", meeting.getId())
-                                .header("Authorization", String.format("Bearer %s", accessToken))
-                                .content(objectMapper.writeValueAsString(participationRequest))
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isBadRequest())
-                .andDo(
-                        restDocs.document(
-                                getErrorResponseFields()
-                        )
-                );
-    }
-
     @DisplayName("모임에 중복된 닉네임이 있다면 예외가 발생한다.")
     @Test
     void duplicated_nickname_in_meeting_throw_exception() throws Exception {
         //given
         Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
-        Member member = appendMember();
-        appendMemberMeeting(meeting, member, "nick");
+        appendParticipant(meeting, "nick");
 
         ParticipationRequest participationRequest = new ParticipationRequest("nick", Role.LEADER);
 
@@ -150,30 +113,6 @@ class ParticipantControllerTest extends RestDocsSupport {
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isConflict())
-                .andDo(
-                        restDocs.document(
-                                getErrorResponseFields()
-                        )
-                );
-    }
-
-    @DisplayName("유효하지 않은 access token을 전달한다면 예외가 발생한다.")
-    @Test
-    void invalid_token_throw_exception() throws Exception {
-        //given
-        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
-        Member member = appendMember();
-        appendMemberMeeting(meeting, member, "nick");
-        ParticipationRequest participationRequest = new ParticipationRequest("123456", Role.LEADER);
-
-        //when & then
-        mockMvc.perform(
-                        RestDocumentationRequestBuilders.post("/api/v1/meetings/{meetingId}/participants", meeting.getId())
-                                .header("Authorization", String.format("Bearer %s", "invalid-accessToken"))
-                                .content(objectMapper.writeValueAsString(participationRequest))
-                                .contentType(MediaType.APPLICATION_JSON)
-                )
-                .andExpect(status().isUnauthorized())
                 .andDo(
                         restDocs.document(
                                 getErrorResponseFields()
@@ -231,18 +170,12 @@ class ParticipantControllerTest extends RestDocsSupport {
         return meetingRepository.save(meeting);
     }
 
-    private Member appendMember() {
-        Member member = Member.builder().createdAt(LocalDateTime.now()).updatedAt(LocalDateTime.now()).build();
-        return memberRepository.save(member);
-    }
-
-    private Participant appendMemberMeeting(Meeting meeting, Member member, String nickname) {
+    private Participant appendParticipant(Meeting meeting, String nickname) {
         Participant memberMeeting = Participant.builder()
                 .nickname(nickname)
                 .role(Role.LEADER)
                 .shootCount(10)
                 .meeting(meeting)
-                .member(member)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now()).build();
         return participantRepository.save(memberMeeting);

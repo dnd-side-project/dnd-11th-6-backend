@@ -1,7 +1,7 @@
-package com.dnd.snappy.domain.member.dto.response;
+package com.dnd.snappy.domain.participant.dto.response;
 
 public record ParticipationResponseDto(
-        Long memberId,
+        Long participantId,
         String accessToken,
         String refreshToken
 ) {

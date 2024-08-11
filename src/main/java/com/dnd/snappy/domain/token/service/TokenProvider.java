@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TokenProvider {
 
-    private static final String MEMBER_ID = "memberId";
+    private static final String PARTICIPANT_ID = "participantId";
 
     private final JwtProperties jwtProperties;
 
@@ -44,7 +44,7 @@ public class TokenProvider {
         final Date now = new Date();
         final Date expiration = new Date(now.getTime() + expireTime);
         return Jwts.builder()
-                .claim(MEMBER_ID, memberId)
+                .claim(PARTICIPANT_ID, memberId)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(jwtProperties.getSecretKey(), SIG.HS256)
@@ -53,12 +53,12 @@ public class TokenProvider {
 
     public Long extractPayload(String token) {
         Claims claims = extractClaims(token);
-        return claims.get(MEMBER_ID, Long.class);
+        return claims.get(PARTICIPANT_ID, Long.class);
     }
 
     public Long extractPayloadIgnoringExpiration(String token) {
         Claims claims = extractClaimsIgnoringExpiration(token);
-        return claims.get(MEMBER_ID, Long.class);
+        return claims.get(PARTICIPANT_ID, Long.class);
     }
 
     private Claims extractClaims(String token) {
