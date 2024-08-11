@@ -58,7 +58,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                                 ),
                                 requestFields(
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임에 사용할 닉네임"),
-                                        fieldWithPath("role").type(JsonFieldType.STRING).description("모임의 권한 (LEADER | MEMBER)")
+                                        fieldWithPath("role").type(JsonFieldType.STRING).description("모임의 권한 (LEADER | PARTICIPANT)")
                                 ),
                                 responseFields(
                                         fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
@@ -168,13 +168,13 @@ class ParticipantControllerTest extends RestDocsSupport {
     }
 
     private Participant appendParticipant(Meeting meeting, String nickname) {
-        Participant memberMeeting = Participant.builder()
+        Participant participant = Participant.builder()
                 .nickname(nickname)
                 .role(Role.LEADER)
                 .shootCount(10)
                 .meeting(meeting)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now()).build();
-        return participantRepository.save(memberMeeting);
+        return participantRepository.save(participant);
     }
 }

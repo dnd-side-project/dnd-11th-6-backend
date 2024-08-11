@@ -39,7 +39,7 @@ class ParticipantServiceTest {
         //given
         Long meetingId = 2L;
         String nickname = "nick";
-        Role role = Role.MEMBER;
+        Role role = Role.PARTICIPANT;
         Meeting meeting = Meeting.builder().id(meetingId).startDate(LocalDateTime.now()).endDate(LocalDateTime.now().plusDays(1)).build();
         given(participantRepository.existsByNicknameAndMeetingId(nickname, meetingId)).willReturn(false);
         given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
@@ -57,7 +57,7 @@ class ParticipantServiceTest {
         //given
         Long meetingId = 2L;
         String nickname = "nick";
-        Role role = Role.MEMBER;
+        Role role = Role.PARTICIPANT;
         given(participantRepository.existsByNicknameAndMeetingId(nickname, meetingId)).willReturn(true);
 
         //when //then
@@ -72,7 +72,7 @@ class ParticipantServiceTest {
         //given
         Long meetingId = 2L;
         String nickname = "nick";
-        Role role = Role.MEMBER;
+        Role role = Role.PARTICIPANT;
         given(participantRepository.existsByNicknameAndMeetingId(nickname, meetingId)).willReturn(false);
         given(meetingRepository.findById(meetingId)).willReturn(Optional.empty());
 
@@ -88,7 +88,7 @@ class ParticipantServiceTest {
         //given
         Long meetingId = 2L;
         String nickname = "nick";
-        Role role = Role.MEMBER;
+        Role role = Role.PARTICIPANT;
         Meeting meeting = Meeting.builder()
                 .id(meetingId)
                 .startDate(LocalDateTime.now().minusDays(3))
