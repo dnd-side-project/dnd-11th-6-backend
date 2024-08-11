@@ -1,4 +1,4 @@
-package com.dnd.snappy.controller;
+package com.dnd.snappy.controller.v1.auth;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;

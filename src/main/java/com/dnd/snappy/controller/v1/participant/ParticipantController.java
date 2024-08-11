@@ -1,7 +1,7 @@
 package com.dnd.snappy.controller.v1.participant;
 
 import com.dnd.snappy.common.dto.ResponseDto;
-import com.dnd.snappy.controller.CookieManager;
+import com.dnd.snappy.controller.v1.auth.CookieManager;
 import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
 import com.dnd.snappy.controller.v1.participant.response.ParticipationResponse;
 import com.dnd.snappy.domain.participant.service.ParticipationService;
@@ -37,7 +37,7 @@ public class ParticipantController {
         );
 
         //TODO: access token도 쿠키로
-        String cookie = cookieManager.createNewCookie(response.refreshToken(), "/api/");
+        String cookie = cookieManager.createRefreshTokenCookie(response.refreshToken(), meetingId, "/api/", 3600L);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie)

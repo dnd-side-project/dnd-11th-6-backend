@@ -68,7 +68,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                                         fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
                                 ),
                                 responseCookies(
-                                        cookieWithName("REFRESH_TOKEN").description("accessToken 재발급을 위한 refreshToken")
+                                        cookieWithName("REFRESH_TOKEN_"  +meeting.getId()).description("accessToken 재발급을 위한 refreshToken")
                                 )
                         )
                 );
