@@ -53,9 +53,6 @@ class ParticipantControllerTest extends RestDocsSupport {
                 .andExpect(status().isOk())
                 .andDo(
                         restDocs.document(
-                                requestHeaders(
-                                        headerWithName("Authorization").optional().description("Bearer accessToken")
-                                ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 ID")
                                 ),

@@ -33,9 +33,9 @@ class ParticipantServiceTest {
     @Mock
     private MeetingRepository meetingRepository;
 
-    @DisplayName("사용자는 모임에 참여할 수 있다.")
+    @DisplayName("모임에 참여하는 참가자를 생성한다.")
     @Test
-    void joinMeeting() {
+    void createParticipant() {
         //given
         Long meetingId = 2L;
         String nickname = "nick";

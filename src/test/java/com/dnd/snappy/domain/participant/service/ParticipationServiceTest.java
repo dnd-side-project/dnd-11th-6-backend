@@ -26,9 +26,9 @@ class ParticipationServiceTest {
     @Mock
     private TokenService tokenService;
 
-    @DisplayName("accessToken없이 모임에 참여할때 member를 생성한다.")
+    @DisplayName("모임에 참여하는 참가자를 만든후 토큰을 생성한다.")
     @Test
-    void participate_when_access_token_is_null() {
+    void participate() {
         //given
         Long participantId = 1L;
         Long meetingId = 2L;
