@@ -67,7 +67,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                         parameterWithName("meetingLink").description("모임 링크")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("모임"),
                                         fieldWithPath("data.meetingId").type(JsonFieldType.NUMBER).description("모임 id"),
                                         fieldWithPath("data.name").type(JsonFieldType.STRING).description("모임 이름"),
@@ -76,8 +76,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.symbolColor").type(JsonFieldType.STRING).description("모임 상징 색"),
                                         fieldWithPath("data.startDate").type(JsonFieldType.STRING).attributes(getDateTimeFormat()).description("모임 시작일"),
                                         fieldWithPath("data.endDate").type(JsonFieldType.STRING).attributes(getDateTimeFormat()).description("모임 종료일"),
-                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("모임 링크 상태"),
-                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("모임 링크 상태")
                                 )
                         )
                 );
@@ -97,10 +96,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         parameterWithName("meetingLink").description("모임 링크")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("모임"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
                                 )
@@ -146,9 +144,8 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("모임 비밀번호")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
-                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터")
                                 )
                         )
                 );
@@ -191,10 +188,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("password").type(JsonFieldType.STRING).description("모임 비밀번호")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
                                 )
@@ -242,9 +238,8 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("leaderAuthKey").type(JsonFieldType.STRING).description("관리자 인증키")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
-                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("데이터")
                                 )
                         )
                 );
@@ -289,10 +284,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("leaderAuthKey").type(JsonFieldType.STRING).description("관리자 인증키")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
                                 )
@@ -339,10 +333,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("leaderAuthKey").type(JsonFieldType.STRING).description("관리자 인증키")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
                                 )
@@ -383,10 +376,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
-                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크"),
-                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크")
                                 )
                         )
                 );
@@ -425,10 +417,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("생성된 모임 정보 (실패 시 null)"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("오류 정보"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러 코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).optional().description("에러 메시지")
                                 )
@@ -469,10 +460,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("생성된 모임 정보 (실패 시 null)"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("오류 정보"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러 코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).optional().description("에러 메시지")
                                 )
@@ -509,10 +499,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("요청 성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 (실패 시 null)"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러 정보"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러 코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).optional().description("에러 메시지")
                                 )
@@ -550,9 +539,8 @@ class MeetingControllerTest extends RestDocsSupport {
                         restDocs.document(
                                 pathParameters(parameterWithName("meetingId").description("모임 ID")),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
-                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("모임 링크"),
-                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("모임 링크")
                                 )
                         )
                 );
@@ -575,10 +563,9 @@ class MeetingControllerTest extends RestDocsSupport {
                                         parameterWithName("meetingId").description("모임 ID")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.NULL).description("공유 가능한 모임 링크"),
                                         fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                                        fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
                                         fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
                                         fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
                                 )

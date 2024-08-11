@@ -8,6 +8,7 @@ import com.dnd.snappy.domain.participant.service.ParticipationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +43,7 @@ public class ParticipantController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie)
                 .body(new ResponseDto<>(
-                        true,
+                        HttpStatus.OK.value(),
                         new ParticipationResponse(response.participantId(), response.accessToken()),
                         null
                 ));

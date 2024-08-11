@@ -61,11 +61,10 @@ class ParticipantControllerTest extends RestDocsSupport {
                                         fieldWithPath("role").type(JsonFieldType.STRING).description("모임의 권한 (LEADER | PARTICIPANT)")
                                 ),
                                 responseFields(
-                                        fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
                                         fieldWithPath("data.participantId").type(JsonFieldType.NUMBER).description("참여자 id"),
-                                        fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("인증에 사용하는 accessToken"),
-                                        fieldWithPath("error").type(JsonFieldType.NULL).description("에러")
+                                        fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("인증에 사용하는 accessToken")
                                 ),
                                 responseCookies(
                                         cookieWithName("REFRESH_TOKEN_"  +meeting.getId()).description("accessToken 재발급을 위한 refreshToken")
@@ -140,10 +139,9 @@ class ParticipantControllerTest extends RestDocsSupport {
 
     private ResponseFieldsSnippet getErrorResponseFields() {
         return responseFields(
-                fieldWithPath("success").type(JsonFieldType.BOOLEAN).description("성공 여부"),
+                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                 fieldWithPath("data").type(JsonFieldType.NULL).description("데이터"),
                 fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                fieldWithPath("error.status").type(JsonFieldType.NUMBER).description("상태코드"),
                 fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
                 fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
         );
