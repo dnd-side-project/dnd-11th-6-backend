@@ -21,30 +21,30 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TokenProvider {
 
-    private static final String MEMBER_ID = "memberId";
+    private static final String PARTICIPANT_ID = "participantId";
 
     private final JwtProperties jwtProperties;
 
-    public Tokens issueTokens(Long memberId) {
+    public Tokens issueTokens(Long participantId) {
         return new Tokens(
-                generateToken(memberId, jwtProperties.getAccessTokenExpireTime()),
-                generateToken(memberId, jwtProperties.getRefreshTokenExpireTime())
+                generateToken(participantId, jwtProperties.getAccessTokenExpireTime()),
+                generateToken(participantId, jwtProperties.getRefreshTokenExpireTime())
         );
     }
 
-    public String issueToken(Long memberId, TokenType token) {
+    public String issueToken(Long participantId, TokenType token) {
         Long expireTime = token == ACCESS_TOKEN ? jwtProperties.getAccessTokenExpireTime() : jwtProperties.getRefreshTokenExpireTime();
         return generateToken(
-                memberId,
+                participantId,
                 expireTime
         );
     }
 
-    private String generateToken(Long memberId, Long expireTime) {
+    private String generateToken(Long participantId, Long expireTime) {
         final Date now = new Date();
         final Date expiration = new Date(now.getTime() + expireTime);
         return Jwts.builder()
-                .claim(MEMBER_ID, memberId)
+                .claim(PARTICIPANT_ID, participantId)
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(jwtProperties.getSecretKey(), SIG.HS256)
@@ -53,12 +53,12 @@ public class TokenProvider {
 
     public Long extractPayload(String token) {
         Claims claims = extractClaims(token);
-        return claims.get(MEMBER_ID, Long.class);
+        return claims.get(PARTICIPANT_ID, Long.class);
     }
 
     public Long extractPayloadIgnoringExpiration(String token) {
         Claims claims = extractClaimsIgnoringExpiration(token);
-        return claims.get(MEMBER_ID, Long.class);
+        return claims.get(PARTICIPANT_ID, Long.class);
     }
 
     private Claims extractClaims(String token) {

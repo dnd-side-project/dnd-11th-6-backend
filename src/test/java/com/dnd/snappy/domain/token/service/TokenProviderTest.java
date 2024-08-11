@@ -31,7 +31,7 @@ class TokenProviderTest {
                 .doesNotThrowAnyException();
     }
 
-    @DisplayName("토큰을 추출하여 memberId를 가져온다.")
+    @DisplayName("토큰을 추출하여 participantId를 가져온다.")
     @Test
     void extractPayload() {
         //given
@@ -39,10 +39,10 @@ class TokenProviderTest {
         String token = tokenProvider.issueToken(1L, TokenType.ACCESS_TOKEN);
 
         //when
-        Long memberId = tokenProvider.extractPayload(token);
+        Long participantId = tokenProvider.extractPayload(token);
 
         //then
-        assertThat(memberId).isEqualTo(1L);
+        assertThat(participantId).isEqualTo(1L);
     }
 
     @DisplayName("토큰을 추출힐때 토큰이 만료되었다면 예외가 발생한다.")
@@ -84,7 +84,7 @@ class TokenProviderTest {
                 .hasMessageContaining(CommonErrorCode.JWT_EXTRACT_ERROR.getMessage());
     }
 
-    @DisplayName("토큰을 추출하여 memberId를 가져온다.")
+    @DisplayName("토큰을 추출하여 participantId를 가져온다.")
     @Test
     void extractPayloadIgnoringExpiration() {
         //given
@@ -92,13 +92,13 @@ class TokenProviderTest {
         String token = tokenProvider.issueToken(1L, TokenType.ACCESS_TOKEN);
 
         //when
-        Long memberId = tokenProvider.extractPayloadIgnoringExpiration(token);
+        Long participantId = tokenProvider.extractPayloadIgnoringExpiration(token);
 
         //then
-        assertThat(memberId).isEqualTo(1L);
+        assertThat(participantId).isEqualTo(1L);
     }
 
-    @DisplayName("토큰의 만료기한이 지났더라도 memberId를 가져온다.")
+    @DisplayName("토큰의 만료기한이 지났더라도 participantId를 가져온다.")
     @Test
     void extractPayloadIgnoringExpiration_when_token_is_expired() {
         //given
@@ -106,10 +106,10 @@ class TokenProviderTest {
         String token = tokenProvider.issueToken(1L, TokenType.ACCESS_TOKEN);
 
         //when
-        Long memberId = tokenProvider.extractPayloadIgnoringExpiration(token);
+        Long participantId = tokenProvider.extractPayloadIgnoringExpiration(token);
 
         //then
-        assertThat(memberId).isEqualTo(1L);
+        assertThat(participantId).isEqualTo(1L);
     }
 
     @DisplayName("토큰을 추출힐때, 유효하지 않은 토큰이라면 예외를 발생시킨다.")
