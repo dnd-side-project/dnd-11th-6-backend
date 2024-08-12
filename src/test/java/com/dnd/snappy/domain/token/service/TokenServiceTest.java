@@ -1,6 +1,5 @@
 package com.dnd.snappy.domain.token.service;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import com.dnd.snappy.domain.token.dto.Tokens;
@@ -40,18 +39,5 @@ class TokenServiceTest {
         //then
         Assertions.assertThat(result).isEqualTo(tokens);
         verify(refreshTokenRedisRepository, times(1)).save(any(RefreshToken.class));
-    }
-
-    @DisplayName("토큰에서 payload를 추출할 수 있다.")
-    @Test
-    void extractTokenIgnoringExpiration() {
-        //given
-        String token = "token";
-
-        //when
-        tokenService.extractTokenIgnoringExpiration(token);
-
-        //then
-        verify(tokenProvider, times(1)).extractPayloadIgnoringExpiration(token);
     }
 }

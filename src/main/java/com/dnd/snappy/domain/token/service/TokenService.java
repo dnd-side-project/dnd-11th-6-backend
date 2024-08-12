@@ -21,8 +21,4 @@ public class TokenService {
         refreshTokenRedisRepository.save(RefreshToken.create(participantId, tokens.refreshToken(), REFRESH_TOKEN_TTL));
         return tokens;
     }
-
-    public Long extractTokenIgnoringExpiration(String token) {
-        return tokenProvider.extractPayloadIgnoringExpiration(token);
-    }
 }

@@ -2,45 +2,39 @@ package com.dnd.snappy.controller.v1.auth;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
-import org.springframework.http.HttpHeaders;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerMapping;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenExtractor {
 
     private static final String PATH_VARIABLE_KEY = "meetingId";
 
-    private final AuthTokenCookieNameGenerator authTokenCookieNameGenerator;
+    private final AuthCookieManager authCookieManager;
 
-    public JwtTokenExtractor(AuthTokenCookieNameGenerator authTokenCookieNameGenerator) {
-        this.authTokenCookieNameGenerator = authTokenCookieNameGenerator;
-    }
-
-    public String extractAccessToken(final HttpServletRequest request) {
+    public String extractToken(TokenType tokenType, final HttpServletRequest request) {
         final Long meetingId = getMeetingId(request);
-        String accessTokenCookieName = authTokenCookieNameGenerator.generateAccessToken(meetingId);
+        Cookie cookie = authCookieManager.getCookie(request, tokenType, meetingId);
+        if(cookie == null) {
+            throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR);
+        }
 
-        Cookie accessTokenCookie = getCookie(request, accessTokenCookieName);
-
-        return accessTokenCookie.getValue();
+        return cookie.getValue();
     }
 
     private Long getMeetingId(HttpServletRequest request) {
-        final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        final Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        if(pathVariables == null || Objects.isNull(pathVariables.get(PATH_VARIABLE_KEY))) {
+            throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR, "No path variables meetingId found in request");
+        }
         return Long.parseLong(pathVariables.get(PATH_VARIABLE_KEY));
-    }
-
-    private Cookie getCookie(HttpServletRequest request, String cookieName) {
-        return Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals(cookieName))
-                .findFirst()
-                .orElseThrow(() -> new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR));
     }
 }

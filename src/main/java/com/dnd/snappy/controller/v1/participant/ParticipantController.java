@@ -5,6 +5,7 @@ import com.dnd.snappy.controller.v1.auth.AuthCookieManager;
 import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
 import com.dnd.snappy.controller.v1.participant.response.ParticipationResponse;
 import com.dnd.snappy.domain.participant.service.ParticipationService;
+import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class ParticipantController {
 
     private final ParticipationService participationService;
 
-    private final AuthCookieManager cookieManager;
+    private final AuthCookieManager authTokenManager;
 
     @PostMapping
     public ResponseEntity<ResponseDto<ParticipationResponse>> participateMeeting(
@@ -40,8 +41,8 @@ public class ParticipantController {
         );
 
         Duration duration = Duration.between(LocalDateTime.now(), response.meetingExpiredDate());
-        String accessTokenCookie = cookieManager.createAccessTokenCookie(response.accessToken(), meetingId, "/api/", duration);
-        String refreshTokenCookie = cookieManager.createRefreshTokenCookie(response.refreshToken(), meetingId, "/api/", duration);
+        String accessTokenCookie = authTokenManager.createTokenCookie(TokenType.ACCESS_TOKEN, response.accessToken(), meetingId, duration);
+        String refreshTokenCookie = authTokenManager.createTokenCookie(TokenType.REFRESH_TOKEN, response.refreshToken(), meetingId, duration);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie)
