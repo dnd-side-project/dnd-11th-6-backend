@@ -11,6 +11,7 @@ import org.springframework.web.servlet.HandlerMapping;
 
 @Component
 public class PathVariableExtractor {
+
     private static final String MEETING_ID_KEY = "meetingId";
 
     public Long extractMeetingId(HttpServletRequest request) {
@@ -18,6 +19,12 @@ public class PathVariableExtractor {
         if (pathVariables == null || Objects.isNull(pathVariables.get(MEETING_ID_KEY))) {
             throw new BusinessException(BAD_REQUEST, "No path variables meetingId found in request");
         }
-        return Long.parseLong(pathVariables.get(MEETING_ID_KEY));
+
+        String meetingId = pathVariables.get(MEETING_ID_KEY);
+        try {
+            return Long.parseLong(pathVariables.get(MEETING_ID_KEY));
+        } catch (NumberFormatException e) {
+            throw new BusinessException(BAD_REQUEST, "Invalid format for meetingId: " + meetingId);
+        }
     }
 }

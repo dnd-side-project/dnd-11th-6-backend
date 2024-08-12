@@ -1,6 +1,5 @@
 package com.dnd.snappy.controller.v1.auth;
 
-
 import static com.dnd.snappy.domain.token.exception.TokenErrorCode.*;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
