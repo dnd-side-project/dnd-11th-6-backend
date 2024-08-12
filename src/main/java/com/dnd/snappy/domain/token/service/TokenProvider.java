@@ -1,11 +1,9 @@
 package com.dnd.snappy.domain.token.service;
 
-import static com.dnd.snappy.domain.auth.exception.AuthErrorCode.*;
+import static com.dnd.snappy.domain.token.exception.TokenErrorCode.*;
 import static com.dnd.snappy.domain.token.service.TokenType.*;
 
-import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
-import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.token.dto.Tokens;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

@@ -1,4 +1,4 @@
-package com.dnd.snappy.domain.auth.exception;
+package com.dnd.snappy.domain.token.exception;
 
 import com.dnd.snappy.common.error.ErrorCode;
 import com.dnd.snappy.common.error.ErrorCodeInterface;
@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum AuthErrorCode implements ErrorCodeInterface {
+public enum TokenErrorCode implements ErrorCodeInterface {
     JWT_EXPIRED_ERROR(HttpStatus.UNAUTHORIZED, "JWT_EXPIRED_ERROR", "jwt 토큰의 유효기간이 지났습니다."),
     JWT_EXTRACT_ERROR(HttpStatus.UNAUTHORIZED, "JWT_EXTRACT_ERROR", "jwt 토큰을 추출하는데 문제가 생겼습니다."),
     ;

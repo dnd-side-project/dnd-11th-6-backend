@@ -1,6 +1,6 @@
 package com.dnd.snappy.domain.token.service;
 
-import static com.dnd.snappy.domain.auth.exception.AuthErrorCode.*;
+import static com.dnd.snappy.domain.token.exception.TokenErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
