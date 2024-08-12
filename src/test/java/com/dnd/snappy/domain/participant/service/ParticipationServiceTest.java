@@ -2,10 +2,12 @@ package com.dnd.snappy.domain.participant.service;
 
 import static org.mockito.BDDMockito.*;
 
+import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseDto;
 import com.dnd.snappy.domain.participant.dto.response.ParticipationResponseDto;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.token.dto.Tokens;
 import com.dnd.snappy.domain.token.service.TokenService;
+import java.time.LocalDateTime;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,20 +32,20 @@ class ParticipationServiceTest {
     @Test
     void participate() {
         //given
-        Long participantId = 1L;
+        CreateParticipantResponseDto createParticipantResponseDto = new CreateParticipantResponseDto(1L, LocalDateTime.now());
         Long meetingId = 2L;
         String nickname = "nickname";
         Role role = Role.LEADER;
         Tokens tokens = new Tokens("accessToken", "refreshToken");
-        given(participantService.createParticipant(meetingId, nickname, role)).willReturn(participantId);
-        given(tokenService.createTokens(participantId)).willReturn(tokens);
+        given(participantService.createParticipant(meetingId, nickname, role)).willReturn(createParticipantResponseDto);
+        given(tokenService.createTokens(createParticipantResponseDto.participantId())).willReturn(tokens);
 
         //when
         ParticipationResponseDto result = participationService.participate(meetingId, nickname, role);
 
         //then
-        Assertions.assertThat(result).isEqualTo(new ParticipationResponseDto(participantId, tokens.accessToken(), tokens.refreshToken()));
+        Assertions.assertThat(result).isEqualTo(new ParticipationResponseDto(createParticipantResponseDto.participantId(), createParticipantResponseDto.meetingExpiredDate(), tokens.accessToken(), tokens.refreshToken()));
         verify(participantService, timeout(1)).createParticipant(meetingId, nickname, role);
-        verify(tokenService, timeout(1)).createTokens(participantId);
+        verify(tokenService, timeout(1)).createTokens(createParticipantResponseDto.participantId());
     }
 }

@@ -6,6 +6,8 @@ import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
 import com.dnd.snappy.controller.v1.participant.response.ParticipationResponse;
 import com.dnd.snappy.domain.participant.service.ParticipationService;
 import jakarta.validation.Valid;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -37,11 +39,13 @@ public class ParticipantController {
                 participationRequestDto.role()
         );
 
-        //TODO: access token도 쿠키로
-        String cookie = cookieManager.createRefreshTokenCookie(response.refreshToken(), meetingId, "/api/", 3600L);
+        Duration duration = Duration.between(LocalDateTime.now(), response.meetingExpiredDate());
+        String accessTokenCookie = cookieManager.createAccessTokenCookie(response.accessToken(), meetingId, "/api/", duration);
+        String refreshTokenCookie = cookieManager.createRefreshTokenCookie(response.refreshToken(), meetingId, "/api/", duration);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie)
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie)
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
                 .body(new ResponseDto<>(
                         HttpStatus.OK.value(),
                         new ParticipationResponse(response.participantId(), response.accessToken()),
