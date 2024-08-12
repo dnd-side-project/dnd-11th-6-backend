@@ -17,6 +17,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 이 인터셉터가 적용될 경로 패턴 지정
         registry.addInterceptor(meetingParticipationInterceptor)
-                .addPathPatterns("/api/**/meeting/{meetingId}/**"); // /meeting/{meetingId} 하위 경로에 모두 적용
+                .addPathPatterns("/api/**/meetings/{meetingId}/**")
+                .excludePathPatterns("/api/**/meetings/{meetingId}/validate-password/**")
+                .excludePathPatterns("/api/**/meetings/{meetingId}/share"); // /meeting/{meetingId} 하위 경로에 모두 적용
     }
 }

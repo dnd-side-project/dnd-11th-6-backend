@@ -17,7 +17,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class MeetingParticipationInterceptor implements HandlerInterceptor {
 
-    public static final String PARTICIPATION_URL_PATTERN = "/api/.*/meeting/\\d+/participants";
+    public static final String PARTICIPATION_URL_PATTERN = "/api/.*/meetings/\\d+/participants";
 
     private final PathVariableExtractor pathVariableExtractor;
     private final JwtTokenExtractor jwtTokenExtractor;
