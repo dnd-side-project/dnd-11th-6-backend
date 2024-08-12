@@ -7,6 +7,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
@@ -35,18 +36,17 @@ public class AuthCookieManager {
                 .toString();
     }
 
-    public Cookie getCookie(HttpServletRequest request, TokenType tokenType, Long meetingId) {
+    public Optional<Cookie> getAuthCookie(HttpServletRequest request, TokenType tokenType, Long meetingId) {
         final String cookieName = authTokenCookieNameGenerator.generateCookieName(tokenType, meetingId);
 
         Cookie[] cookies = request.getCookies();
 
         if (cookies == null) {
-            return null;
+            return Optional.empty();
         }
 
         return Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(cookieName))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 }
