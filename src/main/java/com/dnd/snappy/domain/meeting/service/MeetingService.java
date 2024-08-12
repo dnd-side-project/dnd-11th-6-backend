@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -53,25 +54,27 @@ public class MeetingService {
         }
     }
 
-    @Transactional
-    public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto, MultipartFile thumbnail) {
-        String meetingLinkUuid = generateMeetingLink();
-        checkMeetingLinkDuplication(meetingLinkUuid);
-
-        String thumbnailUrl = getThumbnailUrl(thumbnail);
-
-        CreateMeetingEntityDto dto = CreateMeetingEntityDto.of(requestDto, thumbnailUrl, meetingLinkUuid);
-        Meeting meeting = Meeting.create(dto);
-
-        meetingRepository.save(meeting);
-        return new CreateMeetingResponseDto(meetingLinkUuid);
-    }
-
     @Transactional(readOnly = true)
     public ShareMeetingLinkResponseDto getShareableMeetingLink(Long meetingId) {
         Meeting meeting = findByMeetingIdOrThrow(meetingId);
         String meetingLink = meeting.getMeetingLink();
         return new ShareMeetingLinkResponseDto(meetingLink);
+    }
+
+    @Transactional
+    public CreateMeetingResponseDto createMeeting(CreateMeetingRequestDto requestDto, MultipartFile thumbnail) {
+        String meetingLinkUuid = generateMeetingLink();
+        String thumbnailUrl = getThumbnailUrl(thumbnail);
+
+        checkMeetingLinkDuplication(meetingLinkUuid);
+
+        String leaderAuthKey = generateLeaderAuthKey();
+
+        CreateMeetingEntityDto dto = CreateMeetingEntityDto.of(requestDto, thumbnailUrl, meetingLinkUuid, leaderAuthKey);
+        Meeting meeting = Meeting.create(dto);
+        meetingRepository.save(meeting);
+
+        return new CreateMeetingResponseDto(meeting);
     }
 
     private Meeting findByMeetingLinkOrThrow(String meetingLink) {
@@ -91,8 +94,7 @@ public class MeetingService {
     }
 
     private String generateMeetingLink() {
-        String uuid = UUID.randomUUID().toString();
-        return uuid.replace("-", "").substring(0, 7);
+        return UUID.randomUUID().toString().replace("-", "").substring(0, 7);
     }
 
     private String getThumbnailUrl(MultipartFile thumbnail) {
@@ -100,5 +102,9 @@ public class MeetingService {
             return imageUploader.upload(thumbnail);
         }
         return DEFAULT_THUMBNAIL_URL;
+    }
+
+    private static String generateLeaderAuthKey() {
+        return String.format("%04d", new Random().nextInt(10000));
     }
 }

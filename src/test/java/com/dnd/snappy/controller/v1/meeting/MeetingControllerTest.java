@@ -356,7 +356,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
                 "1234"
         );
 
@@ -377,8 +376,12 @@ class MeetingControllerTest extends RestDocsSupport {
                                 ),
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("생성된 모임 정보"),
-                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("생성된 모임 링크")
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("모임"),
+                                        fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("모임 링크"),
+                                        fieldWithPath("data.leaderAuthKey").type(JsonFieldType.STRING).description("모임 관리자 인증 키"),
+                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("모임 비밀번호"),
+                                        fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("모임 시작일"),
+                                        fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("모임 종료일")
                                 )
                         )
                 );
@@ -398,7 +401,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
                 "1234"
         );
 
@@ -436,12 +438,53 @@ class MeetingControllerTest extends RestDocsSupport {
         LocalDateTime endDate = startDate.minusDays(1);
 
         CreateMeetingRequestDto invalidEndDateDto = new CreateMeetingRequestDto(
-                "팀 회의",
-                "이번 주 프로젝트 진행 상황 공유",
+                "DND",
+                "DND 모임 입니다.",
                 startDate,
                 endDate,
-                "#FF5733",
-                "1234",
+                "#FFF",
+                "1234"
+        );
+
+        String meetingJson = objectMapper.writeValueAsString(invalidEndDateDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.multipart("/api/v1/meetings")
+                        .file(new MockMultipartFile("meeting", "meeting.json", MediaType.APPLICATION_JSON_VALUE, meetingJson.getBytes(StandardCharsets.UTF_8)))
+                        .file("thumbnail", new byte[0])
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                requestParts(
+                                        partWithName("meeting").description("모임 정보 JSON"),
+                                        partWithName("thumbnail").optional().description("모임 썸네일 (선택)")
+                                ),
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("생성된 모임 정보 (실패 시 null)"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("오류 정보"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러 코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).optional().description("에러 메시지")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임 생성 시 종료일이 시작일로부터 7일 이내여야 한다.")
+    @Test
+    void createMeeting_BAD_REQUEST_endDate_eightDaysLater() throws Exception {
+        // 현재 날짜 기준으로 5일 후 시작일, 시작일로부터 8일 후를 종료일로 설정
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = now.plusDays(5);
+        LocalDateTime endDate = startDate.plusDays(8);
+
+        CreateMeetingRequestDto invalidEndDateDto = new CreateMeetingRequestDto(
+                "DND",
+                "DND 모임 입니다.",
+                startDate,
+                endDate,
+                "#FFF",
                 "1234"
         );
 
@@ -480,7 +523,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2),
                 "",
-                "1234",
                 "1234"
         );
 
