@@ -1,7 +1,10 @@
 package com.dnd.snappy.controller.v1.auth;
 
+import static com.dnd.snappy.domain.auth.exception.AuthErrorCode.*;
+
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +27,7 @@ public class JwtTokenExtractor {
         final Long meetingId = getMeetingId(request);
         Cookie cookie = authCookieManager.getCookie(request, tokenType, meetingId);
         if(cookie == null) {
-            throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR);
+            throw new BusinessException(JWT_EXTRACT_ERROR);
         }
 
         return cookie.getValue();
@@ -33,7 +36,7 @@ public class JwtTokenExtractor {
     private Long getMeetingId(HttpServletRequest request) {
         final Map<String, String> pathVariables = (Map) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         if(pathVariables == null || Objects.isNull(pathVariables.get(PATH_VARIABLE_KEY))) {
-            throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR, "No path variables meetingId found in request");
+            throw new BusinessException(JWT_EXTRACT_ERROR, "No path variables meetingId found in request");
         }
         return Long.parseLong(pathVariables.get(PATH_VARIABLE_KEY));
     }

@@ -1,9 +1,11 @@
 package com.dnd.snappy.domain.token.service;
 
+import static com.dnd.snappy.domain.auth.exception.AuthErrorCode.*;
 import static com.dnd.snappy.domain.token.service.TokenType.*;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.token.dto.Tokens;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -67,11 +69,11 @@ public class TokenProvider {
         }
         catch (ExpiredJwtException e) {
             log.warn("[TokenProvider - ExpiredJwtException] {} ", e.getMessage());
-            throw new BusinessException(CommonErrorCode.JWT_EXPIRED_ERROR);
+            throw new BusinessException(JWT_EXPIRED_ERROR);
         }
         catch (JwtException | IllegalArgumentException e) {
             log.warn("[TokenProvider - JwtException or IllegalArgumentException] {} ", e.getMessage());
-            throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR);
+            throw new BusinessException(JWT_EXTRACT_ERROR);
         }
     }
 
@@ -84,7 +86,7 @@ public class TokenProvider {
         }
         catch (JwtException | IllegalArgumentException e) {
             log.warn("[TokenProvider - JwtException or IllegalArgumentException] {} ", e.getMessage());
-            throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR);
+            throw new BusinessException(JWT_EXTRACT_ERROR);
         }
     }
 
