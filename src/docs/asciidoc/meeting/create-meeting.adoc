@@ -23,6 +23,8 @@ include::{snippets}/meeting-controller-test/create-meeting_validation_error/http
 include::{snippets}/meeting-controller-test/create-meeting_bad_request_start-date/http-response.adoc[]
 ===== c. 종료일은 시작일 이내로 설정 시 예외가 발생합니다.
 include::{snippets}/meeting-controller-test/create-meeting_bad_request_end-date/http-response.adoc[]
+===== d. 종료일은 시작일로부터 7일 초과하여 설정 시 예외가 발생합니다.
+include::{snippets}/meeting-controller-test/create-meeting_bad_request_end-date_eight-days-later/http-response.adoc[]
 
 ==== 참고
 ==== 모임 상태 설명

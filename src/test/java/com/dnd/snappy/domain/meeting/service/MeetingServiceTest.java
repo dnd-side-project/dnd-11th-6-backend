@@ -158,7 +158,6 @@ class MeetingServiceTest {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
                 "1234"
         );
 
@@ -168,6 +167,7 @@ class MeetingServiceTest {
         // Then
         assertNotNull(responseDto);
         assertThat(responseDto.meetingLink());
+        assertThat(responseDto.leaderAuthKey());
 
         verify(meetingRepository).existsByMeetingLink(anyString());
         verify(meetingRepository).save(any(Meeting.class));
@@ -187,7 +187,6 @@ class MeetingServiceTest {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
                 "1234"
         );
 
@@ -212,7 +211,6 @@ class MeetingServiceTest {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
                 "1234"
         );
 
@@ -236,7 +234,29 @@ class MeetingServiceTest {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
+                "1234"
+        );
+
+        // When & Then
+        assertThatThrownBy(() -> meetingService.createMeeting(requestDto, null))
+                .isInstanceOf(BusinessException.class)
+                .hasMessageStartingWith(CommonErrorCode.BAD_REQUEST.getMessage());
+    }
+
+    @DisplayName("종료일이 시작일로부터 7일 이내가 아닌 경우 예외 발생")
+    @Test
+    void createMeeting_BAD_REQUEST_endDate_eightDaysLater() {
+        // Given
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startDate = now.plusDays(1);
+        LocalDateTime endDate = startDate.plusDays(8);
+
+        CreateMeetingRequestDto requestDto = new CreateMeetingRequestDto(
+                "DND",
+                "DND 모임 입니다.",
+                startDate,
+                endDate,
+                "#FFF",
                 "1234"
         );
 
