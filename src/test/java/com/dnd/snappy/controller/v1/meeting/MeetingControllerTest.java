@@ -356,7 +356,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
                 "1234"
         );
 
@@ -398,7 +397,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 startDate,
                 endDate,
                 "#FFF",
-                "1234",
                 "1234"
         );
 
@@ -441,7 +439,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 startDate,
                 endDate,
                 "#FF5733",
-                "1234",
                 "1234"
         );
 
@@ -480,7 +477,6 @@ class MeetingControllerTest extends RestDocsSupport {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(2),
                 "",
-                "1234",
                 "1234"
         );
 

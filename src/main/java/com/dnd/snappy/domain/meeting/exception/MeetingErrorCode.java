@@ -14,7 +14,7 @@ public enum MeetingErrorCode implements ErrorCodeInterface {
     MEETING_INVALIDATE_PASSWORD(HttpStatus.BAD_REQUEST, "MEETING_INVALIDATE_PASSWORD", "모임의 비밀번호가 유효하지 않습니다."),
     MEETING_JOIN_DENIED(HttpStatus.FORBIDDEN, "MEETING_JOIN_DENIED", "이미 끝난 모임에는 참여할 수 없습니다."),
     DUPLICATION_MEETING_LINK(HttpStatus.CONFLICT, "DUPLICATION_MEETING_LINK", "모임 링크가 중복되었습니다."),
-    ;
+    DUPLICATION_LEADER_AUTH_KEY(HttpStatus.CONFLICT,"DUPLICATION_LEADER_AUTH_KEY" ,"모임장 비밀번호가 중복되었습니다.");
 
     private final HttpStatus status;
 

@@ -10,10 +10,10 @@ public record CreateMeetingEntityDto(
         String thumbnailUrl,
         String symbolColor,
         String password,
-        String leaderAuthKey,
-        String meetingLink
+        String meetingLink,
+        String leaderAuthKey
 ) {
-    public static CreateMeetingEntityDto of(CreateMeetingRequestDto requestDto, String thumbnailUrl, String meetingLink) {
+    public static CreateMeetingEntityDto of(CreateMeetingRequestDto requestDto, String thumbnailUrl, String meetingLink, String leaderAuthKey) {
         return new CreateMeetingEntityDto(
                 requestDto.name(),
                 requestDto.startDate(),
@@ -22,9 +22,8 @@ public record CreateMeetingEntityDto(
                 thumbnailUrl,
                 requestDto.symbolColor(),
                 requestDto.password(),
-                requestDto.leaderAuthKey(),
-                meetingLink
+                meetingLink,
+                leaderAuthKey
         );
     }
 }
-
