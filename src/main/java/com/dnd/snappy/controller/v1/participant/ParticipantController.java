@@ -1,7 +1,7 @@
 package com.dnd.snappy.controller.v1.participant;
 
 import com.dnd.snappy.common.dto.ResponseDto;
-import com.dnd.snappy.controller.v1.auth.CookieManager;
+import com.dnd.snappy.controller.v1.auth.AuthCookieManager;
 import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
 import com.dnd.snappy.controller.v1.participant.response.ParticipationResponse;
 import com.dnd.snappy.domain.participant.service.ParticipationService;
@@ -25,7 +25,7 @@ public class ParticipantController {
 
     private final ParticipationService participationService;
 
-    private final CookieManager cookieManager;
+    private final AuthCookieManager cookieManager;
 
     @PostMapping
     public ResponseEntity<ResponseDto<ParticipationResponse>> participateMeeting(

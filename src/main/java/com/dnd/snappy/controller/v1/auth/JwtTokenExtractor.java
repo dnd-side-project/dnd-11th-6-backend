@@ -2,36 +2,45 @@ package com.dnd.snappy.controller.v1.auth;
 
 import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.HandlerMapping;
 
 @Component
 public class JwtTokenExtractor {
 
-    private static final String PREFIX_BEARER = "Bearer ";
-    private static final String ACCESS_TOKEN_HEADER = HttpHeaders.AUTHORIZATION;
+    private static final String PATH_VARIABLE_KEY = "meetingId";
+
+    private final AuthTokenCookieNameGenerator authTokenCookieNameGenerator;
+
+    public JwtTokenExtractor(AuthTokenCookieNameGenerator authTokenCookieNameGenerator) {
+        this.authTokenCookieNameGenerator = authTokenCookieNameGenerator;
+    }
 
     public String extractAccessToken(final HttpServletRequest request) {
-        final String accessToken = request.getHeader(ACCESS_TOKEN_HEADER);
-        if (isValid(accessToken)) {
-            return accessToken.substring(PREFIX_BEARER.length());
-        }
-        final String logMessage = "인증 실패(액세스 토큰 추출 실패) - 토큰 : " + accessToken;
-        throw new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR, logMessage);
+        final Long meetingId = getMeetingId(request);
+        String accessTokenCookieName = authTokenCookieNameGenerator.generateAccessToken(meetingId);
+
+        Cookie accessTokenCookie = getCookie(request, accessTokenCookieName);
+
+        return accessTokenCookie.getValue();
     }
 
-    public Optional<String> extractOptionalAccessToken(final HttpServletRequest request) {
-        final String accessToken = request.getHeader(ACCESS_TOKEN_HEADER);
-        if (isValid(accessToken)) {
-            return Optional.of(accessToken.substring(PREFIX_BEARER.length()));
-        }
-        return Optional.empty();
+    private Long getMeetingId(HttpServletRequest request) {
+        final Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
+        return Long.parseLong(pathVariables.get(PATH_VARIABLE_KEY));
     }
 
-    private static boolean isValid(String accessToken) {
-        return StringUtils.hasText(accessToken) && accessToken.startsWith(PREFIX_BEARER);
+    private Cookie getCookie(HttpServletRequest request, String cookieName) {
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(cookieName))
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(CommonErrorCode.JWT_EXTRACT_ERROR));
     }
 }
