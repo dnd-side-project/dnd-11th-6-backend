@@ -22,18 +22,7 @@ public class AuthCookieManager {
     private final AuthTokenCookieNameGenerator authTokenCookieNameGenerator;
 
     public String createTokenCookie(TokenType tokenType, String value, Long meetingId, Duration duration) {
-        return createCookie(authTokenCookieNameGenerator.generateCookieName(tokenType, meetingId), value, PATH, duration);
-    }
-
-    private String createCookie(String name, String value, String path, Duration duration) {
-        return ResponseCookie.from(name, value)
-                .httpOnly(true)
-                .secure(true)
-                .path(path)
-                .sameSite(SAME_SITE_OPTION)
-                .maxAge(duration)
-                .build()
-                .toString();
+        return createCookie(authTokenCookieNameGenerator.generateCookieName(tokenType, meetingId), value, duration);
     }
 
     public Optional<Cookie> getAuthCookie(HttpServletRequest request, TokenType tokenType, Long meetingId) {
@@ -48,5 +37,16 @@ public class AuthCookieManager {
         return Arrays.stream(cookies)
                 .filter(cookie -> cookie.getName().equals(cookieName))
                 .findFirst();
+    }
+
+    private String createCookie(String name, String value, Duration duration) {
+        return ResponseCookie.from(name, value)
+                .httpOnly(true)
+                .secure(true)
+                .path(PATH)
+                .sameSite(SAME_SITE_OPTION)
+                .maxAge(duration)
+                .build()
+                .toString();
     }
 }
