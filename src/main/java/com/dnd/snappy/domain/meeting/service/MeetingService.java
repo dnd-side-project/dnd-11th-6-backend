@@ -69,7 +69,6 @@ public class MeetingService {
         checkMeetingLinkDuplication(meetingLinkUuid);
 
         String leaderAuthKey = generateLeaderAuthKey();
-        checkLeaderAuthKeyDuplication(leaderAuthKey);
 
         CreateMeetingEntityDto dto = CreateMeetingEntityDto.of(requestDto, thumbnailUrl, meetingLinkUuid, leaderAuthKey);
         Meeting meeting = Meeting.create(dto);
@@ -91,12 +90,6 @@ public class MeetingService {
     private void checkMeetingLinkDuplication(String meetingLink) {
         if (meetingRepository.existsByMeetingLink(meetingLink)) {
             throw new DuplicationException(DUPLICATION_MEETING_LINK);
-        }
-    }
-
-    private void checkLeaderAuthKeyDuplication(String leaderAuthKey) {
-        if (meetingRepository.existsByLeaderAuthKey(leaderAuthKey)) {
-            throw new DuplicationException(DUPLICATION_LEADER_AUTH_KEY);
         }
     }
 

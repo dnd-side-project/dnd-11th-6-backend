@@ -71,8 +71,8 @@ public class Meeting extends BaseEntity {
                 .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "시작일은 현재 시간 이후부터 10일 이내여야 합니다."));
 
         Optional.ofNullable(endDate)
-                .filter(date -> !date.isBefore(startDate) && !date.isAfter(startDate.plusDays(7)))
-                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후이어야 하며, 시작일로부터 최대 7일까지만 입력 가능합니다."));
+                .filter(date -> date.isAfter(startDate) && !date.isAfter(startDate.plusDays(7)))
+                .orElseThrow(() -> new BusinessException(CommonErrorCode.BAD_REQUEST, "종료일은 시작일 이후여야 하며, 시작일로부터 최대 7일까지만 입력 가능합니다."));
     }
 
     public MeetingLinkStatus getMeetingLinkStatus() {
