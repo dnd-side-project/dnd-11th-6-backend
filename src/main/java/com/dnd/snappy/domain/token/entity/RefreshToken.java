@@ -34,4 +34,8 @@ public class RefreshToken {
                 .ttl(ttl)
                 .build();
     }
+
+    public boolean equalsToken(String token) {
+        return this.token.equals(token);
+    }
 }

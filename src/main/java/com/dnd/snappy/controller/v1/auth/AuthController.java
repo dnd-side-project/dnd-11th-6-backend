@@ -1,12 +1,11 @@
-package com.dnd.snappy.controller.v1.participant;
+package com.dnd.snappy.controller.v1.auth;
 
 import com.dnd.snappy.common.dto.ResponseDto;
+import com.dnd.snappy.controller.v1.auth.resolver.ReissueAuthInfo;
+import com.dnd.snappy.controller.v1.auth.resolver.ReissueToken;
 import com.dnd.snappy.domain.auth.service.AuthCookieManager;
-import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
-import com.dnd.snappy.controller.v1.participant.response.ParticipationResponse;
-import com.dnd.snappy.domain.participant.service.ParticipationService;
+import com.dnd.snappy.domain.auth.service.AuthService;
 import com.dnd.snappy.domain.token.service.TokenType;
-import jakarta.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -15,30 +14,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/meetings/{meetingId}/participants")
 @RequiredArgsConstructor
-public class ParticipantController {
+@RequestMapping("/api/v1")
+public class AuthController {
 
-    private final ParticipationService participationService;
-
+    private final AuthService authService;
     private final AuthCookieManager authCookieManager;
 
-    @PostMapping
-    public ResponseEntity<ResponseDto<ParticipationResponse>> participateMeeting(
+    @PostMapping("/meetings/{meetingId}/tokens/reissue")
+    public ResponseEntity<?> reissueToken(
             @PathVariable Long meetingId,
-            @Valid @RequestBody ParticipationRequest participationRequestDto
+            @ReissueToken ReissueAuthInfo authInfo
     ) {
-
-        var response = participationService.participate(
-                meetingId,
-                participationRequestDto.nickname(),
-                participationRequestDto.role()
-        );
+        var response = authService.reissueTokens(meetingId, authInfo.participantId(), authInfo.refreshToken());
 
         Duration duration = Duration.between(LocalDateTime.now(), response.meetingExpiredDate());
         String accessTokenCookie = authCookieManager.createTokenCookie(TokenType.ACCESS_TOKEN, response.accessToken(), meetingId, duration);
@@ -49,7 +41,7 @@ public class ParticipantController {
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
                 .body(new ResponseDto<>(
                         HttpStatus.OK.value(),
-                        new ParticipationResponse(response.participantId(), response.accessToken()),
+                        null,
                         null
                 ));
     }

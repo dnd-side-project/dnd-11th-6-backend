@@ -18,6 +18,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(meetingParticipationInterceptor)
                 .addPathPatterns("/api/**/meetings/{meetingId}/**")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/validate-password/**")
-                .excludePathPatterns("/api/**/meetings/{meetingId}/share");
+                .excludePathPatterns("/api/**/meetings/{meetingId}/share")
+                .excludePathPatterns("/api/**/meetings/{meetingId}/tokens/reissue");
     }
 }
