@@ -15,7 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-public class ReissueTokenArgumentResolver implements HandlerMethodArgumentResolver {
+public class TokenRefreshArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final PathVariableExtractor pathVariableExtractor;
     private final JwtTokenExtractor jwtTokenExtractor;
@@ -23,7 +23,7 @@ public class ReissueTokenArgumentResolver implements HandlerMethodArgumentResolv
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.hasParameterAnnotation(ReissueToken.class);
+        return parameter.hasParameterAnnotation(RefreshAuthPrincipal.class);
     }
 
     @Override
@@ -32,6 +32,6 @@ public class ReissueTokenArgumentResolver implements HandlerMethodArgumentResolv
         final Long meetingId = pathVariableExtractor.extractMeetingId(request);
         final String token = jwtTokenExtractor.extractToken(request, meetingId, TokenType.REFRESH_TOKEN);
         final Long participantId = tokenProvider.extractPayload(token);
-        return new ReissueAuthInfo(participantId, token);
+        return new RefreshAuthInfo(participantId, token);
     }
 }

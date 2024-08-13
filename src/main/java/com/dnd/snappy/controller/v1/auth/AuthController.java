@@ -1,8 +1,8 @@
 package com.dnd.snappy.controller.v1.auth;
 
 import com.dnd.snappy.common.dto.ResponseDto;
-import com.dnd.snappy.controller.v1.auth.resolver.ReissueAuthInfo;
-import com.dnd.snappy.controller.v1.auth.resolver.ReissueToken;
+import com.dnd.snappy.controller.v1.auth.resolver.RefreshAuthInfo;
+import com.dnd.snappy.controller.v1.auth.resolver.RefreshAuthPrincipal;
 import com.dnd.snappy.domain.auth.service.AuthCookieManager;
 import com.dnd.snappy.domain.auth.service.AuthService;
 import com.dnd.snappy.domain.token.service.TokenType;
@@ -25,10 +25,10 @@ public class AuthController {
     private final AuthService authService;
     private final AuthCookieManager authCookieManager;
 
-    @PostMapping("/meetings/{meetingId}/tokens/reissue")
+    @PostMapping("/meetings/{meetingId}/tokens/refresh")
     public ResponseEntity<?> reissueToken(
             @PathVariable Long meetingId,
-            @ReissueToken ReissueAuthInfo authInfo
+            @RefreshAuthPrincipal RefreshAuthInfo authInfo
     ) {
         var response = authService.reissueTokens(meetingId, authInfo.participantId(), authInfo.refreshToken());
 

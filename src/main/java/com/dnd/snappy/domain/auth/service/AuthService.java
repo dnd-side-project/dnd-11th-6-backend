@@ -5,6 +5,7 @@ import com.dnd.snappy.domain.auth.dto.response.ReissueTokenResponseDto;
 import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.service.MeetingService;
+import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
 import com.dnd.snappy.domain.token.dto.Tokens;
 import com.dnd.snappy.domain.token.service.TokenService;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +17,16 @@ public class AuthService {
 
     private final TokenService tokenService;
     private final MeetingService meetingService;
+    private final ParticipantRepository participantRepository;
 
     public ReissueTokenResponseDto reissueTokens(Long meetingId, Long participantId, String token) {
         if(!tokenService.equalsToken(participantId, token)) {
             throw new BusinessException(AuthErrorCode.FORBIDDEN);
         }
         Meeting meeting = meetingService.findByMeetingIdOrThrow(meetingId);
+        if(!participantRepository.existsByIdAndMeetingId(participantId, meetingId)) {
+            throw new BusinessException(AuthErrorCode.FORBIDDEN);
+        }
         Tokens tokens = tokenService.createTokens(participantId);
         return new ReissueTokenResponseDto(
                 tokens.accessToken(),

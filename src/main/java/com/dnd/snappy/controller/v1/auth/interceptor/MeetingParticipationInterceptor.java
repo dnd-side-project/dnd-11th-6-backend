@@ -1,6 +1,7 @@
 package com.dnd.snappy.controller.v1.auth.interceptor;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.auth.service.JwtTokenExtractor;
 import com.dnd.snappy.domain.auth.service.PathVariableExtractor;
 import com.dnd.snappy.domain.participant.exception.ParticipantErrorCode;
@@ -40,7 +41,7 @@ public class MeetingParticipationInterceptor implements HandlerInterceptor {
 
     private void validationParticipantInMeeting(Long participantId, Long meetingId) {
         if(!participantRepository.existsByIdAndMeetingId(participantId, meetingId)) {
-            throw new BusinessException(ParticipantErrorCode.NOT_PARTICIPATING_MEETING);
+            throw new BusinessException(AuthErrorCode.FORBIDDEN);
         }
     }
 

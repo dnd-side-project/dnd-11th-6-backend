@@ -1,11 +1,11 @@
 package com.dnd.snappy.controller.v1.auth.interceptor;
 
 import static com.dnd.snappy.domain.auth.exception.AuthErrorCode.UNAUTHORIZED;
-import static com.dnd.snappy.domain.participant.exception.ParticipantErrorCode.NOT_PARTICIPATING_MEETING;
 import static com.dnd.snappy.domain.token.exception.TokenErrorCode.JWT_EXTRACT_ERROR;
 import static org.assertj.core.api.Assertions.*;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.auth.service.AuthTokenCookieNameGenerator;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
@@ -150,7 +150,7 @@ class MeetingParticipationInterceptorTest extends IntegrationTestSupport {
         //when & then
         assertThatThrownBy(() -> meetingParticipationInterceptor.preHandle(request, null, null))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(NOT_PARTICIPATING_MEETING.getMessage());
+                .hasMessageContaining(AuthErrorCode.FORBIDDEN.getMessage());
 
     }
 
