@@ -15,7 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-public class ParticipantArgumentResolver implements HandlerMethodArgumentResolver {
+public class AuthInfoArgumentResolver implements HandlerMethodArgumentResolver {
 
     private final PathVariableExtractor pathVariableExtractor;
     private final JwtTokenExtractor jwtTokenExtractor;
@@ -29,9 +29,9 @@ public class ParticipantArgumentResolver implements HandlerMethodArgumentResolve
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        Long meetingId = pathVariableExtractor.extractMeetingId(request);
+        final Long meetingId = pathVariableExtractor.extractMeetingId(request);
         final String token = jwtTokenExtractor.extractToken(request, meetingId, TokenType.ACCESS_TOKEN);
-        Long participantId = tokenProvider.extractPayload(token);
+        final Long participantId = tokenProvider.extractPayload(token);
         return new AuthInfo(participantId);
     }
 }

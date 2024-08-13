@@ -1,8 +1,10 @@
 package com.dnd.snappy.domain.auth.service;
 
+import static com.dnd.snappy.domain.auth.exception.AuthErrorCode.*;
 import static com.dnd.snappy.domain.token.exception.TokenErrorCode.*;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +19,7 @@ public class JwtTokenExtractor {
 
     public String extractToken(final HttpServletRequest request, Long meetingId, TokenType tokenType) {
         Cookie cookie = authCookieManager.getAuthCookie(request, tokenType, meetingId)
-                .orElseThrow(() -> new BusinessException(JWT_EXTRACT_ERROR));
+                .orElseThrow(() -> new BusinessException(UNAUTHORIZED));
 
         return cookie.getValue();
     }

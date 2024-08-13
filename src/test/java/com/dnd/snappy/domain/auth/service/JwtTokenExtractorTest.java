@@ -3,6 +3,7 @@ package com.dnd.snappy.domain.auth.service;
 import static org.assertj.core.api.Assertions.*;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.token.exception.TokenErrorCode;
 import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.servlet.http.Cookie;
@@ -54,7 +55,7 @@ class JwtTokenExtractorTest {
         //when & then
         assertThatThrownBy(() -> sut.extractToken(request, meetingId, tokenType))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(TokenErrorCode.JWT_EXTRACT_ERROR.getMessage());
+                .hasMessageContaining(AuthErrorCode.UNAUTHORIZED.getMessage());
 
     }
 }
