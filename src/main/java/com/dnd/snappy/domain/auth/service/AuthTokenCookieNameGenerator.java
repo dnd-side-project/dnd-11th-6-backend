@@ -1,4 +1,4 @@
-package com.dnd.snappy.controller.v1.auth;
+package com.dnd.snappy.domain.auth.service;
 
 import com.dnd.snappy.domain.token.service.TokenType;
 import org.springframework.stereotype.Component;

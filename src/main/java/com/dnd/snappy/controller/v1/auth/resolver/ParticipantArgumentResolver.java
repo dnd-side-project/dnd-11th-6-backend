@@ -1,7 +1,7 @@
-package com.dnd.snappy.controller.v1.participant.resolver;
+package com.dnd.snappy.controller.v1.auth.resolver;
 
-import com.dnd.snappy.controller.v1.auth.JwtTokenExtractor;
-import com.dnd.snappy.controller.v1.auth.PathVariableExtractor;
+import com.dnd.snappy.domain.auth.service.JwtTokenExtractor;
+import com.dnd.snappy.domain.auth.service.PathVariableExtractor;
 import com.dnd.snappy.domain.token.service.TokenProvider;
 import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.servlet.http.HttpServletRequest;

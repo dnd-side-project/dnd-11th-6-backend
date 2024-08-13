@@ -1,4 +1,4 @@
-package com.dnd.snappy.controller.v1.auth;
+package com.dnd.snappy.domain.auth.service;
 
 import static com.dnd.snappy.domain.token.exception.TokenErrorCode.*;
 

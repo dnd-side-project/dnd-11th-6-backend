@@ -1,7 +1,6 @@
-package com.dnd.snappy.common.config;
+package com.dnd.snappy.controller.v1.auth.interceptor;
 
 
-import com.dnd.snappy.controller.v1.auth.interceptor.MeetingParticipationInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -9,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebConfig implements WebMvcConfigurer {
+public class InterceptorConfig implements WebMvcConfigurer {
 
     private final MeetingParticipationInterceptor meetingParticipationInterceptor;
 
@@ -19,6 +18,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(meetingParticipationInterceptor)
                 .addPathPatterns("/api/**/meetings/{meetingId}/**")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/validate-password/**")
-                .excludePathPatterns("/api/**/meetings/{meetingId}/share"); // /meeting/{meetingId} 하위 경로에 모두 적용
+                .excludePathPatterns("/api/**/meetings/{meetingId}/share");
     }
 }

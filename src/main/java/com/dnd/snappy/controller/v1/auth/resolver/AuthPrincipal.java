@@ -1,4 +1,4 @@
-package com.dnd.snappy.controller.v1.participant.resolver;
+package com.dnd.snappy.controller.v1.auth.resolver;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
