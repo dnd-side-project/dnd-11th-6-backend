@@ -63,8 +63,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
-                                        fieldWithPath("data.participantId").type(JsonFieldType.NUMBER).description("참여자 id"),
-                                        fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("인증에 사용하는 accessToken")
+                                        fieldWithPath("data.participantId").type(JsonFieldType.NUMBER).description("참여자 id")
                                 ),
                                 responseCookies(
                                         cookieWithName("ACCESS_TOKEN_"  +meeting.getId()).description("인증에 사용되는 accessToken"),
