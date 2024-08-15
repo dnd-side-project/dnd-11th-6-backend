@@ -1,6 +1,8 @@
 package com.dnd.snappy.controller.v1.auth.resolver;
 
+import com.dnd.snappy.domain.auth.dto.response.TokenInfo;
 import com.dnd.snappy.domain.auth.service.JwtTokenExtractor;
+import com.dnd.snappy.domain.auth.service.JwtTokenStrategy;
 import com.dnd.snappy.domain.auth.service.PathVariableExtractor;
 import com.dnd.snappy.domain.token.service.TokenProvider;
 import com.dnd.snappy.domain.token.service.TokenType;
@@ -17,9 +19,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class TokenRefreshArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final PathVariableExtractor pathVariableExtractor;
-    private final JwtTokenExtractor jwtTokenExtractor;
-    private final TokenProvider tokenProvider;
+    private final JwtTokenStrategy jwtTokenStrategy;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -29,9 +29,7 @@ public class TokenRefreshArgumentResolver implements HandlerMethodArgumentResolv
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        final Long meetingId = pathVariableExtractor.extractMeetingId(request);
-        final String token = jwtTokenExtractor.extractToken(request, meetingId, TokenType.REFRESH_TOKEN);
-        final Long participantId = tokenProvider.extractPayload(token);
-        return new RefreshAuthInfo(participantId, token);
+        TokenInfo tokenInfo = jwtTokenStrategy.process(request, TokenType.REFRESH_TOKEN);
+        return new RefreshAuthInfo(tokenInfo.payload(), tokenInfo.token());
     }
 }

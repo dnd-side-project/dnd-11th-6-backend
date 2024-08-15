@@ -1,8 +1,10 @@
 package com.dnd.snappy.controller.v1.auth.interceptor;
 
 import com.dnd.snappy.common.error.exception.BusinessException;
+import com.dnd.snappy.domain.auth.dto.response.TokenInfo;
 import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
 import com.dnd.snappy.domain.auth.service.JwtTokenExtractor;
+import com.dnd.snappy.domain.auth.service.JwtTokenStrategy;
 import com.dnd.snappy.domain.auth.service.PathVariableExtractor;
 import com.dnd.snappy.domain.participant.exception.ParticipantErrorCode;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
@@ -21,8 +23,7 @@ public class MeetingParticipationInterceptor implements HandlerInterceptor {
     public static final String PARTICIPATION_URL_PATTERN = "/api/.*/meetings/\\d+/participants";
 
     private final PathVariableExtractor pathVariableExtractor;
-    private final JwtTokenExtractor jwtTokenExtractor;
-    private final TokenProvider tokenProvider;
+    private final JwtTokenStrategy jwtTokenStrategy;
     private final ParticipantRepository participantRepository;
 
     @Override
@@ -32,9 +33,8 @@ public class MeetingParticipationInterceptor implements HandlerInterceptor {
         }
 
         final Long meetingId = pathVariableExtractor.extractMeetingId(request);
-        final String token = jwtTokenExtractor.extractToken(request, meetingId, TokenType.ACCESS_TOKEN);
-        final Long participantId = tokenProvider.extractPayload(token);
-        validationParticipantInMeeting(participantId, meetingId);
+        TokenInfo tokenInfo = jwtTokenStrategy.process(request, TokenType.ACCESS_TOKEN);
+        validationParticipantInMeeting(tokenInfo.payload(), meetingId);
 
         return true;
     }
