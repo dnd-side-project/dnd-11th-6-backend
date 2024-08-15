@@ -123,12 +123,8 @@ class MeetingServiceTest {
     }
 
     @DisplayName("모임의 관리자 인증키가 맞지 않다면 예외가 발생한다.")
-    @ParameterizedTest
-    @CsvSource({
-            "wrong password, leaderAuthKey",
-            "password, wrong leaderAuthKey"
-    })
-    void isCorrectMeetingPassword_invalidLeaderAuthKey(String requestPassword, String requestLeaderAuthKey) {
+    @Test
+    void isCorrectMeetingPassword_invalidLeaderAuthKey() {
         //given
         Long meetingId = 1L;
         String password = "password";
@@ -138,9 +134,9 @@ class MeetingServiceTest {
         given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
 
         //when //then
-        assertThatThrownBy(() -> meetingService.validateMeetingLeaderAuthKey(meetingId, requestPassword, requestLeaderAuthKey))
+        assertThatThrownBy(() -> meetingService.validateMeetingLeaderAuthKey(meetingId, "wrong leaderAuthKey"))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageStartingWith(MeetingErrorCode.MEETING_INVALIDATE_PASSWORD.getMessage());
+                .hasMessageStartingWith(MeetingErrorCode.MEETING_INVALIDATE_AUTH_KEY.getMessage());
 
     }
 
