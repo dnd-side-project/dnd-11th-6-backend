@@ -8,6 +8,8 @@ endif::[]
 :toc: left
 :toclevels: 2
 
+include::auth/auth.adoc[]
+
 include::meeting/meeting.adoc[]
 
 include::participant/participant.adoc[]

@@ -89,6 +89,10 @@ public class Meeting extends BaseEntity {
         }
     }
 
+    public LocalDateTime getExpiredDate() {
+        return endDate.plusDays(7);
+    }
+
     public boolean isCorrectPassword(String password) {
         return this.password.equals(password);
     }

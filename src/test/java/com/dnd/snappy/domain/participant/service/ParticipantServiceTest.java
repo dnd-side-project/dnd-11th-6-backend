@@ -9,6 +9,7 @@ import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
+import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseDto;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
@@ -45,9 +46,10 @@ class ParticipantServiceTest {
         given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
 
         //when
-        participantService.createParticipant(meetingId, nickname, role);
+        CreateParticipantResponseDto result = participantService.createParticipant(meetingId, nickname, role);
 
         //then
+        assertThat(result.meetingExpiredDate()).isEqualTo(meeting.getExpiredDate());
         verify(participantRepository, times(1)).save(any(Participant.class));
     }
 

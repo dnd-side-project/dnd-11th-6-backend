@@ -7,9 +7,11 @@ import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
+import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseDto;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ public class ParticipantService {
     private final ParticipantRepository participantRepository;
 
     @Transactional
-    public Long createParticipant(Long meetingId, String nickname, Role role) {
+    public CreateParticipantResponseDto createParticipant(Long meetingId, String nickname, Role role) {
         validationCreateParticipant(meetingId, nickname);
 
         Meeting meeting = meetingRepository.findById(meetingId)
@@ -34,7 +36,7 @@ public class ParticipantService {
         Participant participant = Participant.create(nickname, role, meeting);
         participantRepository.save(participant);
 
-        return participant.getId();
+        return new CreateParticipantResponseDto(participant.getId(), meeting.getExpiredDate());
     }
 
     private void validationCreateParticipant(Long meetingId, String nickname) {

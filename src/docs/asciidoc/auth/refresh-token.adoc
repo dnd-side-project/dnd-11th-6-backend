@@ -1,0 +1,23 @@
+=== 토큰 재발급
+==== 성공
+Request
+include::{snippets}/auth-controller-test/reissue_token/http-request.adoc[]
+include::{snippets}/auth-controller-test/reissue_token/path-parameters.adoc[]
+Request Cookie
+include::{snippets}/auth-controller-test/reissue_token/request-cookies.adoc[]
+
+Response
+include::{snippets}/auth-controller-test/reissue_token/http-response.adoc[]
+Response Cookie
+include::{snippets}/auth-controller-test/reissue_token/response-cookies.adoc[]
+
+
+==== 실패
+===== `요청 쿠키로 refresh token이 없는경우`
+include::{snippets}/auth-controller-test/reissue_token_with_no_refresh_token_is_fail/response-body.adoc[]
+
+===== `요청 쿠키로 유효기간이 끝난 refresh token을 주는 경우`
+include::{snippets}/auth-controller-test/reissue_token_with_expired_refresh_token_is_fail/response-body.adoc[]
+
+==== `참가자가 속하지 않은 모임에 재발급 요청을 한 경우`
+include::{snippets}/auth-controller-test/reissue_token_with_other_meeting_refresh_token_is_fail/response-body.adoc[]

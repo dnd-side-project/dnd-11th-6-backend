@@ -67,6 +67,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.accessToken").type(JsonFieldType.STRING).description("인증에 사용하는 accessToken")
                                 ),
                                 responseCookies(
+                                        cookieWithName("ACCESS_TOKEN_"  +meeting.getId()).description("인증에 사용되는 accessToken"),
                                         cookieWithName("REFRESH_TOKEN_"  +meeting.getId()).description("accessToken 재발급을 위한 refreshToken")
                                 )
                         )

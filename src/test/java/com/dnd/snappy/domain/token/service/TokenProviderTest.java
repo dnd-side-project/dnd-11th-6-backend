@@ -1,8 +1,8 @@
 package com.dnd.snappy.domain.token.service;
 
+import static com.dnd.snappy.domain.token.exception.TokenErrorCode.*;
 import static org.assertj.core.api.Assertions.*;
 
-import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.token.dto.Tokens;
 import org.junit.jupiter.api.DisplayName;
@@ -55,7 +55,7 @@ class TokenProviderTest {
         //when //then
         assertThatThrownBy(() -> tokenProvider.extractPayload(token))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(CommonErrorCode.JWT_EXPIRED_ERROR.getMessage());
+                .hasMessageContaining(JWT_EXPIRED_ERROR.getMessage());
     }
 
     @DisplayName("토큰을 추출힐때, 토큰이 비어있다면 예외를 발생시킨다.")
@@ -68,7 +68,7 @@ class TokenProviderTest {
         //when //then
         assertThatThrownBy(() -> tokenProvider.extractPayload(token))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(CommonErrorCode.JWT_EXTRACT_ERROR.getMessage());
+                .hasMessageContaining(JWT_EXTRACT_ERROR.getMessage());
     }
 
     @DisplayName("토큰을 추출힐때, 유효하지 않은 토큰이라면 예외를 발생시킨다.")
@@ -81,7 +81,7 @@ class TokenProviderTest {
         //when //then
         assertThatThrownBy(() -> tokenProvider.extractPayload(token))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(CommonErrorCode.JWT_EXTRACT_ERROR.getMessage());
+                .hasMessageContaining(JWT_EXTRACT_ERROR.getMessage());
     }
 
     @DisplayName("토큰을 추출하여 participantId를 가져온다.")
@@ -122,7 +122,7 @@ class TokenProviderTest {
         //when //then
         assertThatThrownBy(() -> tokenProvider.extractPayloadIgnoringExpiration(token))
                 .isInstanceOf(BusinessException.class)
-                .hasMessageContaining(CommonErrorCode.JWT_EXTRACT_ERROR.getMessage());
+                .hasMessageContaining(JWT_EXTRACT_ERROR.getMessage());
     }
 
 }

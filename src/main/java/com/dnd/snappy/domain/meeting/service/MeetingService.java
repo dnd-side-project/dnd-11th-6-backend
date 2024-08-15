@@ -82,7 +82,7 @@ public class MeetingService {
                 .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
     }
 
-    private Meeting findByMeetingIdOrThrow(Long meetingId) {
+    public Meeting findByMeetingIdOrThrow(Long meetingId) {
         return meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
     }

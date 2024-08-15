@@ -1,11 +1,14 @@
 package com.dnd.snappy.controller.v1.participant;
 
 import com.dnd.snappy.common.dto.ResponseDto;
-import com.dnd.snappy.controller.v1.auth.CookieManager;
+import com.dnd.snappy.domain.auth.service.AuthCookieManager;
 import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
 import com.dnd.snappy.controller.v1.participant.response.ParticipationResponse;
 import com.dnd.snappy.domain.participant.service.ParticipationService;
+import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.validation.Valid;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +26,7 @@ public class ParticipantController {
 
     private final ParticipationService participationService;
 
-    private final CookieManager cookieManager;
+    private final AuthCookieManager authCookieManager;
 
     @PostMapping
     public ResponseEntity<ResponseDto<ParticipationResponse>> participateMeeting(
@@ -37,11 +40,13 @@ public class ParticipantController {
                 participationRequestDto.role()
         );
 
-        //TODO: access token도 쿠키로
-        String cookie = cookieManager.createRefreshTokenCookie(response.refreshToken(), meetingId, "/api/", 3600L);
+        Duration duration = Duration.between(LocalDateTime.now(), response.meetingExpiredDate());
+        String accessTokenCookie = authCookieManager.createTokenCookie(TokenType.ACCESS_TOKEN, response.accessToken(), meetingId, duration);
+        String refreshTokenCookie = authCookieManager.createTokenCookie(TokenType.REFRESH_TOKEN, response.refreshToken(), meetingId, duration);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie)
+                .header(HttpHeaders.SET_COOKIE, accessTokenCookie)
+                .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
                 .body(new ResponseDto<>(
                         HttpStatus.OK.value(),
                         new ParticipationResponse(response.participantId(), response.accessToken()),

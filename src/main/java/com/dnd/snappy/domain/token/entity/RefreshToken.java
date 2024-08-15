@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.TimeToLive;
 @RedisHash(value = "refreshToken")
 public class RefreshToken {
     @Id
-    private Long memberId;
+    private Long id;
 
     private String token;
 
@@ -21,17 +21,21 @@ public class RefreshToken {
     private Long ttl;
 
     @Builder
-    private RefreshToken(Long memberId, String token, Long ttl) {
-        this.memberId = memberId;
+    private RefreshToken(Long id, String token, Long ttl) {
+        this.id = id;
         this.token = token;
         this.ttl = ttl;
     }
 
-    public static RefreshToken create(Long memberId, String token, Long ttl) {
+    public static RefreshToken create(Long id, String token, Long ttl) {
         return RefreshToken.builder()
-                .memberId(memberId)
+                .id(id)
                 .token(token)
                 .ttl(ttl)
                 .build();
+    }
+
+    public boolean equalsToken(String token) {
+        return this.token.equals(token);
     }
 }

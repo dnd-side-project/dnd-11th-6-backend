@@ -1,5 +1,6 @@
 package com.dnd.snappy.domain.participant.service;
 
+import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseDto;
 import com.dnd.snappy.domain.token.dto.Tokens;
 import com.dnd.snappy.domain.participant.dto.response.ParticipationResponseDto;
 import com.dnd.snappy.domain.participant.entity.Role;
@@ -22,11 +23,12 @@ public class ParticipationService {
             String nickname,
             Role role
     ) {
-        Long participantId = participantService.createParticipant(meetingId, nickname, role);
-        Tokens tokens = tokenService.createTokens(participantId);
+        CreateParticipantResponseDto createParticipantResponseDto = participantService.createParticipant(meetingId, nickname, role);
+        Tokens tokens = tokenService.createTokens(createParticipantResponseDto.participantId());
 
         return new ParticipationResponseDto(
-                participantId,
+                createParticipantResponseDto.participantId(),
+                createParticipantResponseDto.meetingExpiredDate(),
                 tokens.accessToken(),
                 tokens.refreshToken()
         );
