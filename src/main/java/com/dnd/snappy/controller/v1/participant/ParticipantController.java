@@ -49,7 +49,7 @@ public class ParticipantController {
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
                 .body(new ResponseDto<>(
                         HttpStatus.OK.value(),
-                        new ParticipationResponse(response.participantId(), response.accessToken()),
+                        new ParticipationResponse(response.participantId()),
                         null
                 ));
     }
