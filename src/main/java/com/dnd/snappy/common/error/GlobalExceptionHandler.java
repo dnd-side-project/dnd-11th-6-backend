@@ -19,6 +19,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RuntimeException.class)
+    protected ResponseEntity<ResponseDto<?>> handleBusinessException(
+            final RuntimeException e,
+            final HttpServletRequest request
+    ) {
+        log.error("RuntimeException: {} {}", e.getMessage(), request.getRequestURL());
+        return ResponseDto.fail(CommonErrorCode.INTERNAL_SERVER_ERROR.toErrorCode());
+    }
+
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ResponseDto<?>> handleBusinessException(
             final BusinessException e,

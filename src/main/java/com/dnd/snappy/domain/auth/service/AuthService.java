@@ -21,11 +21,11 @@ public class AuthService {
 
     public ReissueTokenResponseDto reissueTokens(Long meetingId, Long participantId, String token) {
         if(!tokenService.equalsToken(participantId, token)) {
-            throw new BusinessException(AuthErrorCode.FORBIDDEN);
+            throw new BusinessException(AuthErrorCode.FORBIDDEN, "유효하지 않은 토큰입니다.");
         }
         Meeting meeting = meetingService.findByMeetingIdOrThrow(meetingId);
         if(!participantRepository.existsByIdAndMeetingId(participantId, meetingId)) {
-            throw new BusinessException(AuthErrorCode.FORBIDDEN);
+            throw new BusinessException(AuthErrorCode.FORBIDDEN, "참여중인 모임이 아닙니다.");
         }
         Tokens tokens = tokenService.createTokens(participantId);
         return new ReissueTokenResponseDto(
