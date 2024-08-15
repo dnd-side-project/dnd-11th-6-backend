@@ -46,11 +46,11 @@ public class MeetingService {
     }
 
     @Transactional(readOnly = true)
-    public void validateMeetingLeaderAuthKey(Long meetingId, String password, String leaderAuthKey) {
+    public void validateMeetingLeaderAuthKey(Long meetingId, String leaderAuthKey) {
         Meeting meeting = findByMeetingIdOrThrow(meetingId);
 
-        if(!meeting.isLeaderAuthKeyValid(password, leaderAuthKey)) {
-            throw new BusinessException(MEETING_INVALIDATE_PASSWORD);
+        if(!meeting.isCorrectLeaderAuthKey(leaderAuthKey)) {
+            throw new BusinessException(MEETING_INVALIDATE_AUTH_KEY);
         }
     }
 

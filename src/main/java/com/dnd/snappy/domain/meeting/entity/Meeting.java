@@ -97,8 +97,8 @@ public class Meeting extends BaseEntity {
         return this.password.equals(password);
     }
 
-    public boolean isLeaderAuthKeyValid(String password, String leaderAuthKey) {
-        return isCorrectPassword(password) && this.leaderAuthKey.equals(leaderAuthKey);
+    public boolean isCorrectLeaderAuthKey(String leaderAuthKey) {
+        return this.leaderAuthKey.equals(leaderAuthKey);
     }
 
     public boolean canJoinMeeting() {
