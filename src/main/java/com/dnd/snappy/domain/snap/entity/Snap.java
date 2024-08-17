@@ -48,7 +48,7 @@ public class Snap extends BaseEntity {
 
     public static Snap createSnap(Meeting meeting, Participant participant, String snapUrl, LocalDateTime shootDate) {
         meeting.validateCanShoot();
-        participant.validateCanShoot();
+        participant.addShootCount();
         return Snap.builder()
                 .meeting(meeting)
                 .participant(participant)
