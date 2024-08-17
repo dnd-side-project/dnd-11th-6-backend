@@ -2,6 +2,7 @@ package com.dnd.snappy.domain.snap.entity;
 
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
+import com.dnd.snappy.domain.mission.entity.RandomMission;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.mission.entity.Mission;
 import jakarta.persistence.Column;
@@ -32,6 +33,10 @@ public class Snap extends BaseEntity {
     private Meeting meeting;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mission_id", nullable = false)
+    @JoinColumn(name = "mission_id")
     private Mission mission;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "random_mission_id")
+    private RandomMission randomMission;
 }
