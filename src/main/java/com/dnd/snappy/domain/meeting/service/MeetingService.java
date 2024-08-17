@@ -77,14 +77,19 @@ public class MeetingService {
         return new CreateMeetingResponseDto(meeting);
     }
 
-    private Meeting findByMeetingLinkOrThrow(String meetingLink) {
-        return meetingRepository.findByMeetingLink(meetingLink)
-                .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
+    public MeetingDetailResponseDto findMeetingDetailById(Long meetingId) {
+        Meeting meeting = findByMeetingIdOrThrow(meetingId);
+        return new MeetingDetailResponseDto(meeting);
     }
 
     public Meeting findByMeetingIdOrThrow(Long meetingId) {
         return meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
+    }
+
+    private Meeting findByMeetingLinkOrThrow(String meetingLink) {
+        return meetingRepository.findByMeetingLink(meetingLink)
+                .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
     }
 
     private void checkMeetingLinkDuplication(String meetingLink) {

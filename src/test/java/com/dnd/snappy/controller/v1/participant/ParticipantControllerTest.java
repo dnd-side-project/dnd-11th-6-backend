@@ -9,6 +9,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dnd.snappy.controller.v1.participant.request.ParticipationRequest;
@@ -58,7 +59,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                                 ),
                                 requestFields(
                                         fieldWithPath("nickname").type(JsonFieldType.STRING).description("모임에 사용할 닉네임"),
-                                        fieldWithPath("role").type(JsonFieldType.STRING).description("모임의 권한 (LEADER | PARTICIPANT)")
+                                        fieldWithPath("role").type(JsonFieldType.STRING).attributes(key("format").value("LEADER(리더) | PARTICIPANT(참가자)")).description("사용자 권한")
                                 ),
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
