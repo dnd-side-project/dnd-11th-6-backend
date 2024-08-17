@@ -1,0 +1,9 @@
+=== 랜덤 미션 전체 조회
+
+==== 성공
+===== Request
+include::{snippets}/random-mission-controller-test/find-random-missions/http-request.adoc[]
+
+===== Response
+include::{snippets}/random-mission-controller-test/find-random-missions/http-response.adoc[]
+include::{snippets}/random-mission-controller-test/find-random-missions/response-fields.adoc[]
