@@ -32,7 +32,7 @@ public class SnapController {
             @RequestPart("snap") @Valid CreateSnapRequest createSnapshotRequest,
             @RequestPart("file") MultipartFile snap
     ) {
-        var data = snapService.createSnap(meetingId, authInfo.participantId(), snap, createSnapshotRequest.shootDate());
+        var data = snapService.createSimpleSnap(meetingId, authInfo.participantId(), snap, createSnapshotRequest.shootDate());
         return ResponseDto.created(data);
     }
 }
