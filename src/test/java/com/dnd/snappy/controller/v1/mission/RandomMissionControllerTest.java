@@ -31,7 +31,7 @@ class RandomMissionControllerTest extends RestDocsSupport {
         appendRandomMissions();
 
         mockMvc.perform(
-                        get("/api/v1/random-mission")
+                        get("/api/v1/random-missions")
                 )
                 .andExpect(status().isOk())
                 .andDo(
