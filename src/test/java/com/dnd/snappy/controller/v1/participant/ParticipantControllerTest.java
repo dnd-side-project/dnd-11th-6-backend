@@ -158,7 +158,7 @@ class ParticipantControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
 
         mockMvc.perform(
-                        get("/api/v1/meetings/{meetingId}/participants/me", meeting.getId())
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/participants/me", meeting.getId())
                                 .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -168,6 +168,10 @@ class ParticipantControllerTest extends RestDocsSupport {
                                 requestCookies(
                                         cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증에 사용되는 access token")
                                 ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                )
+                                ,
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("참가자 세부정보"),
