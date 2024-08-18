@@ -470,7 +470,7 @@ class MeetingControllerTest extends RestDocsSupport {
                 "",
                 "",
                 LocalDateTime.now().plusDays(1),
-                LocalDateTime.now().plusDays(2),
+                null,
                 "",
                 "1234"
         );

@@ -4,6 +4,7 @@ import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
+import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;

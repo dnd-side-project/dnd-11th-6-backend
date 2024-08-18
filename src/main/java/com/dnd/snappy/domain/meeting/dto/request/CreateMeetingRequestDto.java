@@ -18,11 +18,10 @@ public record CreateMeetingRequestDto(
         String description,
 
         @NotNull(message = "시작일은 필수 입력값입니다.")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime startDate,
 
-        @NotNull(message = "종료일은 필수 입력값입니다.")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
         LocalDateTime endDate,
 
         @NotBlank(message = "컬러칩 코드는 필수 입력값입니다.")

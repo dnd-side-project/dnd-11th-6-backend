@@ -1,6 +1,7 @@
 package com.dnd.snappy.domain.meeting.dto.request;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 public record CreateMeetingEntityDto(
         String name,
@@ -17,13 +18,13 @@ public record CreateMeetingEntityDto(
         return new CreateMeetingEntityDto(
                 requestDto.name(),
                 requestDto.startDate(),
-                requestDto.endDate(),
+                Optional.ofNullable(requestDto.endDate()).orElse(requestDto.startDate().plusDays(1)),
                 requestDto.description(),
                 thumbnailUrl,
                 requestDto.symbolColor(),
                 requestDto.password(),
-                meetingLink,
-                leaderAuthKey
+                leaderAuthKey,
+                meetingLink
         );
     }
 }
