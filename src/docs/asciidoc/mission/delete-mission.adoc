@@ -1,0 +1,17 @@
+=== 모임 미션 삭제
+==== 성공
+===== Request
+
+include::{snippets}/mission-controller-test/delete-mission/http-request.adoc[]
+include::{snippets}/mission-controller-test/delete-mission/path-parameters.adoc[]
+
+===== Response
+include::{snippets}/mission-controller-test/delete-mission/http-response.adoc[]
+include::{snippets}/mission-controller-test/delete-mission/response-fields.adoc[]
+
+==== 실패
+`모임 리더가 아닌 사용자가 미션 삭제하려 할 때 실패한다.`
+include::{snippets}/mission-controller-test/delete-mission_unauthorized_mission/http-response.adoc[]
+
+`존재하지 않는 미션을 삭제하려 할 때 실패한다.`
+include::{snippets}/mission-controller-test/delete-mission_mission_not_found/http-response.adoc[]

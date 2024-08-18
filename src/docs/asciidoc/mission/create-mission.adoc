@@ -1,0 +1,20 @@
+=== 모임 미션 생성
+==== 성공
+===== Request
+include::{snippets}/mission-controller-test/create-mission/http-request.adoc[]
+include::{snippets}/mission-controller-test/create-mission/path-parameters.adoc[]
+
+===== Request Body
+include::{snippets}/mission-controller-test/create-mission/request-body.adoc[]
+include::{snippets}/mission-controller-test/create-mission/request-fields.adoc[]
+
+===== Response
+include::{snippets}/mission-controller-test/create-mission/http-response.adoc[]
+include::{snippets}/mission-controller-test/create-mission/response-fields.adoc[]
+
+==== 실패
+`미션 내용 유효성 검증 (3자 ~ 20자)`
+include::{snippets}/mission-controller-test/create-mission_invalid_input/http-response.adoc[]
+
+`모임 리더가 아닌 사용자가 미션을 생성하려 할 때 실패한다.`
+include::{snippets}/mission-controller-test/create-mission_unauthorized_mission/http-response.adoc[]

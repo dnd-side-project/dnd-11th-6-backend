@@ -1,0 +1,27 @@
+=== 모임 미션 수정
+==== 성공
+===== Request
+
+include::{snippets}/mission-controller-test/modify-mission/http-request.adoc[]
+include::{snippets}/mission-controller-test/modify-mission/path-parameters.adoc[]
+
+===== Request Body
+include::{snippets}/mission-controller-test/modify-mission/request-body.adoc[]
+include::{snippets}/mission-controller-test/modify-mission/request-fields.adoc[]
+
+===== Response
+include::{snippets}/mission-controller-test/modify-mission/http-response.adoc[]
+include::{snippets}/mission-controller-test/modify-mission/response-fields.adoc[]
+
+==== 실패
+`모임 리더가 아닌 사용자가 미션 수정하려 할 때 실패한다.`
+include::{snippets}/mission-controller-test/modify-mission_unauthorized_mission/http-response.adoc[]
+
+`존재하지 않는 미션을 수정하려 할 때 실패한다.`
+include::{snippets}/mission-controller-test/modify-mission_mission_not_found/http-response.adoc[]
+
+`미션에 참여자가 있어 수정할 수 없는 경우 실패한다.`
+include::{snippets}/mission-controller-test/modify-mission_mission_has_participants/http-response.adoc[]
+
+`미션 내용을 변경하지 않고 수정 요청 시 실패한다."`
+include::{snippets}/mission-controller-test/modify-mission_mission_content_unchanged/http-response.adoc[]
