@@ -1,13 +1,11 @@
 package com.dnd.snappy.controller.v1.snap;
 
-import com.amazonaws.services.ec2.model.CreateSnapshotRequest;
 import com.dnd.snappy.common.dto.ResponseDto;
 import com.dnd.snappy.controller.v1.auth.resolver.AuthInfo;
 import com.dnd.snappy.controller.v1.auth.resolver.AuthPrincipal;
 import com.dnd.snappy.controller.v1.snap.request.CreateSnapRequest;
-import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.snap.dto.response.CreateSnapResponseDto;
-import com.dnd.snappy.domain.snap.service.SnapService;
+import com.dnd.snappy.domain.snap.service.SimpleSnapService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +21,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class SnapController {
 
-    private final SnapService snapService;
+    private final SimpleSnapService simpleSnapService;
 
-    @PostMapping
-    public ResponseEntity<ResponseDto<CreateSnapResponseDto>> createSnap(
+    @PostMapping("/simple")
+    public ResponseEntity<ResponseDto<CreateSnapResponseDto>> createSimpleSnap(
             @PathVariable("meetingId") Long meetingId,
             @AuthPrincipal AuthInfo authInfo,
             @RequestPart("snap") @Valid CreateSnapRequest createSnapshotRequest,
             @RequestPart("file") MultipartFile snap
     ) {
-        var data = snapService.createSimpleSnap(meetingId, authInfo.participantId(), snap, createSnapshotRequest.shootDate());
+        var data = simpleSnapService.create(meetingId, authInfo.participantId(), snap, createSnapshotRequest.shootDate());
         return ResponseDto.created(data);
     }
 }
