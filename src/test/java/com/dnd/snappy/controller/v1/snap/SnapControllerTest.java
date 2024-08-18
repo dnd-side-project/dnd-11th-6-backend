@@ -18,7 +18,9 @@ import com.dnd.snappy.controller.v1.snap.request.CreateSnapRequest;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.mission.entity.Mission;
+import com.dnd.snappy.domain.mission.entity.MissionParticipant;
 import com.dnd.snappy.domain.mission.entity.RandomMission;
+import com.dnd.snappy.domain.mission.repository.MissionParticipantRepository;
 import com.dnd.snappy.domain.mission.repository.MissionRepository;
 import com.dnd.snappy.domain.mission.repository.RandomMissionRepository;
 import com.dnd.snappy.domain.participant.entity.Participant;
@@ -54,6 +56,9 @@ class SnapControllerTest extends RestDocsSupport {
 
     @Autowired
     private MissionRepository missionRepository;
+
+    @Autowired
+    private MissionParticipantRepository missionParticipantRepository;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -284,23 +289,6 @@ class SnapControllerTest extends RestDocsSupport {
 
     }
 
-    private Meeting appendMeeting(LocalDateTime startDate, LocalDateTime endDate) {
-        Meeting meeting = Meeting.builder()
-                .name("DND")
-                .description("DND 모임 입니다.")
-                .symbolColor("#FFF")
-                .thumbnailUrl("thumbnailUrl")
-                .startDate(startDate)
-                .endDate(endDate)
-                .meetingLink("meetingLink")
-                .password("password")
-                .leaderAuthKey("adminPassword")
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        return meetingRepository.save(meeting);
-    }
-
     @DisplayName("모임 미션을 수행한 Snap 을 등록한다.")
     @Test
     void createMeetingMissionSnap() throws Exception {
@@ -451,6 +439,58 @@ class SnapControllerTest extends RestDocsSupport {
 
     }
 
+    @DisplayName("이미 완료한 모임 미션인 경우 예외 발생")
+    @Test
+    void createMeetingMissionSnap_already_completed_mission() throws Exception {
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        Participant participant = appendParticipant(meeting, "jaja", 10);
+        Mission mission = appendMission(meeting);
+        appendMissionParticipant(mission, participant);
+        String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
+        CreateMeetingMissionSnapRequest createSnapRequest = new CreateMeetingMissionSnapRequest(mission.getId(), LocalDateTime.now());
+        String request = objectMapper.writeValueAsString(createSnapRequest);
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
+        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/meeting-mission", meeting.getId())
+                                .file(new MockMultipartFile("snap", "snap.json", MediaType.APPLICATION_JSON_VALUE, request.getBytes(StandardCharsets.UTF_8)))
+                                .file(image)
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("공유 가능한 모임 링크"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                )
+                        )
+                );
+
+    }
+
+    private Meeting appendMeeting(LocalDateTime startDate, LocalDateTime endDate) {
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(startDate)
+                .endDate(endDate)
+                .meetingLink("meetingLink")
+                .password("password")
+                .leaderAuthKey("adminPassword")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        return meetingRepository.save(meeting);
+    }
+
     private Participant appendParticipant(Meeting meeting, String nickname, int shootCount) {
         Participant participant = Participant.builder()
                 .nickname(nickname)
@@ -470,6 +510,11 @@ class SnapControllerTest extends RestDocsSupport {
     private Mission appendMission(Meeting meeting) {
         Mission mission = Mission.builder().content("test mission content").meeting(meeting).build();
         return missionRepository.save(mission);
+    }
+
+    private MissionParticipant appendMissionParticipant(Mission mission, Participant participant) {
+        MissionParticipant missionParticipant = MissionParticipant.builder().mission(mission).participant(participant).build();
+        return missionParticipantRepository.save(missionParticipant);
     }
 
 

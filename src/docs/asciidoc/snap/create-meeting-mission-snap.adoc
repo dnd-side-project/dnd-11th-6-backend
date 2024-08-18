@@ -31,3 +31,6 @@ include::{snippets}/snap-controller-test/create-meeting-mission-snap_exceed_max_
 
 `참여자가 참여한 모임에 요청으로 보낸 미션 ID가 없을때 예외 발생`
 include::{snippets}/snap-controller-test/create-meeting-mission-snap_not_participation_mission/response-body.adoc[]
+
+`참여자가 이미 수행한 모임 미션일때 예외 발생`
+include::{snippets}/snap-controller-test/create-meeting-mission-snap_already_completed_mission/response-body.adoc[]
