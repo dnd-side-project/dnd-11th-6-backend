@@ -31,5 +31,13 @@ public class Mission extends BaseEntity {
                 .meeting(meeting)
                 .build();
     }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public boolean belongsToMeeting(Long meetingId) {
+        return this.meeting.getId().equals(meetingId);
+    }
 }
 

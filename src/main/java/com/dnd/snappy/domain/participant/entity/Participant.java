@@ -45,7 +45,7 @@ public class Participant extends BaseEntity {
                 .build();
     }
 
-    public boolean isLeader() {
-        return this.role == Role.LEADER;
+    public boolean isLeader(Long meetingId) {
+        return this.role == Role.LEADER && this.meeting.getId().equals(meetingId);
     }
 }
