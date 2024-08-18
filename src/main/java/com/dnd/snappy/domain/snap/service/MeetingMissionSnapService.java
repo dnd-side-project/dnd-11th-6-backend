@@ -33,18 +33,21 @@ public class MeetingMissionSnapService {
     @Transactional
     public CreateSnapResponseDto create(Long meetingId, Long participantId, Long missionId, MultipartFile file, LocalDateTime shootDate) {
         SnapSetupDto snapSetupDto = snapSetupManager.setup(meetingId, participantId, file);
-        Mission mission = missionRepository.findByIdAndMeetingId(missionId, meetingId)
-                .orElseThrow(() -> new NotFoundException(MissionErrorCode.NOT_FOUND_MEETING_MISSION, missionId));
+        Mission mission = findMissionOrThrow(meetingId, missionId);
         if(missionParticipantRepository.existsByMissionIdAndParticipantId(missionId, participantId)) {
             throw new BusinessException(MissionErrorCode.ALREADY_COMPLETED_MEETING_MISSION);
         }
         Snap snap = MeetingMissionSnap.create(snapSetupDto.snapUrl(), shootDate, snapSetupDto.meeting(), snapSetupDto.participant(), mission);
         snapRepository.save(snap);
         missionParticipantRepository.save(MissionParticipant.create(mission, snapSetupDto.participant()));
-
         return new CreateSnapResponseDto(
                 snap.getId(),
                 snap.getSnapUrl()
         );
+    }
+
+    private Mission findMissionOrThrow(Long meetingId, Long missionId) {
+        return missionRepository.findByIdAndMeetingId(missionId, meetingId)
+                .orElseThrow(() -> new NotFoundException(MissionErrorCode.NOT_FOUND_MEETING_MISSION, missionId));
     }
 }

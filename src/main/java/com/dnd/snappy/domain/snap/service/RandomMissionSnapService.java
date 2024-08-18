@@ -28,8 +28,7 @@ public class RandomMissionSnapService {
     @Transactional
     public CreateSnapResponseDto create(Long meetingId, Long participantId, Integer randomMissionId, MultipartFile file, LocalDateTime shootDate) {
         SnapSetupDto snapSetupDto = snapSetupManager.setup(meetingId, participantId, file);
-        RandomMission randomMission = randomMissionRepository.findById(randomMissionId)
-                .orElseThrow(() -> new NotFoundException(MissionErrorCode.NOT_FOUND_RANDOM_MISSION, randomMissionId));
+        RandomMission randomMission = findRandomMissionOrThrow(randomMissionId);
 
         Snap snap = RandomMissionSnap.create(snapSetupDto.snapUrl(), shootDate, snapSetupDto.meeting(), snapSetupDto.participant(), randomMission);
         snapRepository.save(snap);
@@ -38,5 +37,10 @@ public class RandomMissionSnapService {
                 snap.getId(),
                 snap.getSnapUrl()
         );
+    }
+
+    private RandomMission findRandomMissionOrThrow(Integer randomMissionId) {
+        return randomMissionRepository.findById(randomMissionId)
+                .orElseThrow(() -> new NotFoundException(MissionErrorCode.NOT_FOUND_RANDOM_MISSION, randomMissionId));
     }
 }
