@@ -30,9 +30,9 @@ class AuthCookieManagerTest {
         String name = authTokenCookieNameGenerator.generateCookieName(tokenType, 1L);
         ResponseCookie expectedCookie = ResponseCookie.from(name, "token")
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/api/")
-                .sameSite("None")
+                .sameSite("Strict")
                 .maxAge(duration)
                 .build();
         assertThat(result).isEqualTo(expectedCookie.toString());

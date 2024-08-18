@@ -115,8 +115,8 @@ class MissionParticipantControllerTest extends RestDocsSupport {
                                 ),
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                        fieldWithPath("data").type(JsonFieldType.ARRAY).description("참여자가 완료한 모임 미션들"),
-                                        fieldWithPath("data[].missionId").type(JsonFieldType.NUMBER).description("완료한 모임 미션 ID"),
+                                        fieldWithPath("data").type(JsonFieldType.ARRAY).description("참여자가 완료하지 않은 모임 미션들"),
+                                        fieldWithPath("data[].missionId").type(JsonFieldType.NUMBER).description("완료하지 않은 모임 미션 ID"),
                                         fieldWithPath("data[].content").type(JsonFieldType.STRING).description("미션 내용")
                                 )
                         )

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class AuthCookieManager {
 
     private static final String PATH = "/api/";
-    private static final String SAME_SITE_OPTION = "None";
+    private static final String SAME_SITE_OPTION = "Strict";
 
     private final AuthTokenCookieNameGenerator authTokenCookieNameGenerator;
 
@@ -40,7 +40,7 @@ public class AuthCookieManager {
     private String createCookie(String name, String value, Duration duration) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false) //http 적용전 임시
                 .path(PATH)
                 .sameSite(SAME_SITE_OPTION)
                 .maxAge(duration)

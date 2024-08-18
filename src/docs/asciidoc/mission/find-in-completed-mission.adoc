@@ -1,0 +1,11 @@
+=== 참가자(인증토큰을 가진 사용자)가 수행하지 않은 모임 미션 조회
+
+==== 성공
+===== Request
+include::{snippets}/mission-participant-controller-test/find-not-completed-missions/http-request.adoc[]
+include::{snippets}/mission-participant-controller-test/find-not-completed-missions/path-parameters.adoc[]
+===== Request Cookie
+include::{snippets}/mission-participant-controller-test/find-not-completed-missions/request-cookies.adoc[]
+===== Response
+include::{snippets}/mission-participant-controller-test/find-not-completed-missions/http-response.adoc[]
+include::{snippets}/mission-participant-controller-test/find-not-completed-missions/response-fields.adoc[]
