@@ -3,8 +3,10 @@ package com.dnd.snappy.controller.v1.snap;
 import com.dnd.snappy.common.dto.ResponseDto;
 import com.dnd.snappy.controller.v1.auth.resolver.AuthInfo;
 import com.dnd.snappy.controller.v1.auth.resolver.AuthPrincipal;
+import com.dnd.snappy.controller.v1.snap.request.CreateRandomMissionSnapRequest;
 import com.dnd.snappy.controller.v1.snap.request.CreateSnapRequest;
 import com.dnd.snappy.domain.snap.dto.response.CreateSnapResponseDto;
+import com.dnd.snappy.domain.snap.service.RandomMissionSnapService;
 import com.dnd.snappy.domain.snap.service.SimpleSnapService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class SnapController {
 
     private final SimpleSnapService simpleSnapService;
+    private final RandomMissionSnapService randomMissionSnapService;
 
     @PostMapping("/simple")
     public ResponseEntity<ResponseDto<CreateSnapResponseDto>> createSimpleSnap(
@@ -31,6 +34,17 @@ public class SnapController {
             @RequestPart("image") MultipartFile snap
     ) {
         var data = simpleSnapService.create(meetingId, authInfo.participantId(), snap, createSnapshotRequest.shootDate());
+        return ResponseDto.created(data);
+    }
+
+    @PostMapping("/random-mission")
+    public ResponseEntity<ResponseDto<CreateSnapResponseDto>> createRandomMissionSnap(
+            @PathVariable("meetingId") Long meetingId,
+            @AuthPrincipal AuthInfo authInfo,
+            @RequestPart("snap") @Valid CreateRandomMissionSnapRequest createRandomMissionSnapRequest,
+            @RequestPart("image") MultipartFile snap
+    ) {
+        var data = randomMissionSnapService.create(meetingId, authInfo.participantId(), createRandomMissionSnapRequest.randomMissionId(), snap, createRandomMissionSnapRequest.shootDate());
         return ResponseDto.created(data);
     }
 }

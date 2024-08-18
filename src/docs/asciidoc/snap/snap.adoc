@@ -2,3 +2,5 @@
 == Snap API
 
 include::create-simple-snap.adoc[]
+
+include::create-random-mission-snap.adoc[]

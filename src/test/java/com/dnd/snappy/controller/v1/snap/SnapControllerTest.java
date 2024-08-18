@@ -12,9 +12,12 @@ import static org.springframework.restdocs.request.RequestDocumentation.requestP
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dnd.snappy.controller.v1.snap.request.CreateRandomMissionSnapRequest;
 import com.dnd.snappy.controller.v1.snap.request.CreateSnapRequest;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
+import com.dnd.snappy.domain.mission.entity.RandomMission;
+import com.dnd.snappy.domain.mission.repository.RandomMissionRepository;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
@@ -42,6 +45,9 @@ class SnapControllerTest extends RestDocsSupport {
 
     @Autowired
     private ParticipantRepository participantRepository;
+
+    @Autowired
+    private RandomMissionRepository randomMissionRepository;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -157,6 +163,121 @@ class SnapControllerTest extends RestDocsSupport {
 
     }
 
+    @DisplayName("랜덤 미션을 수행한 Snap 을 등록한다.")
+    @Test
+    void createRandomMissionSnap() throws Exception {
+        RandomMission randomMission = appendRandomMission();
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        Participant participant = appendParticipant(meeting, "jaja", 0);
+        String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
+        CreateRandomMissionSnapRequest createSnapRequest = new CreateRandomMissionSnapRequest(randomMission.getId(), LocalDateTime.now());
+        String request = objectMapper.writeValueAsString(createSnapRequest);
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
+        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/random-mission", meeting.getId())
+                                .file(new MockMultipartFile("snap", "snap.json", MediaType.APPLICATION_JSON_VALUE, request.getBytes(StandardCharsets.UTF_8)))
+                                .file(image)
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isCreated())
+                .andDo(
+                        restDocs.document(
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                requestParts(
+                                        partWithName("snap").description("JSON 형태의 snap 정보"),
+                                        partWithName("image").description("업로드할 이미지 파일")
+                                ),
+                                requestPartFields("snap",
+                                        fieldWithPath("randomMissionId").type(JsonFieldType.NUMBER).description("수행한 랜덤 미션 ID"),
+                                        fieldWithPath("shootDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-ddTHH:mm")).description("사진 촬영 시간")
+                                ),
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
+                                        fieldWithPath("data.snapId").type(JsonFieldType.NUMBER).description("생성된 snap ID"),
+                                        fieldWithPath("data.snapUrl").type(JsonFieldType.STRING).description("snap 이미지 url")
+                                )
+                        )
+                );
+
+    }
+
+    @DisplayName("랜덤 미션을 수행한 사진을 등록할때 모임이 진행중이 아니라면 예외가 발생한다.")
+    @Test
+    void createRandomMissionSnap_meeting_not_in_progress() throws Exception {
+        RandomMission randomMission = appendRandomMission();
+        Meeting meeting = appendMeeting(LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(2));
+        Participant participant = appendParticipant(meeting, "jaja", 0);
+        String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
+        CreateRandomMissionSnapRequest createSnapRequest = new CreateRandomMissionSnapRequest(randomMission.getId(), LocalDateTime.now());
+        String request = objectMapper.writeValueAsString(createSnapRequest);
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
+        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/random-mission", meeting.getId())
+                                .file(new MockMultipartFile("snap", "snap.json", MediaType.APPLICATION_JSON_VALUE, request.getBytes(StandardCharsets.UTF_8)))
+                                .file(image)
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isForbidden())
+                .andDo(
+                        restDocs.document(
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("공유 가능한 모임 링크"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                )
+                        )
+                );
+
+    }
+
+    @DisplayName("랜덤 미션을 수행한 사진을 등록할때 참여자의 촬영 횟수가 최대치를 넘었으면 예외가 발생한다.")
+    @Test
+    void createRandomMissionSnap_exceed_max_shoot_count() throws Exception {
+        RandomMission randomMission = appendRandomMission();
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(2));
+        Participant participant = appendParticipant(meeting, "jaja", 10);
+        String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
+        CreateRandomMissionSnapRequest createSnapRequest = new CreateRandomMissionSnapRequest(randomMission.getId(), LocalDateTime.now());
+        String request = objectMapper.writeValueAsString(createSnapRequest);
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
+        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/random-mission", meeting.getId())
+                                .file(new MockMultipartFile("snap", "snap.json", MediaType.APPLICATION_JSON_VALUE, request.getBytes(StandardCharsets.UTF_8)))
+                                .file(image)
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("공유 가능한 모임 링크"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                )
+                        )
+                );
+
+    }
+
     private Meeting appendMeeting(LocalDateTime startDate, LocalDateTime endDate) {
         Meeting meeting = Meeting.builder()
                 .name("DND")
@@ -183,6 +304,11 @@ class SnapControllerTest extends RestDocsSupport {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now()).build();
         return participantRepository.save(participant);
+    }
+
+    private RandomMission appendRandomMission() {
+        RandomMission randomMission = RandomMission.builder().content("test random mission content").build();
+        return randomMissionRepository.save(randomMission);
     }
 
 

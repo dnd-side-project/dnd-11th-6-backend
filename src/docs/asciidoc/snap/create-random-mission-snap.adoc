@@ -1,0 +1,30 @@
+=== 랜덤 미션 snap 등록
+==== 성공
+===== 요청 형식
+
+요청은 `multipart/form-data` 형식을 사용하여 JSON 데이터와 파일을 함께 전송합니다.
+
+- **`name=snap`**: snap 정보를 포함하는 JSON 데이터입니다.
+
+- **`name=image`**: 업로드할 이미지 파일.
+
+===== Request
+include::{snippets}/snap-controller-test/create-random-mission-snap/http-request.adoc[]
+===== Request Part
+include::{snippets}/snap-controller-test/create-random-mission-snap/request-parts.adoc[]
+===== Request Part중 snap에 들어가는 json 형식
+include::{snippets}/snap-controller-test/create-random-mission-snap/request-part-snap-fields.adoc[]
+include::{snippets}/snap-controller-test/create-random-mission-snap/path-parameters.adoc[]
+===== Request Cookie
+include::{snippets}/snap-controller-test/create-random-mission-snap/request-cookies.adoc[]
+
+===== Response
+include::{snippets}/snap-controller-test/create-random-mission-snap/http-response.adoc[]
+include::{snippets}/snap-controller-test/create-random-mission-snap/response-fields.adoc[]
+
+==== 실패
+`진행중인 모임이 아니라면 예외 발생`
+include::{snippets}/snap-controller-test/create-random-mission-snap_meeting_not_in_progress/response-body.adoc[]
+
+`참여자의 사진 촬영 횟수과 최대치를 초과한 경우 예외 발생`
+include::{snippets}/snap-controller-test/create-random-mission-snap_exceed_max_shoot_count/response-body.adoc[]
