@@ -7,6 +7,7 @@ import com.dnd.snappy.domain.snap.repository.SnapRepository;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -18,6 +19,7 @@ public class SimpleSnapService {
     private final SnapRepository snapRepository;
 
 
+    @Transactional
     public CreateSnapResponseDto create(Long meetingId, Long participantId, MultipartFile file, LocalDateTime shootDate) {
         SnapSetupDto snapSetupDto = snapSetupManager.setup(meetingId, participantId, file);
 

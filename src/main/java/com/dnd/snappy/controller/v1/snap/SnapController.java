@@ -28,7 +28,7 @@ public class SnapController {
             @PathVariable("meetingId") Long meetingId,
             @AuthPrincipal AuthInfo authInfo,
             @RequestPart("snap") @Valid CreateSnapRequest createSnapshotRequest,
-            @RequestPart("file") MultipartFile snap
+            @RequestPart("image") MultipartFile snap
     ) {
         var data = simpleSnapService.create(meetingId, authInfo.participantId(), snap, createSnapshotRequest.shootDate());
         return ResponseDto.created(data);
