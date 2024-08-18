@@ -21,20 +21,20 @@ public class MissionParticipantController {
     private final MissionParticipantService missionParticipantService;
 
     @GetMapping("/completed")
-    public ResponseEntity<ResponseDto<List<MissionDetailResponseDto>>> findCompletedMissionsByParticipantId(
+    public ResponseEntity<ResponseDto<List<MissionDetailResponseDto>>> findCompletedMissions(
             @PathVariable Long meetingId,
             @AuthPrincipal AuthInfo authInfo
     ) {
-        var response = missionParticipantService.findCompletedMissionsByParticipantId(authInfo.participantId());
+        var response = missionParticipantService.findCompletedMissions(authInfo.participantId());
         return ResponseDto.ok(response);
     }
 
     @GetMapping("/incomplete")
-    public ResponseEntity<ResponseDto<List<MissionDetailResponseDto>>> findNotCompletedMissionsByParticipant(
+    public ResponseEntity<ResponseDto<List<MissionDetailResponseDto>>> findNotCompletedMissions(
             @PathVariable Long meetingId,
             @AuthPrincipal AuthInfo authInfo
     ) {
-        var response = missionParticipantService.findNotCompletedMissionsByParticipant(meetingId, authInfo.participantId());
+        var response = missionParticipantService.findNotCompletedMissions(meetingId, authInfo.participantId());
         return ResponseDto.ok(response);
     }
 }

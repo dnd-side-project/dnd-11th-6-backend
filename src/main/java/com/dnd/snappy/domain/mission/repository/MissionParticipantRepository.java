@@ -12,8 +12,8 @@ public interface MissionParticipantRepository extends JpaRepository<MissionParti
     boolean existsByMissionIdAndParticipantId(Long missionId, Long participantId);
 
     @Query("SELECT m FROM Mission m LEFT JOIN MissionParticipant mp ON m.id = mp.mission.id AND mp.participant.id = :participantId WHERE mp.id IS NULL AND m.meeting.id = :meetingId")
-    List<Mission> findNotCompletedMissionsByParticipant(@Param("meetingId") Long meetingId, @Param("participantId") Long participantId);
+    List<Mission> findNotCompletedMissions(@Param("meetingId") Long meetingId, @Param("participantId") Long participantId);
 
     @Query("SELECT m FROM Mission m INNER JOIN MissionParticipant mp ON m.id = mp.mission.id WHERE mp.participant.id = :participantId")
-    List<Mission> findCompletedMissionsByParticipantId(Long participantId);
+    List<Mission> findCompletedMissions(Long participantId);
 }

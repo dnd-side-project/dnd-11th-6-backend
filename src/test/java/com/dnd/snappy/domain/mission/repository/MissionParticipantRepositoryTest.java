@@ -33,7 +33,7 @@ class MissionParticipantRepositoryTest {
 
     @DisplayName("참여자가 수행하지 않은 미션을 조회할 수 있다.")
     @Test
-    void findMissionsNotCompletedByParticipant() {
+    void findNotCompletedMissions() {
         //given
         Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Meeting meeting2 = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
@@ -47,7 +47,7 @@ class MissionParticipantRepositoryTest {
         missionParticipantRepository.save(MissionParticipant.builder().mission(missions.get(0)).participant(participant).build());
 
         //when
-        List<Mission> result = missionParticipantRepository.findNotCompletedMissionsByParticipant(meeting.getId(), participant.getId());
+        List<Mission> result = missionParticipantRepository.findNotCompletedMissions(meeting.getId(), participant.getId());
 
         //then
         Assertions.assertThat(result).hasSize(2)
@@ -61,7 +61,7 @@ class MissionParticipantRepositoryTest {
 
     @DisplayName("참여자가 수행한 미션을 조회할 수 있다.")
     @Test
-    void findCompletedMissionsByParticipantId() {
+    void findCompletedMissions() {
         //given
         Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Participant participant = appendParticipant(meeting, "jae", 1);
@@ -74,7 +74,7 @@ class MissionParticipantRepositoryTest {
         missionParticipantRepository.save(MissionParticipant.builder().mission(missions.get(2)).participant(participant).build());
 
         //when
-        List<Mission> result = missionParticipantRepository.findCompletedMissionsByParticipantId(
+        List<Mission> result = missionParticipantRepository.findCompletedMissions(
                 participant.getId());
 
         //then

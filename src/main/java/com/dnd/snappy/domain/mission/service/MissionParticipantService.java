@@ -15,15 +15,15 @@ public class MissionParticipantService {
 
     private final MissionParticipantRepository missionParticipantRepository;
 
-    public List<MissionDetailResponseDto> findCompletedMissionsByParticipantId(Long participantId) {
-        List<Mission> missions = missionParticipantRepository.findCompletedMissionsByParticipantId(participantId);
+    public List<MissionDetailResponseDto> findCompletedMissions(Long participantId) {
+        List<Mission> missions = missionParticipantRepository.findCompletedMissions(participantId);
         return missions.stream()
                 .map(mission -> new MissionDetailResponseDto(mission.getId(), mission.getContent()))
                 .toList();
     }
 
-    public List<MissionDetailResponseDto> findNotCompletedMissionsByParticipant(Long meetingId, Long participantId) {
-        List<Mission> missions = missionParticipantRepository.findNotCompletedMissionsByParticipant(meetingId, participantId);
+    public List<MissionDetailResponseDto> findNotCompletedMissions(Long meetingId, Long participantId) {
+        List<Mission> missions = missionParticipantRepository.findNotCompletedMissions(meetingId, participantId);
         return missions.stream()
                 .map(mission -> new MissionDetailResponseDto(mission.getId(), mission.getContent()))
                 .toList();
