@@ -3,11 +3,13 @@ package com.dnd.snappy.controller.v1.snap;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dnd.snappy.controller.v1.snap.request.CreateSnapRequest;
@@ -74,6 +76,9 @@ class SnapControllerTest extends RestDocsSupport {
                                 requestParts(
                                         partWithName("snap").description("JSON 형태의 snap 정보"),
                                         partWithName("image").description("업로드할 이미지 파일")
+                                ),
+                                requestPartFields("snap",
+                                        fieldWithPath("shootDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-ddTHH:mm")).description("사진 촬영 시간")
                                 ),
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),

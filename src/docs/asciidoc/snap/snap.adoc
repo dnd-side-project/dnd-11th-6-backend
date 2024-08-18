@@ -1,0 +1,4 @@
+[[Snap-API]]
+== Snap API
+
+include::create-simple-snap.adoc[]
