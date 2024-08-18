@@ -2,6 +2,7 @@ package com.dnd.snappy.domain.mission.entity;
 
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
+import com.dnd.snappy.domain.mission.dto.request.CreateMissionEntityDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,4 +24,12 @@ public class Mission extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
+
+    public static Mission create(CreateMissionEntityDto dto, Meeting meeting) {
+        return Mission.builder()
+                .content(dto.content())
+                .meeting(meeting)
+                .build();
+    }
 }
+

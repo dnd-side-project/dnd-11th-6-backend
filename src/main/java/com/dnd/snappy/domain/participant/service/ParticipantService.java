@@ -11,7 +11,6 @@ import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseD
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -44,4 +44,8 @@ public class Participant extends BaseEntity {
                 .shootCount(MAX_SHOOT_COUNT)
                 .build();
     }
+
+    public boolean isLeader() {
+        return this.role == Role.LEADER;
+    }
 }
