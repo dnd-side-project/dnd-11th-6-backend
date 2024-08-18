@@ -27,7 +27,7 @@ public class MeetingMissionSnapService {
     @Transactional
     public CreateSnapResponseDto create(Long meetingId, Long participantId, Long missionId, MultipartFile file, LocalDateTime shootDate) {
         SnapSetupDto snapSetupDto = snapSetupManager.setup(meetingId, participantId, file);
-        Mission mission = missionRepository.findById(missionId)
+        Mission mission = missionRepository.findByIdAndMeetingId(missionId, meetingId)
                 .orElseThrow(() -> new NotFoundException(MissionErrorCode.NOT_FOUND_MEETING_MISSION, missionId));
 
         Snap snap = MeetingMissionSnap.create(snapSetupDto.snapUrl(), shootDate, snapSetupDto.meeting(), snapSetupDto.participant(), mission);
