@@ -2,7 +2,6 @@ package com.dnd.snappy.domain.snap.entity;
 
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.mission.entity.Mission;
-import com.dnd.snappy.domain.mission.entity.RandomMission;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -15,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorValue("Meeting_MISSION_SNAP")
+@DiscriminatorValue("MEETING_MISSION")
 public class MeetingMissionSnap extends Snap {
 
     @ManyToOne(fetch = FetchType.LAZY)

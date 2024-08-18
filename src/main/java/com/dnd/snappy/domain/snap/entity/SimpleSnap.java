@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorValue("SIMPLE_SNAP")
+@DiscriminatorValue("SIMPLE")
 public class SimpleSnap extends Snap {
 
     private SimpleSnap(String snapUrl, LocalDateTime shootDate, Meeting meeting, Participant participant) {

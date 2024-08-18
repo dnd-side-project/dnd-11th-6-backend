@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DiscriminatorValue("RANDOM_MISSION_SNAP")
+@DiscriminatorValue("RANDOM_MISSION")
 public class RandomMissionSnap extends Snap {
 
     @ManyToOne(fetch = FetchType.LAZY)
