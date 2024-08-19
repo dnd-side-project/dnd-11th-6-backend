@@ -3,7 +3,7 @@ package com.dnd.snappy.domain.common.dto.response;
 import java.util.List;
 
 public record CursorBasedResponseDto<T>(
-        Long lastCursorId,
+        Long nextCursorId,
         T data,
         Long count,
         boolean hasNextCursor

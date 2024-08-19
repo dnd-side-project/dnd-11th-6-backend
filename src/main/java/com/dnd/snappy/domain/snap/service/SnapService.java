@@ -39,14 +39,14 @@ public class SnapService {
                 lastSnapResponse.snapId(),
                 snapResponse,
                 count,
-                cursorBasedRequestDto.limit() > snapResponse.size()
+                cursorBasedRequestDto.limit() == snapResponse.size()
         );
     }
 
     private Long getCursorId(Optional<Long> cursorId, Long meetingId) {
         return cursorId.orElseGet(() ->
                         snapRepository.findFirstByMeetingIdOrderByIdDesc(meetingId)
-                                .map(BaseEntity::getId)
+                                .map(snap -> snap.getId() + 1)
                                 .orElse(0L));
     }
 }
