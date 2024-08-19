@@ -19,29 +19,29 @@ import org.springframework.transaction.annotation.Transactional;
 public class SnapService {
 
     private final SnapRepository snapRepository;
-//
-//    public CursorBasedResponseDto<List<SnapResponseDto>> findSnapsInMeeting(CursorBasedRequestDto cursorBasedRequestDto, Long meetingId) {
-//        Long count = snapRepository.countByMeetingId(meetingId);
-//        if (count == 0L) {
-//            return CursorBasedResponseDto.empty();
-//        }
-//
-//        Long cursorId = getCursorId(cursorBasedRequestDto.cursorId(), meetingId);
-//        PageRequest pageable = PageRequest.of(0, cursorBasedRequestDto.limit());
-//
-//        List<SnapResponseDto> snapResponse = snapRepository.findSnapsInMeetingByCursorId(cursorId, meetingId, pageable);
-//        if(snapResponse.isEmpty()){
-//            return CursorBasedResponseDto.empty();
-//        }
-//
-//        SnapResponseDto lastSnapResponse = snapResponse.get(snapResponse.size() - 1);
-//        return CursorBasedResponseDto.of(
-//                lastSnapResponse.snapId(),
-//                snapResponse,
-//                count,
-//                cursorBasedRequestDto.limit() > snapResponse.size()
-//        );
-//    }
+
+    public CursorBasedResponseDto<List<SnapResponseDto>> findSnapsInMeeting(CursorBasedRequestDto cursorBasedRequestDto, Long meetingId) {
+        Long count = snapRepository.countByMeetingId(meetingId);
+        if (count == 0L) {
+            return CursorBasedResponseDto.empty(List.of());
+        }
+
+        Long cursorId = getCursorId(cursorBasedRequestDto.cursorId(), meetingId);
+        PageRequest pageable = PageRequest.of(0, cursorBasedRequestDto.limit());
+
+        List<SnapResponseDto> snapResponse = snapRepository.findSnapsInMeetingByCursorId(cursorId, meetingId, pageable);
+        if(snapResponse.isEmpty()){
+            return CursorBasedResponseDto.empty(List.of());
+        }
+
+        SnapResponseDto lastSnapResponse = snapResponse.get(snapResponse.size() - 1);
+        return new CursorBasedResponseDto<>(
+                lastSnapResponse.snapId(),
+                snapResponse,
+                count,
+                cursorBasedRequestDto.limit() > snapResponse.size()
+        );
+    }
 
     private Long getCursorId(Optional<Long> cursorId, Long meetingId) {
         return cursorId.orElseGet(() ->
