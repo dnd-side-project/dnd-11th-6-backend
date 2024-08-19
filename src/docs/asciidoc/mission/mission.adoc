@@ -1,0 +1,8 @@
+[[MISSION-API]]
+== mission API
+
+include::random-mission.adoc[]
+
+include::find-completed-mission.adoc[]
+
+include::find-in-completed-mission.adoc[]

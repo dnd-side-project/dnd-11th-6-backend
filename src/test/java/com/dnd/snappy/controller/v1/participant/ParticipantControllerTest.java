@@ -63,7 +63,7 @@ class ParticipantControllerTest extends RestDocsSupport {
                         .content(objectMapper.writeValueAsString(participationRequest))
                         .contentType(MediaType.APPLICATION_JSON)
         )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(
                         restDocs.document(
                                 pathParameters(

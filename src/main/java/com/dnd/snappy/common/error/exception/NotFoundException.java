@@ -18,4 +18,8 @@ public class NotFoundException extends BusinessException {
         super(errorCode.toErrorCode(), "[id: " + id + " is not found]");
     }
 
+    public NotFoundException(ErrorCodeInterface errorCode, Integer id) {
+        super(errorCode.toErrorCode(), "[id: " + id + " is not found]");
+    }
+
 }

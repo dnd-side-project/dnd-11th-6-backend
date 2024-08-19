@@ -13,3 +13,7 @@ include::auth/auth.adoc[]
 include::meeting/meeting.adoc[]
 
 include::participant/participant.adoc[]
+
+include::mission/mission.adoc[]
+
+include::snap/snap.adoc[]

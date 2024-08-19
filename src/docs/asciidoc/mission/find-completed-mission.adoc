@@ -1,0 +1,11 @@
+=== 참가자(인증토큰을 가진 사용자)가 완료한 모임 미션 조회
+
+==== 성공
+===== Request
+include::{snippets}/mission-participant-controller-test/find-completed-missions/http-request.adoc[]
+include::{snippets}/mission-participant-controller-test/find-completed-missions/path-parameters.adoc[]
+===== Request Cookie
+include::{snippets}/mission-participant-controller-test/find-completed-missions/request-cookies.adoc[]
+===== Response
+include::{snippets}/mission-participant-controller-test/find-completed-missions/http-response.adoc[]
+include::{snippets}/mission-participant-controller-test/find-completed-missions/response-fields.adoc[]

@@ -51,7 +51,7 @@ public class ParticipantController {
         String accessTokenCookie = authCookieManager.createTokenCookie(TokenType.ACCESS_TOKEN, response.accessToken(), meetingId, duration);
         String refreshTokenCookie = authCookieManager.createTokenCookie(TokenType.REFRESH_TOKEN, response.refreshToken(), meetingId, duration);
 
-        return ResponseEntity.ok()
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.SET_COOKIE, accessTokenCookie)
                 .header(HttpHeaders.SET_COOKIE, refreshTokenCookie)
                 .body(new ResponseDto<>(
