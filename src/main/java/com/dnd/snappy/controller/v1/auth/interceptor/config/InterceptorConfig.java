@@ -22,6 +22,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/**/meetings/{meetingId}/validate-password")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/validate-leader-key")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/share")
-                .excludePathPatterns("/api/**/meetings/{meetingId}/tokens/refresh");
+                .excludePathPatterns("/api/**/meetings/{meetingId}/tokens/refresh")
+                .excludePathPatterns("/api/v1/meetings/{meetingId}/participants/check-nickname");
     }
 }
