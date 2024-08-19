@@ -14,6 +14,7 @@ import com.dnd.snappy.domain.mission.repository.RandomMissionRepository;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
+import com.dnd.snappy.domain.snap.dto.response.SnapResponseDto;
 import com.dnd.snappy.domain.snap.entity.MeetingMissionSnap;
 import com.dnd.snappy.domain.snap.entity.RandomMissionSnap;
 import com.dnd.snappy.domain.snap.entity.SimpleSnap;
@@ -22,6 +23,7 @@ import com.dnd.snappy.support.IntegrationTestSupport;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +32,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-@ActiveProfiles("local")
 @Transactional
 class SnapRepositoryTest extends IntegrationTestSupport {
 
@@ -49,11 +50,15 @@ class SnapRepositoryTest extends IntegrationTestSupport {
     @Autowired
     private SnapRepository snapRepository;
 
+    @Autowired
+    private RandomMissionSnapRepository randomMissionSnapRepository;
+
     @DisplayName("커서 기반 페이지네이션을 통해 snaps을 조회할 수 있다.")
     @Test
     void findSnapsInMeetingByCursorId() {
         //given
         Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Meeting meeting2 = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Participant participant = appendParticipant(meeting, "nick", 2);
         List<RandomMission> randomMissions = appendRandomMissions(20);
         List<Mission> missions = appendMissions(meeting, 20);
@@ -62,12 +67,14 @@ class SnapRepositoryTest extends IntegrationTestSupport {
             appendSimpleSnap(meeting, participant);
             appendRandomMissionSnap(meeting, participant, randomMissions.get(i));
             Snap snap = appendMeetingMissionSnap(meeting, participant, missions.get(i));
+            appendSimpleSnap(meeting2, participant);
 
             lastId = snap.getId();
         }
 
         //when
-        List<Snap> snaps = snapRepository.findMeetingMissionSnapsInMeetingByCursorId(lastId+1, meeting.getId(), PageRequest.of(0, 20));
+        List<SnapResponseDto> snaps = snapRepository.findSnapsInMeetingByCursorId(lastId+1, meeting.getId(), PageRequest.of(0, 20));
+        System.out.println("snap = " + snaps.get(0));
 
         //then
         assertThat(snaps).hasSize(20);
