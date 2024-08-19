@@ -35,7 +35,6 @@ public class MeetingParticipationInterceptor implements HandlerInterceptor {
         final Long meetingId = pathVariableExtractor.extractMeetingId(request);
         TokenInfo tokenInfo = jwtTokenStrategy.process(request, TokenType.ACCESS_TOKEN);
         validationParticipantInMeeting(tokenInfo.payload(), meetingId);
-
         return true;
     }
 

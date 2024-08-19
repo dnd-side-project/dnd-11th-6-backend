@@ -18,9 +18,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
         // 이 인터셉터가 적용될 경로 패턴 지정
         registry.addInterceptor(meetingParticipationInterceptor)
                 .addPathPatterns("/api/**/meetings/{meetingId}/**")
+                .excludePathPatterns("/api/**/meetings/{meetingId}")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/validate-password")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/validate-leader-key")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/share")
-                .excludePathPatterns("/api/**/meetings/{meetingId}/tokens/refresh");
+                .excludePathPatterns("/api/**/meetings/{meetingId}/tokens/refresh")
+                .excludePathPatterns("/api/v1/meetings/{meetingId}/participants/check-nickname");
     }
 }

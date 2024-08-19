@@ -1,7 +1,9 @@
 package com.dnd.snappy.domain.participant.entity;
 
+import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
+import com.dnd.snappy.domain.participant.exception.ParticipantErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,6 +22,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class Participant extends BaseEntity {
 
+    public static final int DEFAULT_SHOOT_COUNT = 0;
     public static final int MAX_SHOOT_COUNT = 10;
 
     @Column(nullable = false, length = 8)
@@ -41,11 +44,21 @@ public class Participant extends BaseEntity {
                 .nickname(nickname)
                 .role(role)
                 .meeting(meeting)
-                .shootCount(MAX_SHOOT_COUNT)
+                .shootCount(DEFAULT_SHOOT_COUNT)
                 .build();
     }
 
     public boolean isLeader(Long meetingId) {
         return this.role == Role.LEADER && this.meeting.getId().equals(meetingId);
+
+    public void addShootCount() {
+        if(canNotShoot()) {
+            throw new BusinessException(ParticipantErrorCode.EXCEED_MAX_SHOOT_COUNT);
+        }
+        shootCount++;
+    }
+
+    private boolean canNotShoot() {
+        return this.shootCount == MAX_SHOOT_COUNT;
     }
 }

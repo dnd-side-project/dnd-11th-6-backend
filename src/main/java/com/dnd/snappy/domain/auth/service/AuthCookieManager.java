@@ -5,8 +5,10 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class AuthCookieManager {
 
     private static final String PATH = "/api/";
-    private static final String SAME_SITE_OPTION = "None";
+    private static final String SAME_SITE_OPTION = "Strict";
 
     private final AuthTokenCookieNameGenerator authTokenCookieNameGenerator;
 
@@ -27,7 +29,6 @@ public class AuthCookieManager {
         final String cookieName = authTokenCookieNameGenerator.generateCookieName(tokenType, meetingId);
 
         Cookie[] cookies = request.getCookies();
-
         if (cookies == null) {
             return Optional.empty();
         }
@@ -40,7 +41,7 @@ public class AuthCookieManager {
     private String createCookie(String name, String value, Duration duration) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false) //http 적용전 임시
                 .path(PATH)
                 .sameSite(SAME_SITE_OPTION)
                 .maxAge(duration)

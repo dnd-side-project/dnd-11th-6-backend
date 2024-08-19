@@ -24,4 +24,11 @@ public class MissionParticipant extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mission_id", nullable = false)
     private Mission mission;
+
+    public static MissionParticipant create(Mission mission, Participant participant) {
+        return MissionParticipant.builder()
+                .mission(mission)
+                .participant(participant)
+                .build();
+    }
 }

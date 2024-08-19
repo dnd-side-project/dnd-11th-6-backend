@@ -1,0 +1,15 @@
+=== 모임 ID로 meeting 조회
+
+==== 성공
+Request
+include::{snippets}/meeting-controller-test/find-meeting-detail-by-id/http-request.adoc[]
+include::{snippets}/meeting-controller-test/find-meeting-detail-by-id/path-parameters.adoc[]
+
+Response
+include::{snippets}/meeting-controller-test/find-meeting-detail-by-id/http-response.adoc[]
+include::{snippets}/meeting-controller-test/find-meeting-detail-by-id/response-fields.adoc[]
+
+
+==== 실패
+`path parameters로 준 모임 ID에 해당하는 모임이 없을때 발생`
+include::{snippets}/meeting-controller-test/find-meeting-detail-by-id_not_fond/http-response.adoc[]

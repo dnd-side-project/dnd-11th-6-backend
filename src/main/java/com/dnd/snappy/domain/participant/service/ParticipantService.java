@@ -8,8 +8,10 @@ import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseDto;
+import com.dnd.snappy.domain.participant.dto.response.ParticipantDetailResponseDto;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
+import com.dnd.snappy.domain.participant.exception.ParticipantErrorCode;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ParticipantService {
 
     private final MeetingRepository meetingRepository;
@@ -36,6 +39,21 @@ public class ParticipantService {
         participantRepository.save(participant);
 
         return new CreateParticipantResponseDto(participant.getId(), meeting.getExpiredDate());
+    }
+
+    public boolean checkDuplicateNickname(Long meetingId, String nickname) {
+        return participantRepository.existsByNicknameAndMeetingId(nickname, meetingId);
+    }
+
+    public ParticipantDetailResponseDto findParticipantDetailById(Long participantId) {
+        Participant participant = participantRepository.findById(participantId)
+                .orElseThrow(() -> new NotFoundException(ParticipantErrorCode.NOT_FOUND_PARTICIPANT_ID));
+        return new ParticipantDetailResponseDto(
+                participant.getId(),
+                participant.getNickname(),
+                participant.getRole(),
+                participant.getShootCount()
+        );
     }
 
     private void validationCreateParticipant(Long meetingId, String nickname) {

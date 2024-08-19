@@ -11,11 +11,13 @@ public record MeetingDetailResponseDto(
         String description,
         String thumbnailUrl,
         String symbolColor,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH", timezone = "Asia/Seoul")
         LocalDateTime startDate,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH", timezone = "Asia/Seoul")
         LocalDateTime endDate,
-        MeetingLinkStatus status
+        MeetingLinkStatus linkStatus,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH", timezone = "Asia/Seoul")
+        LocalDateTime linkExpiredDate
 ) {
 
     public MeetingDetailResponseDto(Meeting meeting) {
@@ -27,7 +29,8 @@ public record MeetingDetailResponseDto(
                 meeting.getSymbolColor(),
                 meeting.getStartDate(),
                 meeting.getEndDate(),
-                meeting.getMeetingLinkStatus()
+                meeting.getMeetingLinkStatus(),
+                meeting.getExpiredDate()
         );
     }
 }

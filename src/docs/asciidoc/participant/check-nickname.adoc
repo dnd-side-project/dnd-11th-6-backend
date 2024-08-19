@@ -1,0 +1,14 @@
+=== 닉네임 사용 가능 여부 조회
+
+==== 성공
+===== Request
+include::{snippets}/participant-controller-test/check-duplicate-nickname/http-request.adoc[]
+include::{snippets}/participant-controller-test/check-duplicate-nickname/query-parameters.adoc[]
+include::{snippets}/participant-controller-test/check-duplicate-nickname/path-parameters.adoc[]
+
+===== Response
+`닉네임 이용가능 case`
+include::{snippets}/participant-controller-test/check-duplicate-nickname/http-response.adoc[]
+`닉네임 이용불가 case`
+include::{snippets}/participant-controller-test/check-duplicate-nickname_false/http-response.adoc[]
+include::{snippets}/participant-controller-test/check-duplicate-nickname/response-fields.adoc[]
