@@ -23,6 +23,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MeetingService {
     private static final String DEFAULT_THUMBNAIL_URL = "https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/logo.png";
 
@@ -77,14 +78,19 @@ public class MeetingService {
         return new CreateMeetingResponseDto(meeting);
     }
 
-    private Meeting findByMeetingLinkOrThrow(String meetingLink) {
-        return meetingRepository.findByMeetingLink(meetingLink)
-                .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
+    public MeetingDetailResponseDto findMeetingDetailById(Long meetingId) {
+        Meeting meeting = findByMeetingIdOrThrow(meetingId);
+        return new MeetingDetailResponseDto(meeting);
     }
 
     public Meeting findByMeetingIdOrThrow(Long meetingId) {
         return meetingRepository.findById(meetingId)
                 .orElseThrow(() -> new NotFoundException(MEETING_NOT_FOUND, meetingId));
+    }
+
+    private Meeting findByMeetingLinkOrThrow(String meetingLink) {
+        return meetingRepository.findByMeetingLink(meetingLink)
+                .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
     }
 
     private void checkMeetingLinkDuplication(String meetingLink) {

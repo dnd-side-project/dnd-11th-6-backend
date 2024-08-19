@@ -14,11 +14,13 @@ import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
+import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -302,5 +304,40 @@ class MeetingServiceTest {
         assertThatThrownBy(() -> meetingService.getShareableMeetingLink(meetingId))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessageStartingWith(MeetingErrorCode.MEETING_NOT_FOUND.getMessage());
+    }
+
+    @DisplayName("모임 세부 정보를 조회한다.")
+    @Test
+    void findMeetingDetailById() {
+        //given
+        Long meetingId = 1L;
+        LocalDateTime endDate = LocalDateTime.now().plusDays(1);
+        Meeting meeting = Meeting.builder()
+                .id(meetingId)
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(endDate)
+                .meetingLink("meetingLink")
+                .build();
+        given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
+
+        //when
+        MeetingDetailResponseDto result = meetingService.findMeetingDetailById(meetingId);
+
+        //then
+        Assertions.assertThat(result).isEqualTo(new MeetingDetailResponseDto(
+                meeting.getId(),
+                meeting.getName(),
+                meeting.getDescription(),
+                meeting.getThumbnailUrl(),
+                meeting.getSymbolColor(),
+                meeting.getStartDate(),
+                meeting.getEndDate(),
+                MeetingLinkStatus.IN_PROGRESS,
+                endDate.plusDays(7)
+        ));
     }
 }

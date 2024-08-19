@@ -3,6 +3,8 @@
 
 include::find-by-meeting-link.adoc[]
 
+include::find-by-meeting-id.adoc[]
+
 include::create-meeting.adoc[]
 
 include::validate-meeting-password.adoc[]

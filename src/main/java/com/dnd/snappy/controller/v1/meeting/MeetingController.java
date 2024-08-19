@@ -36,6 +36,14 @@ public class MeetingController {
         return ResponseDto.ok(response);
     }
 
+    @GetMapping("/{meetingId}")
+    public ResponseEntity<ResponseDto<MeetingDetailResponseDto>> findMeetingDetailById(
+            @PathVariable("meetingId") Long meetingId
+    ) {
+        var response = meetingService.findMeetingDetailById(meetingId);
+        return ResponseDto.ok(response);
+    }
+
     @PostMapping("/{meetingId}/validate-password")
     public ResponseEntity<ResponseDto<?>> validateMeetingPassword(
             @PathVariable("meetingId") Long meetingId,

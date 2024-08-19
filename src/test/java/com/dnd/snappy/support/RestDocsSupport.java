@@ -70,7 +70,7 @@ public abstract class RestDocsSupport extends AbstractContainerBase {
 
 
     protected Attributes.Attribute getDateTimeFormat() {
-        return key("format").value("yyyy-MM-dd HH:mm");
+        return key("format").value("yyyy-MM-dd'T'HH:mm");
     }
 
 }
