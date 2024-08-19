@@ -8,6 +8,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -195,7 +196,7 @@ class ParticipantControllerTest extends RestDocsSupport {
         String token = fakeTokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
 
         mockMvc.perform(
-                        get("/api/v1/meetings/{meetingId}/participants/me", meeting.getId())
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/participants/me", meeting.getId())
                                 .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -205,6 +206,71 @@ class ParticipantControllerTest extends RestDocsSupport {
                                 getErrorResponseFields()
                         )
                 );
+    }
+
+    @DisplayName("닉네임이 사용가능한지 알 수 있다.")
+    @Test
+    void checkDuplicateNickname() throws Exception {
+        //given
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/participants/check-nickname", meeting.getId())
+                                .queryParam("nickname", "nick")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                queryParameters(
+                                        parameterWithName("nickname").description("사용하고 싶은 닉네임")
+                                )
+                                ,
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                )
+                                ,
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("닉네임 사용 가능한지"),
+                                        fieldWithPath("data.isAvailableNickname").type(JsonFieldType.BOOLEAN).description("닉네임 사용 가능한지")
+                                )
+                        )
+                );
+
+    }
+
+    @DisplayName("닉네임이 사용가능한지 알 수 있다.")
+    @Test
+    void checkDuplicateNickname_false() throws Exception {
+        //given
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        appendParticipant(meeting, "nick");
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/participants/check-nickname", meeting.getId())
+                                .queryParam("nickname", "nick")
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                queryParameters(
+                                        parameterWithName("nickname").description("사용하고 싶은 닉네임")
+                                )
+                                ,
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                )
+                                ,
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("닉네임 사용 가능한지"),
+                                        fieldWithPath("data.isAvailableNickname").type(JsonFieldType.BOOLEAN).description("닉네임 사용 가능한지")
+                                )
+                        )
+                );
+
     }
 
     private ResponseFieldsSnippet getErrorResponseFields() {

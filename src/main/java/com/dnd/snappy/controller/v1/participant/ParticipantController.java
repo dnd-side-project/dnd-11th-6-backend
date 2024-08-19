@@ -12,6 +12,7 @@ import com.dnd.snappy.domain.participant.service.ParticipantService;
 import com.dnd.snappy.domain.participant.service.ParticipationService;
 import com.dnd.snappy.domain.token.service.TokenType;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
@@ -75,7 +76,7 @@ public class ParticipantController {
     @GetMapping("/check-nickname")
     public ResponseEntity<ResponseDto<CheckDuplicateNicknameResponse>> checkDuplicateNickname(
             @PathVariable("meetingId") Long meetingId,
-            @RequestParam("nickname") String nickname
+            @RequestParam("nickname") @NotBlank(message = "nickname은 필수입니다.") String nickname
     ) {
         boolean isDuplicatedNickname = participantService.checkDuplicateNickname(meetingId, nickname);
 
