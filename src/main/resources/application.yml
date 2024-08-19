@@ -2,8 +2,25 @@ server:
   port: 8080
 spring:
   profiles:
-    active: dev
+    active: local
     include: secret
+jwt:
+  secretKey: '${custom.jwt.secretKey}'
+  access-token-expire-time: 1800000 # 30분
+  refresh-token-expire-time: 3600000 # 1시간
+
+# S3 설정
+cloud:
+  aws:
+    credentials:
+      accessKey: '${accessKey}'
+      secretKey: '${secretKey}'
+    s3:
+      bucketName: '${bucketName}'
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 
 ---
 spring:
@@ -22,7 +39,7 @@ spring:
     password: '${custom.db.password}'
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
@@ -35,23 +52,35 @@ spring:
       host: '${custom.redis.host}'
       port: '${custom.redis.port}'
 
-jwt:
-  secretKey: '${custom.jwt.secretKey}'
-  access-token-expire-time: 1800000 # 30분
-  refresh-token-expire-time: 3600000 # 1시간
-
-# S3 설정
-cloud:
-  aws:
-    credentials:
-      accessKey: '${accessKey}'
-      secretKey: '${secretKey}'
-    s3:
-      bucketName: '${bucketName}'
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  transaction:
+    default-timeout: '${custom.transaction.default-timeout}'
+  datasource:
+    hikari:
+      maximum-pool-size: '${custom.hikari.maximum-pool-size}'
+      idle-timeout: '${custom.hikari.idle-timeout}'
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: '${custom.db.url}'
+    username: '${custom.db.username}'
+    password: '${custom.db.password}'
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 1000
+    defer-datasource-initialization: true
+  data:
+    redis:
+      host: '${custom.redis.host}'
+      port: '${custom.redis.port}'
 
 ---
 spring:

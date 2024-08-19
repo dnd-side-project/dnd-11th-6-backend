@@ -7,6 +7,7 @@ import com.dnd.snappy.domain.mission.entity.MissionParticipant;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
+import com.dnd.snappy.support.IntegrationTestSupport;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -14,10 +15,8 @@ import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
-class MissionParticipantRepositoryTest {
+class MissionParticipantRepositoryTest extends IntegrationTestSupport {
 
     @Autowired
     private ParticipantRepository participantRepository;
