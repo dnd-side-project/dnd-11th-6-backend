@@ -1,0 +1,17 @@
+=== 내 정보 조회
+
+==== 성공
+Request
+include::{snippets}/participant-controller-test/get-participant-in-meeting/http-request.adoc[]
+Request Cookie
+include::{snippets}/participant-controller-test/get-participant-in-meeting/request-cookies.adoc[]
+include::{snippets}/participant-controller-test/get-participant-in-meeting/path-parameters.adoc[]
+
+Response
+include::{snippets}/participant-controller-test/get-participant-in-meeting/http-response.adoc[]
+include::{snippets}/participant-controller-test/get-participant-in-meeting/response-fields.adoc[]
+
+
+==== 실패
+`access token이 만료됐을때 발생`
+include::{snippets}/participant-controller-test/get-participant-in-meeting_expired_token/http-response.adoc[]

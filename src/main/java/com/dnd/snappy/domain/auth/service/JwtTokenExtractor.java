@@ -20,7 +20,6 @@ public class JwtTokenExtractor {
         final Long meetingId = pathVariableExtractor.extractMeetingId(request);
         Cookie cookie = authCookieManager.getAuthCookie(request, tokenType, meetingId)
                 .orElseThrow(() -> new BusinessException(UNAUTHORIZED));
-
         return cookie.getValue();
     }
 }

@@ -8,12 +8,14 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dnd.snappy.controller.v1.meeting.request.LeaderAuthKeyValidationRequest;
 import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.support.RestDocsSupport;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
@@ -21,6 +23,7 @@ import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,9 +78,10 @@ class MeetingControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.description").type(JsonFieldType.STRING).description("모임 세부 정보"),
                                         fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING).description("모임 썸네일 url"),
                                         fieldWithPath("data.symbolColor").type(JsonFieldType.STRING).description("모임 상징 색"),
-                                        fieldWithPath("data.startDate").type(JsonFieldType.STRING).attributes(getDateTimeFormat()).description("모임 시작일"),
-                                        fieldWithPath("data.endDate").type(JsonFieldType.STRING).attributes(getDateTimeFormat()).description("모임 종료일"),
-                                        fieldWithPath("data.status").type(JsonFieldType.STRING).description("모임 링크 상태")
+                                        fieldWithPath("data.startDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-dd'T'HH")).description("모임 시작일"),
+                                        fieldWithPath("data.endDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-dd'T'HH")).description("모임 종료일"),
+                                        fieldWithPath("data.linkStatus").type(JsonFieldType.STRING).attributes(key("format").value("PENDING(모임 시작전) | IN_PROGRESS(진행중) | COMPLETED(모임 종료)")).description("모임 상태"),
+                                        fieldWithPath("data.linkExpiredDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-dd'T'HH")).description("모임이 언제까지 유효한지")
                                 )
                         )
                 );
@@ -553,15 +558,81 @@ class MeetingControllerTest extends RestDocsSupport {
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 ID")
                                 ),
+                                gerErrorResponse()
+                        )
+                );
+    }
+
+    @DisplayName("meetingId를 통해 모임 세부사항을 조회한다.")
+    @Test
+    void findMeetingDetailById() throws Exception {
+        //given
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now().plusDays(3))
+                .meetingLink("sgawra")
+                .password("password")
+                .leaderAuthKey("leaderAuthKey")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        meetingRepository.save(meeting);
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}", meeting.getId())
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
-                                        fieldWithPath("data").type(JsonFieldType.NULL).description("공유 가능한 모임 링크"),
-                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
-                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
-                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("모임"),
+                                        fieldWithPath("data.meetingId").type(JsonFieldType.NUMBER).description("모임 id"),
+                                        fieldWithPath("data.name").type(JsonFieldType.STRING).description("모임 이름"),
+                                        fieldWithPath("data.description").type(JsonFieldType.STRING).description("모임 세부 정보"),
+                                        fieldWithPath("data.thumbnailUrl").type(JsonFieldType.STRING).description("모임 썸네일 url"),
+                                        fieldWithPath("data.symbolColor").type(JsonFieldType.STRING).description("모임 상징 색"),
+                                        fieldWithPath("data.startDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-dd'T'HH")).description("모임 시작일"),
+                                        fieldWithPath("data.endDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-dd'T'HH")).description("모임 종료일"),
+                                        fieldWithPath("data.linkStatus").type(JsonFieldType.STRING).attributes(key("format").value("PENDING(모임 시작전) | IN_PROGRESS(진행중) | COMPLETED(모임 종료)")).description("모임 상태"),
+                                        fieldWithPath("data.linkExpiredDate").type(JsonFieldType.STRING).attributes(key("format").value("yyyy-MM-dd'T'HH")).description("모임이 언제까지 유효한지")
                                 )
                         )
                 );
+
+    }
+
+    @DisplayName("모임 id에 해당하는 모임이 없을 경우 예외가 발생한다.")
+    @Test
+    void findMeetingDetailById_not_fond() throws Exception {
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}", 1L)
+                )
+                .andExpect(status().isNotFound())
+                .andDo(
+                        restDocs.document(
+                                gerErrorResponse()
+                        )
+                );
+
+    }
+
+    private ResponseFieldsSnippet gerErrorResponse() {
+        return responseFields(
+                fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                fieldWithPath("data").type(JsonFieldType.NULL).description("공유 가능한 모임 링크"),
+                fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+        );
     }
 
 }

@@ -10,11 +10,14 @@ import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseDto;
+import com.dnd.snappy.domain.participant.dto.response.ParticipantDetailResponseDto;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
+import com.dnd.snappy.domain.participant.exception.ParticipantErrorCode;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,5 +106,50 @@ class ParticipantServiceTest {
         assertThatThrownBy(() -> participantService.createParticipant(meetingId, nickname, role))
                 .isInstanceOf(BusinessException.class)
                 .hasMessageContaining(MeetingErrorCode.MEETING_JOIN_DENIED.getMessage());
+    }
+
+    @DisplayName("id에 해당하는 참가자의 세부정보를 조회한다.")
+    @Test
+    void findParticipantDetailById() {
+        //given
+        Participant participant = Participant.builder()
+                .id(1L)
+                .role(Role.LEADER)
+                .shootCount(10)
+                .nickname("jae")
+                .build();
+        given(participantRepository.findById(participant.getId())).willReturn(Optional.of(participant));
+
+        //when
+        ParticipantDetailResponseDto result = participantService.findParticipantDetailById(
+                participant.getId());
+
+        //then
+        assertThat(result)
+                .isEqualTo(new ParticipantDetailResponseDto(
+                        1L,
+                        "jae",
+                        Role.LEADER,
+                        10
+                ));
+
+    }
+
+    @DisplayName("ID에 해당하는 참가자가 없을 경우 예외가 발생한다.")
+    @Test
+    void findParticipantDetailById_not_found_throw_exception() {
+        //given
+        Participant participant = Participant.builder()
+                .id(1L)
+                .role(Role.LEADER)
+                .shootCount(10)
+                .nickname("jae")
+                .build();
+        given(participantRepository.findById(participant.getId())).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> participantService.findParticipantDetailById(participant.getId()))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessageContaining(ParticipantErrorCode.NOT_FOUND_PARTICIPANT_ID.getMessage());
     }
 }
