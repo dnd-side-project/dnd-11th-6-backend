@@ -25,7 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MeetingService {
-    private static final String DEFAULT_THUMBNAIL_URL = "https://dnd-11th-6.s3.ap-northeast-2.amazonaws.com/logo.png";
+    private static final String DEFAULT_THUMBNAIL_URL = "logo.png";
 
     private final MeetingRepository meetingRepository;
 
