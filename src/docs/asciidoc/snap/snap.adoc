@@ -1,0 +1,8 @@
+[[Snap-API]]
+== Snap API
+
+include::create-simple-snap.adoc[]
+
+include::create-random-mission-snap.adoc[]
+
+include::create-meeting-mission-snap.adoc[]

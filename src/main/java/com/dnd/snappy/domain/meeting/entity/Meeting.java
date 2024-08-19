@@ -4,6 +4,7 @@ import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
+import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
@@ -106,4 +107,9 @@ public class Meeting extends BaseEntity {
         return currStatus == MeetingLinkStatus.PENDING || currStatus == MeetingLinkStatus.IN_PROGRESS;
     }
 
+    public void validateCanShoot() {
+        if(getMeetingLinkStatus() != MeetingLinkStatus.IN_PROGRESS) {
+            throw new BusinessException(MeetingErrorCode.NO_IN_PROGRESS_MEETING);
+        }
+    }
 }

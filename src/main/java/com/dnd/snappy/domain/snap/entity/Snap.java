@@ -2,27 +2,34 @@ package com.dnd.snappy.domain.snap.entity;
 
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
-import com.dnd.snappy.domain.mission.entity.RandomMission;
 import com.dnd.snappy.domain.participant.entity.Participant;
-import com.dnd.snappy.domain.mission.entity.Mission;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-@Entity
 @Getter
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "DTYPE")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SuperBuilder(toBuilder = true)
-public class Snap extends BaseEntity {
+public abstract class Snap extends BaseEntity {
 
     @Column(name = "snap_url")
     private String snapUrl;
+
+    @Column(nullable = false)
+    private LocalDateTime shootDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participant_id", nullable = false)
@@ -32,11 +39,10 @@ public class Snap extends BaseEntity {
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mission_id")
-    private Mission mission;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "random_mission_id")
-    private RandomMission randomMission;
+    protected Snap(String snapUrl, LocalDateTime shootDate, Meeting meeting, Participant participant) {
+        this.snapUrl = snapUrl;
+        this.shootDate = shootDate;
+        this.meeting = meeting;
+        this.participant = participant;
+    }
 }
