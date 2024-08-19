@@ -28,6 +28,12 @@ public record ResponseDto<T>(
                 .body(responseDto);
     }
 
+    public static ResponseEntity<ResponseDto<String>> successMessage(String message) {
+        ResponseDto<String> responseDto = new ResponseDto<>(HttpStatus.OK.value(), message, null);
+        return ResponseEntity
+                .ok(responseDto);
+    }
+
     public static ResponseEntity<ResponseDto<?>> fail(ErrorCodeInterface errorCode) {
         ResponseDto<?> responseDto = new ResponseDto<>(errorCode.getStatus().value(), null, ErrorResponseDto.from(errorCode));
         return ResponseEntity

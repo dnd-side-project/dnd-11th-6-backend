@@ -48,6 +48,10 @@ public class Participant extends BaseEntity {
                 .build();
     }
 
+    public boolean isLeader(Long meetingId) {
+        return this.role == Role.LEADER && this.meeting.getId().equals(meetingId);
+    }
+
     public void addShootCount() {
         if(canNotShoot()) {
             throw new BusinessException(ParticipantErrorCode.EXCEED_MAX_SHOOT_COUNT);
