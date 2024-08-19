@@ -41,6 +41,10 @@ public class ParticipantService {
         return new CreateParticipantResponseDto(participant.getId(), meeting.getExpiredDate());
     }
 
+    public boolean checkDuplicateNickname(Long meetingId, String nickname) {
+        return participantRepository.existsByNicknameAndMeetingId(nickname, meetingId);
+    }
+
     public ParticipantDetailResponseDto findParticipantDetailById(Long participantId) {
         Participant participant = participantRepository.findById(participantId)
                 .orElseThrow(() -> new NotFoundException(ParticipantErrorCode.NOT_FOUND_PARTICIPANT_ID));
