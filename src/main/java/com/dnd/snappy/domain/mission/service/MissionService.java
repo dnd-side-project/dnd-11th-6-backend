@@ -32,7 +32,7 @@ public class MissionService {
         Mission mission = Mission.create(missionDto, findByMeetingIdOrThrow(meetingId));
         missionRepository.save(mission);
 
-        return new CreateMissionResponseDto(mission.getContent());
+        return new CreateMissionResponseDto(mission.getId(), mission.getContent());
     }
 
     @Transactional
@@ -43,9 +43,8 @@ public class MissionService {
         missionValidationService.validateModification(mission, requestDto.content(), participantId, meetingId);
 
         mission.setContent(requestDto.content());
-        missionRepository.save(mission);
 
-        return new ModifyMissionResponseDto(mission.getContent());
+        return new ModifyMissionResponseDto(mission.getId(), mission.getContent());
     }
 
     @Transactional

@@ -78,7 +78,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 .content(objectMapper.writeValueAsString(requestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(
                         restDocs.document(
                                 pathParameters(
@@ -89,6 +89,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 ),
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data.missionId").type(JsonFieldType.NUMBER).description("생성된 미션 ID"),
                                         fieldWithPath("data.content").type(JsonFieldType.STRING).description("미션 내용")
                                 )
                         )
@@ -113,7 +114,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 .content(objectMapper.writeValueAsString(createRequestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         Mission createdMission = missionRepository.findAll().get(0);
         Long missionId = createdMission.getId();
@@ -139,6 +140,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 ),
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data.missionId").type(JsonFieldType.NUMBER).description("수정된 미션 ID"),
                                         fieldWithPath("data.content").type(JsonFieldType.STRING).description("수정된 미션 내용")
                                 )
                         )
@@ -163,7 +165,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 .content(objectMapper.writeValueAsString(createRequestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         Mission createdMission = missionRepository.findAll().get(0);
         Long missionId = createdMission.getId();
@@ -267,7 +269,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 .content(objectMapper.writeValueAsString(createRequestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         Mission createdMission = missionRepository.findAll().get(0);
         Long missionId = createdMission.getId();
@@ -313,7 +315,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 .content(objectMapper.writeValueAsString(createRequestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         Mission createdMission = missionRepository.findAll().get(0);
         Long missionId = createdMission.getId();
@@ -449,7 +451,7 @@ public class MissionControllerTest extends RestDocsSupport {
                                 .content(objectMapper.writeValueAsString(createRequestDto))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         ModifyMissionRequestDto modifyRequestDto = new ModifyMissionRequestDto("수정 전 미션 내용");
 

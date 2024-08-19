@@ -22,7 +22,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -114,7 +113,6 @@ class MissionServiceTest {
         assertThat(response.content()).isEqualTo(newMissionContent);
         verify(missionValidationService, times(1)).validateIsLeader(participantId, meetingId);
         verify(missionValidationService, times(1)).validateModification(existingMission, newMissionContent, participantId, meetingId);
-        verify(missionRepository, times(1)).save(argThat(m -> m.getContent().equals(newMissionContent)));
     }
 
     @DisplayName("존재하지 않는 미션 ID로 미션을 수정하려고 할 때 실패한다.")

@@ -27,7 +27,7 @@ public class MissionController {
             @Valid @RequestBody CreateMissionRequestDto requestDto
     ) {
         var response = missionService.createMission(meetingId, authInfo.participantId(), requestDto);
-        return ResponseDto.ok(response);
+        return ResponseDto.created(response);
     }
 
     @PatchMapping("/{missionId}")
