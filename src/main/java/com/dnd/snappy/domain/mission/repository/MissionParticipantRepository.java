@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface MissionParticipantRepository extends JpaRepository<MissionParticipant, Long> {
+  
+    boolean existsByMissionId(Long missionId);
 
     boolean existsByMissionIdAndParticipantId(Long missionId, Long participantId);
 
