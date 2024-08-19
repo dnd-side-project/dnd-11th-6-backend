@@ -50,6 +50,7 @@ public class Participant extends BaseEntity {
 
     public boolean isLeader(Long meetingId) {
         return this.role == Role.LEADER && this.meeting.getId().equals(meetingId);
+    }
 
     public void addShootCount() {
         if(canNotShoot()) {
