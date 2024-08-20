@@ -7,10 +7,12 @@ import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("SIMPLE")
+@SuperBuilder(toBuilder = true)
 public class SimpleSnap extends Snap {
 
     private SimpleSnap(String snapUrl, LocalDateTime shootDate, Meeting meeting, Participant participant) {

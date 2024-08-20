@@ -8,10 +8,6 @@ include::modify-mission.adoc[]
 
 include::delete-mission.adoc[]
 
-
-[[MISSION-API]]
-== mission API
-
 include::random-mission.adoc[]
 
 include::find-completed-mission.adoc[]

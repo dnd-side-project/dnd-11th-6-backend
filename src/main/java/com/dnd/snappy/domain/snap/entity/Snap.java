@@ -39,6 +39,9 @@ public abstract class Snap extends BaseEntity {
     @JoinColumn(name = "meeting_id", nullable = false)
     private Meeting meeting;
 
+    @Column(insertable = false, updatable = false)
+    private String dtype;
+
     protected Snap(String snapUrl, LocalDateTime shootDate, Meeting meeting, Participant participant) {
         this.snapUrl = snapUrl;
         this.shootDate = shootDate;

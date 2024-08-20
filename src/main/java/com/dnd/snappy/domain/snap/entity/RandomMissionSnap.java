@@ -11,14 +11,16 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
+@SuperBuilder(toBuilder = true)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DiscriminatorValue("RANDOM_MISSION")
 public class RandomMissionSnap extends Snap {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "random_mission_id")
+    @JoinColumn(name = "random_mission_id", nullable = false)
     private RandomMission randomMission;
 
     private RandomMissionSnap(String snapUrl, LocalDateTime shootDate, Meeting meeting, Participant participant, RandomMission randomMission) {

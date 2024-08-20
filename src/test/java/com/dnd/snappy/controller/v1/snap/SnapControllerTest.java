@@ -8,6 +8,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.response
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,12 +27,19 @@ import com.dnd.snappy.domain.mission.repository.RandomMissionRepository;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
+import com.dnd.snappy.domain.snap.entity.MeetingMissionSnap;
+import com.dnd.snappy.domain.snap.entity.RandomMissionSnap;
+import com.dnd.snappy.domain.snap.entity.SimpleSnap;
+import com.dnd.snappy.domain.snap.entity.Snap;
+import com.dnd.snappy.domain.snap.repository.SnapRepository;
 import com.dnd.snappy.domain.token.service.TokenProvider;
 import com.dnd.snappy.domain.token.service.TokenType;
 import com.dnd.snappy.support.RestDocsSupport;
 import jakarta.servlet.http.Cookie;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -59,6 +67,9 @@ class SnapControllerTest extends RestDocsSupport {
 
     @Autowired
     private MissionParticipantRepository missionParticipantRepository;
+
+    @Autowired
+    private SnapRepository snapRepository;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -502,6 +513,62 @@ class SnapControllerTest extends RestDocsSupport {
         return participantRepository.save(participant);
     }
 
+    @DisplayName("모임내의 모든 사진을 조회한다.")
+    @Test
+    void findSnapsInMeeting() throws Exception {
+        //given
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Participant participant = appendParticipant(meeting, "nick", 2);
+        List<RandomMission> randomMissions = appendRandomMissions(20);
+        List<Mission> missions = appendMissions(meeting, 20);
+        long lastId = 0;
+        for(int i=0; i<4; i++) {
+            appendSimpleSnap(meeting, participant);
+            appendRandomMissionSnap(meeting, participant, randomMissions.get(i));
+            Snap snap = appendMeetingMissionSnap(meeting, participant, missions.get(i));
+
+            lastId = snap.getId();
+        }
+
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/snaps", meeting.getId())
+                                .queryParam("cursorId", String.valueOf(lastId + 1))
+                                .queryParam("limit", String.valueOf(3))
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                queryParameters(
+                                        parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
+                                        parameterWithName("limit").description("조회하고 싶은 데이터 갯수 (기본: 10개)")
+                                )
+                                ,
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                )
+                                ,
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
+                                        fieldWithPath("data.nextCursorId").type(JsonFieldType.NUMBER).description("다음 cursorId값"),
+                                        fieldWithPath("data.data").type(JsonFieldType.ARRAY).description("snap 데이터"),
+                                        fieldWithPath("data.data[].snapId").type(JsonFieldType.NUMBER).description("snap ID"),
+                                        fieldWithPath("data.data[].snapUrl").type(JsonFieldType.STRING).description("촬영한 snap url"),
+                                        fieldWithPath("data.data[].type").type(JsonFieldType.STRING).attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
+                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 갯수"),
+                                        fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                )
+                        )
+                );
+
+    }
+
     private RandomMission appendRandomMission() {
         RandomMission randomMission = RandomMission.builder().content("test random mission content").build();
         return randomMissionRepository.save(randomMission);
@@ -515,6 +582,47 @@ class SnapControllerTest extends RestDocsSupport {
     private MissionParticipant appendMissionParticipant(Mission mission, Participant participant) {
         MissionParticipant missionParticipant = MissionParticipant.builder().mission(mission).participant(participant).build();
         return missionParticipantRepository.save(missionParticipant);
+    }
+
+    public List<RandomMission> appendRandomMissions(int count) {
+        List<RandomMission> randomMissions = new ArrayList<>();
+        for(int i=1; i<=count; i++) {
+            RandomMission randomMission = RandomMission.builder()
+                    .content("test content " + i)
+                    .build();
+            randomMissions.add(randomMission);
+        }
+
+        return randomMissionRepository.saveAll(randomMissions);
+    }
+
+    public List<Mission> appendMissions(Meeting meeting, int count) {
+        List<Mission> missions = new ArrayList<>();
+        for(int i=1; i<=count; i++) {
+            Mission mission = Mission.builder()
+                    .meeting(meeting)
+                    .content("miss content " + i)
+                    .build();
+            missions.add(mission);
+        }
+
+        return missionRepository.saveAll(missions);
+    }
+
+    private Snap appendSimpleSnap(Meeting meeting, Participant participant) {
+        SimpleSnap snap = SimpleSnap.builder().meeting(meeting).participant(participant).snapUrl("url1")
+                .shootDate(LocalDateTime.now()).build();
+        return snapRepository.save(snap);
+    }
+
+    private Snap appendRandomMissionSnap(Meeting meeting, Participant participant, RandomMission randomMission) {
+        RandomMissionSnap snap = RandomMissionSnap.builder().meeting(meeting).participant(participant).snapUrl("url1").shootDate(LocalDateTime.now()).randomMission(randomMission).build();
+        return snapRepository.save(snap);
+    }
+
+    private Snap appendMeetingMissionSnap(Meeting meeting, Participant participant, Mission mission) {
+        MeetingMissionSnap snap = MeetingMissionSnap.builder().meeting(meeting).participant(participant).snapUrl("url1").shootDate(LocalDateTime.now()).mission(mission).build();
+        return snapRepository.save(snap);
     }
 
 
