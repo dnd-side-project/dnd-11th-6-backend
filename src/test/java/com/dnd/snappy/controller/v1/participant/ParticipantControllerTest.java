@@ -284,6 +284,7 @@ class ParticipantControllerTest extends RestDocsSupport {
         }
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
 
+
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/participants", meeting.getId())
                                 .queryParam("cursorId", String.valueOf(0))
