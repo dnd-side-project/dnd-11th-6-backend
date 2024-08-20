@@ -543,7 +543,7 @@ class SnapControllerTest extends RestDocsSupport {
                         restDocs.document(
                                 queryParameters(
                                         parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
-                                        parameterWithName("limit").description("조회하고 싶은 데이터 갯수 (기본: 10개)")
+                                        parameterWithName("limit").description("조회하고 싶은 데이터 수 (기본: 10개)")
                                 )
                                 ,
                                 pathParameters(
@@ -561,7 +561,7 @@ class SnapControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.data[].snapId").type(JsonFieldType.NUMBER).description("snap ID"),
                                         fieldWithPath("data.data[].snapUrl").type(JsonFieldType.STRING).description("촬영한 snap url"),
                                         fieldWithPath("data.data[].type").type(JsonFieldType.STRING).attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
-                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 갯수"),
+                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 수"),
                                         fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                 )
                         )
@@ -599,7 +599,7 @@ class SnapControllerTest extends RestDocsSupport {
                         restDocs.document(
                                 queryParameters(
                                         parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
-                                        parameterWithName("limit").description("조회하고 싶은 데이터 갯수 (기본: 10개)")
+                                        parameterWithName("limit").description("조회하고 싶은 데이터 개수 (기본: 10개)")
                                 )
                                 ,
                                 pathParameters(
@@ -617,7 +617,7 @@ class SnapControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.data[].snapId").type(JsonFieldType.NUMBER).description("snap ID"),
                                         fieldWithPath("data.data[].snapUrl").type(JsonFieldType.STRING).description("촬영한 snap url"),
                                         fieldWithPath("data.data[].type").type(JsonFieldType.STRING).attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
-                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 갯수"),
+                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 수"),
                                         fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                 )
                         )
@@ -655,7 +655,7 @@ class SnapControllerTest extends RestDocsSupport {
                         restDocs.document(
                                 queryParameters(
                                         parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
-                                        parameterWithName("limit").description("조회하고 싶은 데이터 갯수 (기본: 10개)")
+                                        parameterWithName("limit").description("조회하고 싶은 데이터 수 (기본: 10개)")
                                 )
                                 ,
                                 pathParameters(
@@ -673,7 +673,7 @@ class SnapControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.data[].snapId").type(JsonFieldType.NUMBER).description("snap ID"),
                                         fieldWithPath("data.data[].snapUrl").type(JsonFieldType.STRING).description("촬영한 snap url"),
                                         fieldWithPath("data.data[].type").type(JsonFieldType.STRING).attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
-                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 갯수"),
+                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 수"),
                                         fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                 )
                         )
@@ -715,7 +715,7 @@ class SnapControllerTest extends RestDocsSupport {
                         restDocs.document(
                                 queryParameters(
                                         parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
-                                        parameterWithName("limit").description("조회하고 싶은 데이터 갯수 (기본: 10개)")
+                                        parameterWithName("limit").description("조회하고 싶은 데이터 수 (기본: 10개)")
                                 )
                                 ,
                                 pathParameters(
@@ -733,7 +733,7 @@ class SnapControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.data[].snapId").type(JsonFieldType.NUMBER).description("snap ID"),
                                         fieldWithPath("data.data[].snapUrl").type(JsonFieldType.STRING).description("촬영한 snap url"),
                                         fieldWithPath("data.data[].type").type(JsonFieldType.STRING).attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
-                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 갯수"),
+                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 수"),
                                         fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                 )
                         )
