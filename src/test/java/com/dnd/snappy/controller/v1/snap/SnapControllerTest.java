@@ -716,8 +716,7 @@ class SnapControllerTest extends RestDocsSupport {
                                 queryParameters(
                                         parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
                                         parameterWithName("limit").description("조회하고 싶은 데이터 수 (기본: 10개)")
-                                )
-                                ,
+                                ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 ID")
                                 ),
