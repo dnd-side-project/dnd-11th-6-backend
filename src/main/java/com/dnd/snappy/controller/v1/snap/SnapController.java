@@ -78,4 +78,13 @@ public class SnapController {
         var data = snapService.findSnapsInMeeting(cursorBasedRequest.toCursorBasedRequestDto(), meetingId);
         return ResponseDto.ok(data);
     }
+
+    @GetMapping("/random-mission")
+    public ResponseEntity<ResponseDto<CursorBasedResponseDto<List<SnapResponseDto>>>> findRandomMissionSnapsInMeeting(
+            @PathVariable("meetingId") Long meetingId,
+            @ModelAttribute CursorBasedRequest cursorBasedRequest
+    ) {
+        var data = randomMissionSnapService.findSnapsInMeeting(cursorBasedRequest.toCursorBasedRequestDto(), meetingId);
+        return ResponseDto.ok(data);
+    }
 }

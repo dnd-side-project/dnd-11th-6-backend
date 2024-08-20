@@ -15,14 +15,3 @@ include::{snippets}/snap-controller-test/find-snaps-in-meeting/request-cookies.a
 ===== Response
 include::{snippets}/snap-controller-test/find-snaps-in-meeting/http-response.adoc[]
 include::{snippets}/snap-controller-test/find-snaps-in-meeting/response-fields.adoc[]
-
-==== 실패
-
-`참여자의 사진 촬영 횟수과 최대치를 초과한 경우 예외 발생`
-include::{snippets}/snap-controller-test/create-meeting-mission-snap_exceed_max_shoot_count/response-body.adoc[]
-
-`참여자가 참여한 모임에 요청으로 보낸 미션 ID가 없을때 예외 발생`
-include::{snippets}/snap-controller-test/create-meeting-mission-snap_not_participation_mission/response-body.adoc[]
-
-`참여자가 이미 수행한 모임 미션일때 예외 발생`
-include::{snippets}/snap-controller-test/create-meeting-mission-snap_already_completed_mission/response-body.adoc[]
