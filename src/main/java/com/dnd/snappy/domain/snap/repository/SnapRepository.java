@@ -15,6 +15,32 @@ public interface SnapRepository extends JpaRepository<Snap, Long> {
 
     Long countByMeetingId(@Param("meetingId") Long meetingId);
 
-    @Query("select new com.dnd.snappy.domain.snap.dto.response.SnapResponseDto(s.id, s.snapUrl, s.dtype) from Snap s where s.id < :cursorId and s.meeting.id = :meetingId order by s.id desc")
+    @Query("""
+        select new com.dnd.snappy.domain.snap.dto.response.SnapResponseDto(s.id, s.snapUrl, s.dtype)
+        from Snap s
+        where s.id < :cursorId
+        and s.meeting.id = :meetingId
+        order by s.id desc
+    """)
     List<SnapResponseDto> findSnapsInMeetingByCursorId(@Param("cursorId") Long cursorId, @Param("meetingId") Long meetingId, Pageable pageable);
+
+    Optional<Snap> findFirstByMeetingIdAndParticipantIdOrderByIdDesc(@Param("meetingId") Long meetingId, @Param("participantId") Long participantId);
+
+    Long countByMeetingIdAndParticipantId(@Param("meetingId") Long meetingId, @Param("participantId") Long participantId);
+
+    @Query("""
+        select new com.dnd.snappy.domain.snap.dto.response.SnapResponseDto(s.id, s.snapUrl, s.dtype)
+        from Snap s
+        where s.id < :cursorId
+        and s.meeting.id = :meetingId
+        and s.participant.id = :participantId
+        order by s.id desc
+    """)
+    List<SnapResponseDto> findParticipantSnapsInMeetingByCursorId(
+            @Param("cursorId") Long cursorId,
+            @Param("meetingId") Long meetingId,
+            @Param("participantId") Long participantId,
+            Pageable pageable
+    );
+
 }

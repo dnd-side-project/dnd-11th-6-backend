@@ -12,3 +12,5 @@ include::find-snaps-in-meeting.adoc[]
 include::find-random-mission-snap-in-meeting.adoc[]
 
 include::find-meeting-mission-snap-in-meeting.adoc[]
+
+include::find-participant-snaps-in-meeting.adoc[]

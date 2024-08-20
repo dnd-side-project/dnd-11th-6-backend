@@ -96,4 +96,14 @@ public class SnapController {
         var data = meetingMissionSnapService.findSnapsInMeeting(cursorBasedRequest.toCursorBasedRequestDto(), meetingId);
         return ResponseDto.ok(data);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<ResponseDto<CursorBasedResponseDto<List<SnapResponseDto>>>> findParticipantSnapsInMeeting(
+            @PathVariable("meetingId") Long meetingId,
+            @ModelAttribute CursorBasedRequest cursorBasedRequest,
+            @AuthPrincipal AuthInfo authInfo
+    ) {
+        var data = snapService.findParticipantSnapsInMeeting(cursorBasedRequest.toCursorBasedRequestDto(), meetingId, authInfo.participantId());
+        return ResponseDto.ok(data);
+    }
 }
