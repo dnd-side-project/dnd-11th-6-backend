@@ -1,0 +1,17 @@
+=== 모임 내 참가자들 조회 (페이지네이션)
+
+`커서 기반 페이지네이션이 적용된 API입니다. 커서 기반 페이지네이션에 대한 설명은 공통 영역 메뉴의 커서 기반 페이지네이션 설명 탭을 확인해 주세요!`
+
+==== 성공
+
+===== Request
+include::{snippets}/participant-controller-test/find-participants-in-meeting/http-request.adoc[]
+===== Query Parameter
+include::{snippets}/participant-controller-test/find-participants-in-meeting/query-parameters.adoc[]
+include::{snippets}/participant-controller-test/find-participants-in-meeting/path-parameters.adoc[]
+===== Request Cookie
+include::{snippets}/participant-controller-test/find-participants-in-meeting/request-cookies.adoc[]
+
+===== Response
+include::{snippets}/participant-controller-test/find-participants-in-meeting/http-response.adoc[]
+include::{snippets}/participant-controller-test/find-participants-in-meeting/response-fields.adoc[]
