@@ -681,6 +681,66 @@ class SnapControllerTest extends RestDocsSupport {
 
     }
 
+    @DisplayName("모임내의 인증된 사용자 사진을 커서 기반 페이지네이션으로 조회한다.")
+    @Test
+    void findParticipantMeetingMissionSnapsInMeeting() throws Exception {
+        //given
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Participant participant = appendParticipant(meeting, "nick1", 2);
+        Participant participant2 = appendParticipant(meeting, "nick2", 2);
+        List<RandomMission> randomMissions = appendRandomMissions(5);
+        List<Mission> missions = appendMissions(meeting, 5);
+        long lastId = 0;
+        for(int i=1; i<=4; i++) {
+            appendSimpleSnap(meeting, participant);
+            appendSimpleSnap(meeting, participant2);
+            appendRandomMissionSnap(meeting, participant, randomMissions.get(i));
+            appendRandomMissionSnap(meeting, participant2, randomMissions.get(i));
+            Snap snap = appendMeetingMissionSnap(meeting, participant, missions.get(i));
+            Snap snap2 = appendMeetingMissionSnap(meeting, participant2, missions.get(i));
+
+            lastId = snap2.getId();
+        }
+
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/snaps/me", meeting.getId())
+                                .queryParam("cursorId", String.valueOf(lastId + 1))
+                                .queryParam("limit", String.valueOf(3))
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                queryParameters(
+                                        parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
+                                        parameterWithName("limit").description("조회하고 싶은 데이터 갯수 (기본: 10개)")
+                                )
+                                ,
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                )
+                                ,
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
+                                        fieldWithPath("data.nextCursorId").type(JsonFieldType.NUMBER).description("다음 cursorId값"),
+                                        fieldWithPath("data.data").type(JsonFieldType.ARRAY).description("snap 데이터"),
+                                        fieldWithPath("data.data[].snapId").type(JsonFieldType.NUMBER).description("snap ID"),
+                                        fieldWithPath("data.data[].snapUrl").type(JsonFieldType.STRING).description("촬영한 snap url"),
+                                        fieldWithPath("data.data[].type").type(JsonFieldType.STRING).attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
+                                        fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 갯수"),
+                                        fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
+                                )
+                        )
+                );
+
+    }
+
     private RandomMission appendRandomMission() {
         RandomMission randomMission = RandomMission.builder().content("test random mission content").build();
         return randomMissionRepository.save(randomMission);
