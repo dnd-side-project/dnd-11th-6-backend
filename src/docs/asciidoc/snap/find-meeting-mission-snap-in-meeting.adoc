@@ -1,0 +1,17 @@
+=== 모임 내 모임 미션 사진 전체 조회 (페이지네이션)
+
+`커서 기반 페이지네이션이 적용된 API입니다. 커서 기반 페이지네이션에 대한 설명은 공통 영역 메뉴의 커서 기반 페이지네이션 설명 탭을 확인해 주세요!`
+
+==== 성공
+
+===== Request
+include::{snippets}/snap-controller-test/find-meeting-mission-snaps-in-meeting/http-request.adoc[]
+===== Query Parameter
+include::{snippets}/snap-controller-test/find-meeting-mission-snaps-in-meeting/query-parameters.adoc[]
+include::{snippets}/snap-controller-test/find-meeting-mission-snaps-in-meeting/path-parameters.adoc[]
+===== Request Cookie
+include::{snippets}/snap-controller-test/find-meeting-mission-snaps-in-meeting/request-cookies.adoc[]
+
+===== Response
+include::{snippets}/snap-controller-test/find-meeting-mission-snaps-in-meeting/http-response.adoc[]
+include::{snippets}/snap-controller-test/find-meeting-mission-snaps-in-meeting/response-fields.adoc[]

@@ -8,3 +8,7 @@ include::create-random-mission-snap.adoc[]
 include::create-meeting-mission-snap.adoc[]
 
 include::find-snaps-in-meeting.adoc[]
+
+include::find-random-mission-snap-in-meeting.adoc[]
+
+include::find-meeting-mission-snap-in-meeting.adoc[]
