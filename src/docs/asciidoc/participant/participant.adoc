@@ -6,3 +6,5 @@ include::join-meeting.adoc[]
 include::find-participant-me.adoc[]
 
 include::check-nickname.adoc[]
+
+include::find-participants-in-meeting.adoc[]
