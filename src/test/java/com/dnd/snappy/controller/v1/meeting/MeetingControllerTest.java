@@ -331,6 +331,7 @@ class MeetingControllerTest extends RestDocsSupport {
                                 responseFields(
                                         fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
                                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("모임"),
+                                        fieldWithPath("data.name").type(JsonFieldType.STRING).description("모임 이름"),
                                         fieldWithPath("data.meetingLink").type(JsonFieldType.STRING).description("모임 링크"),
                                         fieldWithPath("data.leaderAuthKey").type(JsonFieldType.STRING).description("모임 관리자 인증 키"),
                                         fieldWithPath("data.password").type(JsonFieldType.STRING).description("모임 비밀번호"),
