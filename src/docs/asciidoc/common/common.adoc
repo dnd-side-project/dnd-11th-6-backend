@@ -1,0 +1,4 @@
+[[common]]
+== 공통 영역
+
+include::cursor-based-pagination.adoc[]

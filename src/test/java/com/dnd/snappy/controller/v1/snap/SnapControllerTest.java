@@ -515,7 +515,7 @@ class SnapControllerTest extends RestDocsSupport {
 
     @DisplayName("모임내의 모든 사진을 조회한다.")
     @Test
-    void test() throws Exception {
+    void findSnapsInMeeting() throws Exception {
         //given
         Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         Participant participant = appendParticipant(meeting, "nick", 2);
@@ -534,7 +534,7 @@ class SnapControllerTest extends RestDocsSupport {
         mockMvc.perform(
                         RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/snaps", meeting.getId())
                                 .queryParam("cursorId", String.valueOf(lastId + 1))
-                                .queryParam("limit", String.valueOf(10))
+                                .queryParam("limit", String.valueOf(3))
                                 .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN)))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
@@ -542,8 +542,8 @@ class SnapControllerTest extends RestDocsSupport {
                 .andDo(
                         restDocs.document(
                                 queryParameters(
-                                        parameterWithName("cursorId").description("사용하고 싶은 닉네임"),
-                                        parameterWithName("limit").description("사용하고 싶은 닉네임")
+                                        parameterWithName("cursorId").description("마지막으로 조회한 cursorId값"),
+                                        parameterWithName("limit").description("조회하고 싶은 데이터 갯수 (기본: 10개)")
                                 )
                                 ,
                                 pathParameters(
@@ -562,7 +562,7 @@ class SnapControllerTest extends RestDocsSupport {
                                         fieldWithPath("data.data[].snapUrl").type(JsonFieldType.STRING).description("촬영한 snap url"),
                                         fieldWithPath("data.data[].type").type(JsonFieldType.STRING).attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
                                         fieldWithPath("data.count").type(JsonFieldType.NUMBER).description("전체 사진 갯수"),
-                                        fieldWithPath("data.hasNextCursor").type(JsonFieldType.BOOLEAN).description("snap 데이터")
+                                        fieldWithPath("data.hasNext").type(JsonFieldType.BOOLEAN).description("다음 페이지 여부")
                                 )
                         )
                 );

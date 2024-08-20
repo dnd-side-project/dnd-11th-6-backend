@@ -6,7 +6,7 @@ public record CursorBasedResponseDto<T>(
         Long nextCursorId,
         T data,
         Long count,
-        boolean hasNextCursor
+        boolean hasNext
 ) {
 
     public static <T> CursorBasedResponseDto<T> empty(T emptyList) {

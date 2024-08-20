@@ -8,6 +8,6 @@ public record CursorBasedRequest(
         Integer limit
 ) {
     public CursorBasedRequestDto toCursorBasedRequestDto() {
-        return new CursorBasedRequestDto(Optional.of(cursorId < 0 ? 0 : cursorId), limit == null ? 10 : limit);
+        return new CursorBasedRequestDto((cursorId == null || cursorId <= 0) ? Optional.empty() : Optional.of(cursorId), limit == null ? 10 : limit);
     }
 }
