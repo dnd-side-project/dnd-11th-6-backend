@@ -19,21 +19,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
-    protected ResponseEntity<ResponseDto<?>> handleBusinessException(
-            final RuntimeException e,
-            final HttpServletRequest request
-    ) {
-        log.error("RuntimeException: {} {}", e.getMessage(), request.getRequestURL());
-        return ResponseDto.fail(CommonErrorCode.INTERNAL_SERVER_ERROR.toErrorCode());
-    }
-
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ResponseDto<?>> handleBusinessException(
             final BusinessException e,
             final HttpServletRequest request
     ) {
-        log.error("BusinessException: {} {}", e.getErrorCode(), request.getRequestURL());
+        log.info("BusinessException: {} {}", e.getErrorCode(), request.getRequestURL());
+        return ResponseDto.fail(e.getErrorCode());
+    }
+
+    @ExceptionHandler(ImageException.class)
+    protected ResponseEntity<ResponseDto<?>> handleImageException(
+            final ImageException e,
+            final HttpServletRequest request
+    ) {
+        log.info("ImageException: {} {}", e.getErrorCode(), request.getRequestURL());
         return ResponseDto.fail(e.getErrorCode());
     }
 
@@ -51,17 +51,17 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = CommonErrorCode.VALIDATION_ERROR.toErrorCode();
         errorCode.appendMessage(errorMessage);
 
-        log.error("ValidationException: {} {}", errorCode, request.getRequestURL());
+        log.info("ValidationException: {} {}", errorCode, request.getRequestURL());
         return ResponseDto.fail(errorCode);
     }
 
-    @ExceptionHandler(ImageException.class)
-    protected ResponseEntity<ResponseDto<?>> handleImageException(
-            final ImageException e,
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<ResponseDto<?>> handleBusinessException(
+            final Exception e,
             final HttpServletRequest request
     ) {
-        log.error("ImageException: {} {}", e.getErrorCode(), request.getRequestURL());
-        return ResponseDto.fail(e.getErrorCode());
+        log.error("[Exception] 예상치 못한 오류 발생: {} {}", e.getMessage(), request.getRequestURL(), e);
+        return ResponseDto.fail(CommonErrorCode.INTERNAL_SERVER_ERROR.toErrorCode());
     }
 
 }
