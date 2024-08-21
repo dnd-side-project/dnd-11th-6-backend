@@ -3,6 +3,7 @@ package com.dnd.snappy.domain.participant.repository;
 import com.dnd.snappy.domain.participant.dto.response.ParticipantResponseDto;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,4 +24,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
     List<ParticipantResponseDto> findByMeetingId(@Param("meetingId") Long meetingId, @Param("cursorId") Long cursorId, Pageable pageable);
 
     Long countByMeetingId(Long meetingId);
+
+    @Query("select p from Participant p join fetch Meeting m")
+    Optional<Participant> findByIdWithMeeting();
 }

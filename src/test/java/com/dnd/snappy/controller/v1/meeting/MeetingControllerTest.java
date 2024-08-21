@@ -1,5 +1,7 @@
 package com.dnd.snappy.controller.v1.meeting;
 
+import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
+import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -16,10 +18,16 @@ import com.dnd.snappy.controller.v1.meeting.request.LeaderAuthKeyValidationReque
 import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
+import com.dnd.snappy.domain.participant.entity.Participant;
+import com.dnd.snappy.domain.participant.entity.Role;
+import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
+import com.dnd.snappy.domain.token.service.TokenProvider;
+import com.dnd.snappy.domain.token.service.TokenType;
 import com.dnd.snappy.support.RestDocsSupport;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 
+import jakarta.servlet.http.Cookie;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
@@ -40,6 +48,13 @@ class MeetingControllerTest extends RestDocsSupport {
 
     @Autowired
     private MeetingRepository meetingRepository;
+
+    @Autowired
+    private ParticipantRepository participantRepository;
+
+    @Autowired
+    private TokenProvider tokenProvider;
+
 
     @DisplayName("모임 링크를 통해 모임 상세 정보를 조회한다.")
     @Test
@@ -626,6 +641,69 @@ class MeetingControllerTest extends RestDocsSupport {
 
     }
 
+    @DisplayName("모임의 비밀번호를 알 수 있다.")
+    @Test
+    void findMeetingPassword() throws Exception {
+        //given
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Participant participant = appendParticipant(meeting, "nick", Role.LEADER, 10);
+        String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/password", meeting.getId())
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("모임"),
+                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("모임 비밀번호"),
+                                        fieldWithPath("data.leaderAuthKey").type(JsonFieldType.STRING).description("모임 관리자키")
+                                )
+                        )
+                );
+
+    }
+
+    @DisplayName("모임의 비밀번호를 알 수 있다.")
+    @Test
+    void findMeetingPassword_no_leader() throws Exception {
+        //given
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Participant participant = appendParticipant(meeting, "nick", Role.PARTICIPANT, 10);
+        String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/password", meeting.getId())
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), token))
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("모임"),
+                                        fieldWithPath("data.password").type(JsonFieldType.STRING).description("모임 비밀번호")
+                                )
+                        )
+                );
+
+    }
+
     private ResponseFieldsSnippet gerErrorResponse() {
         return responseFields(
                 fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
@@ -634,6 +712,34 @@ class MeetingControllerTest extends RestDocsSupport {
                 fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
                 fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
         );
+    }
+
+    private Meeting appendMeeting(LocalDateTime startDate, LocalDateTime endDate) {
+        Meeting meeting = Meeting.builder()
+                .name("DND")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(startDate)
+                .endDate(endDate)
+                .meetingLink("meetingLink")
+                .password("1234")
+                .leaderAuthKey("1423")
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        return meetingRepository.save(meeting);
+    }
+
+    private Participant appendParticipant(Meeting meeting, String nickname, Role role, int shootCount) {
+        Participant participant = Participant.builder()
+                .nickname(nickname)
+                .role(role)
+                .shootCount(shootCount)
+                .meeting(meeting)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now()).build();
+        return participantRepository.save(participant);
     }
 
 }
