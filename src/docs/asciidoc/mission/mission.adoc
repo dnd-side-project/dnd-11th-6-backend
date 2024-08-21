@@ -14,3 +14,4 @@ include::find-completed-mission.adoc[]
 
 include::find-in-completed-mission.adoc[]
 
+include::meeting-mission-detail.adoc[]

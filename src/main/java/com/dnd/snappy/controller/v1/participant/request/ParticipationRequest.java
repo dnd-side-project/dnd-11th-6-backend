@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record ParticipationRequest(
-        @Size(min = 1, max = 6, message = "닉네임은 최소 1글자 최대 6글자까지 가능합니다.")
+        @Size(min = 1, max = 8, message = "닉네임은 최소 1글자 최대 8글자까지 가능합니다.")
         @NotBlank(message = "nickname은 필수입니다.")
         String nickname,
 

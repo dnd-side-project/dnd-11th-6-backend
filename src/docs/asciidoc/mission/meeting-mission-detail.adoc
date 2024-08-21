@@ -1,0 +1,29 @@
+=== [참여자] 모임 미션 전체 조회
+
+==== 성공
+===== Request
+include::{snippets}/mission-detail-controller-test/find-meeting-missions/http-request.adoc[]
+
+===== Response
+include::{snippets}/mission-detail-controller-test/find-meeting-missions/http-response.adoc[]
+include::{snippets}/mission-detail-controller-test/find-meeting-missions/response-fields.adoc[]
+
+==== 실패
+`참여하지 않은 모임 ID로 미션 목록을 조회할 때 예외가 발생한다.`
+include::{snippets}/mission-detail-controller-test/find-meeting-missions_-meeting-not-found/http-response.adoc[]
+
+
+=== [주최자] 모임 미션 전체 조회
+* **hasParticipants**: 해당 미션에 참여자가 존재하면 `true`, 없다면 `false`
+
+==== 성공
+===== Request
+include::{snippets}/mission-detail-controller-test/find-leader-meeting-missions/http-request.adoc[]
+
+===== Response
+include::{snippets}/mission-detail-controller-test/find-leader-meeting-missions/http-response.adoc[]
+include::{snippets}/mission-detail-controller-test/find-leader-meeting-missions/response-fields.adoc[]
+
+==== 실패
+`리더가 아닌 사용자가 리더 전용 미션 목록을 조회할 때 예외가 발생한다.`
+include::{snippets}/mission-detail-controller-test/find-leader-meeting-missions_unauthorized_mission/http-response.adoc[]

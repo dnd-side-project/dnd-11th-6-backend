@@ -479,15 +479,15 @@ public class MissionControllerTest extends RestDocsSupport {
 
     private Meeting createMeeting() {
         Meeting meeting = Meeting.builder()
-                .name("name")
+                .name("DND")
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .startDate(LocalDateTime.now())
                 .endDate(LocalDateTime.now())
                 .symbolColor("#fff")
                 .meetingLink("link")
-                .password("password")
-                .leaderAuthKey("aaa")
+                .password("1234")
+                .leaderAuthKey("1234")
                 .build();
         return meetingRepository.save(meeting);
     }
