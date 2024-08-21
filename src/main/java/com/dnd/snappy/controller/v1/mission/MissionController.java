@@ -5,8 +5,7 @@ import com.dnd.snappy.controller.v1.auth.resolver.AuthInfo;
 import com.dnd.snappy.controller.v1.auth.resolver.AuthPrincipal;
 import com.dnd.snappy.domain.mission.dto.request.CreateMissionRequestDto;
 import com.dnd.snappy.domain.mission.dto.request.ModifyMissionRequestDto;
-import com.dnd.snappy.domain.mission.dto.response.CreateMissionResponseDto;
-import com.dnd.snappy.domain.mission.dto.response.ModifyMissionResponseDto;
+import com.dnd.snappy.domain.mission.dto.response.*;
 import com.dnd.snappy.domain.mission.service.MissionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +49,4 @@ public class MissionController {
         missionService.deleteMission(meetingId, missionId, authInfo.participantId());
         return ResponseDto.successMessage("모임 미션 삭제 성공했습니다.");
     }
-
 }
