@@ -12,3 +12,5 @@ include::validate-meeting-password.adoc[]
 include::validate-meeting-password-leader.adoc[]
 
 include::shareable-meeting-link.adoc[]
+
+include::find-meeting-password.adoc[]

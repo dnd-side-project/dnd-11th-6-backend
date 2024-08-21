@@ -10,6 +10,7 @@ import com.dnd.snappy.domain.common.dto.response.CursorBasedResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.participant.dto.response.CreateParticipantResponseDto;
+import com.dnd.snappy.domain.participant.dto.response.MeetingPasswordResponseDto;
 import com.dnd.snappy.domain.participant.dto.response.ParticipantDetailResponseDto;
 import com.dnd.snappy.domain.participant.dto.response.ParticipantResponseDto;
 import com.dnd.snappy.domain.participant.entity.Participant;
@@ -83,6 +84,19 @@ public class ParticipantService {
                 cursorBasedRequestDto.limit() == participantResponse.size()
         );
     }
+
+    public MeetingPasswordResponseDto findMeetingPassword(Long participantId) {
+        Participant participant = participantRepository.findById(participantId)
+                .orElseThrow(() -> new NotFoundException(ParticipantErrorCode.NOT_FOUND_PARTICIPANT_ID));
+        Meeting meeting = participant.getMeeting();
+
+        if(participant.getRole() == Role.PARTICIPANT) {
+            return new MeetingPasswordResponseDto(meeting.getPassword(), null);
+        }
+
+        return new MeetingPasswordResponseDto(meeting.getPassword(), meeting.getLeaderAuthKey());
+    }
+
 
     private void validationCreateParticipant(Long meetingId, String nickname) {
         if(participantRepository.existsByNicknameAndMeetingId(nickname, meetingId)) {

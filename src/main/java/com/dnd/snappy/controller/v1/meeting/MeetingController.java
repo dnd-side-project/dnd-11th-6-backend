@@ -1,6 +1,8 @@
 package com.dnd.snappy.controller.v1.meeting;
 
 import com.dnd.snappy.common.dto.ResponseDto;
+import com.dnd.snappy.controller.v1.auth.resolver.AuthInfo;
+import com.dnd.snappy.controller.v1.auth.resolver.AuthPrincipal;
 import com.dnd.snappy.controller.v1.meeting.request.LeaderAuthKeyValidationRequest;
 import com.dnd.snappy.controller.v1.meeting.request.LeaderValidationRequest;
 import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
@@ -9,6 +11,9 @@ import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.service.MeetingService;
+import com.dnd.snappy.domain.participant.dto.response.MeetingPasswordResponseDto;
+import com.dnd.snappy.domain.participant.entity.Role;
+import com.dnd.snappy.domain.participant.service.ParticipantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MeetingController {
 
     private final MeetingService meetingService;
+    private final ParticipantService participantService;
 
     @GetMapping
     public ResponseEntity<ResponseDto<MeetingDetailResponseDto>> findByMeetingLink(
@@ -76,6 +82,15 @@ public class MeetingController {
             @PathVariable Long meetingId) {
         var response = meetingService.getShareableMeetingLink(meetingId);
         return ResponseDto.ok(response);
+    }
+
+    @GetMapping("/{meetingId}/password")
+    public ResponseEntity<ResponseDto<MeetingPasswordResponseDto>> findMeetingPassword(
+            @PathVariable Long meetingId,
+            @AuthPrincipal AuthInfo authInfo
+    ) {
+        var data = participantService.findMeetingPassword(authInfo.participantId());
+        return ResponseDto.ok(data);
     }
 
 }
