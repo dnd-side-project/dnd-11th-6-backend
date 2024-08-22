@@ -4,7 +4,7 @@ import com.dnd.snappy.common.error.CommonErrorCode;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.common.BaseEntity;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
-import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
+import com.dnd.snappy.domain.meeting.dto.request.ModifyMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -116,4 +116,17 @@ public class Meeting extends BaseEntity {
             throw new BusinessException(MeetingErrorCode.NO_IN_PROGRESS_MEETING);
         }
     }
+
+    public void modifyMeeting(ModifyMeetingRequestDto dto) {
+        if (dto.name() != null) {
+            this.name = dto.name();
+        }
+        if (dto.description() != null) {
+            this.description = dto.description();
+        }
+        if (dto.symbolColor() != null) {
+            this.symbolColor = dto.symbolColor();
+        }
+    }
+
 }
