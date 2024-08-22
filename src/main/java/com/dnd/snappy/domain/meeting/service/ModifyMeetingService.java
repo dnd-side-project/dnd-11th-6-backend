@@ -28,6 +28,10 @@ public class ModifyMeetingService {
 
         validateLeader(participant, meetingId);
 
+        if (!meeting.modifyMeeting(requestDto)) {
+            throw new BusinessException(MeetingErrorCode.NO_MODIFICATION);
+        }
+
         meeting.modifyMeeting(requestDto);
 
         return new ModifyMeetingResponseDto(meeting.getId(), meeting.getName(), meeting.getDescription(), meeting.getSymbolColor());

@@ -17,7 +17,7 @@ public enum MeetingErrorCode implements ErrorCodeInterface {
     DUPLICATION_MEETING_LINK(HttpStatus.CONFLICT, "DUPLICATION_MEETING_LINK", "모임 링크가 중복되었습니다."),
     NO_IN_PROGRESS_MEETING(HttpStatus.FORBIDDEN, "NO_IN_PROGRESS_MEETING", "진행중인 모임이 아닙니다."),
     UNAUTHORIZED_MEETING(HttpStatus.FORBIDDEN, "UNAUTHORIZED_MEETING", "모임 수정 권한이 없습니다."),
-    ;
+    NO_MODIFICATION(HttpStatus.BAD_REQUEST, "NO_MODIFICATION", "변경된 수정 사항이 없습니다.");
 
     private final HttpStatus status;
 

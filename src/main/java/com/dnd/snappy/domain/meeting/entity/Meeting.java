@@ -117,16 +117,23 @@ public class Meeting extends BaseEntity {
         }
     }
 
-    public void modifyMeeting(ModifyMeetingRequestDto dto) {
-        if (dto.name() != null) {
+    public boolean modifyMeeting(ModifyMeetingRequestDto dto) {
+        boolean isModified = false;
+
+        if (dto.name() != null && !dto.name().equals(this.name)) {
             this.name = dto.name();
+            isModified = true;
         }
-        if (dto.description() != null) {
+        if (dto.description() != null && !dto.description().equals(this.description)) {
             this.description = dto.description();
+            isModified = true;
         }
-        if (dto.symbolColor() != null) {
+        if (dto.symbolColor() != null && !dto.symbolColor().equals(this.symbolColor)) {
             this.symbolColor = dto.symbolColor();
+            isModified = true;
         }
+
+        return isModified;
     }
 
 }
