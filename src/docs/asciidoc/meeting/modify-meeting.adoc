@@ -18,3 +18,7 @@ include::{snippets}/modify-meeting-controller-test/modify-meeting_invalid_input/
 `모임 리더가 아닌 참여자가 모임 정보를 수정하려 할 때 실패한다.`
 include::{snippets}/modify-meeting-controller-test/modify-meeting_unauthorized_meeting/http-response.adoc[]
 
+`모임 정보를 수정할 때 변경된 사항이 없는 경우 실패한다.`
+include::{snippets}/modify-meeting-controller-test/modify-meeting_no_changes/http-response.adoc[]
+
+

@@ -184,6 +184,34 @@ class ModifyMeetingControllerTest extends RestDocsSupport {
                 );
     }
 
+    @DisplayName("모임 정보를 수정할 때 변경된 사항이 없는 경우 실패한다.")
+    @Test
+    void modifyMeeting_NO_CHANGES() throws Exception {
+        // given
+        Meeting meeting = createMeeting();
+
+        Participant leader = createParticipant(meeting, Role.LEADER);
+        Tokens leaderTokens = tokenProvider.issueTokens(leader.getId());
+        String leaderAccessTokenCookieName = authTokenCookieNameGenerator.generateCookieName(TokenType.ACCESS_TOKEN, meeting.getId());
+        String leaderAccessToken = leaderTokens.accessToken();
+
+        ModifyMeetingRequestDto modifyRequestDto = new ModifyMeetingRequestDto(meeting.getName(), meeting.getDescription(), meeting.getSymbolColor());
+
+        // when & then
+        mockMvc.perform(
+                        patch("/api/v1/meetings/{meetingId}", meeting.getId())
+                                .cookie(new Cookie(leaderAccessTokenCookieName, leaderAccessToken))
+                                .content(objectMapper.writeValueAsString(modifyRequestDto))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                getErrorResponseFields()
+                        )
+                );
+    }
+
     private Meeting createMeeting() {
         Meeting meeting = Meeting.builder()
                 .name("DND")
