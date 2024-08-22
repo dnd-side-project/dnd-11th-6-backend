@@ -14,20 +14,17 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class MDCFilter implements Filter {
-    private static final String MDC_CORRELATION_ID_KEY = "correlationId";
+    private final String REQUEST_ID = "request_id";
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        try {
-            MDC.put(MDC_CORRELATION_ID_KEY, generateCorrelationId());
-            chain.doFilter(request, response);
-        } finally {
-            MDC.clear();
-        }
+        MDC.put(REQUEST_ID, generateRequestId());
+        chain.doFilter(request, response);
+        MDC.clear();
     }
 
-    private String generateCorrelationId() {
+    private String generateRequestId() {
         return UUID.randomUUID()
                 .toString()
                 .substring(0, 8);
