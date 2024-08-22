@@ -1,7 +1,7 @@
 package com.dnd.snappy.domain.meeting.dto.response;
 
 public record ModifyMeetingResponseDto(
-        Long MeetingId,
+        Long meetingId,
         String name,
         String description,
         String symbolColor
