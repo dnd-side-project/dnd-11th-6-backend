@@ -7,7 +7,6 @@ import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.mission.dto.response.LeaderMeetingMissionDetailResponseDto;
 import com.dnd.snappy.domain.mission.dto.response.MeetingMissionDetailResponseDto;
 import com.dnd.snappy.domain.mission.entity.Mission;
-import com.dnd.snappy.domain.mission.repository.MissionParticipantRepository;
 import com.dnd.snappy.domain.mission.repository.MissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class MissionDetailService {
     private final MissionRepository missionRepository;
     private final MeetingRepository meetingRepository;
     private final MissionValidationService missionValidationService;
-    private final MissionParticipantRepository missionParticipantRepository;
 
     @Transactional(readOnly = true)
     public List<MeetingMissionDetailResponseDto> findMeetingMissions(Long meetingId, Long participantId) {
@@ -40,23 +38,7 @@ public class MissionDetailService {
         findByMeetingIdOrThrow(meetingId);
         missionValidationService.validateIsLeader(participantId, meetingId);
 
-        List<Mission> missions = missionRepository.findAllByMeetingId(meetingId);
-
-        return missions.stream()
-                .map(mission -> {
-                    boolean hasParticipants = hasParticipants(mission.getId());
-                    return new LeaderMeetingMissionDetailResponseDto(
-                            mission.getId(),
-                            mission.getContent(),
-                            hasParticipants
-                    );
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public boolean hasParticipants(Long missionId) {
-        return missionParticipantRepository.existsByMissionId(missionId);
+        return missionRepository.findLeaderMeetingMissions(meetingId, participantId);
     }
 
     private Meeting findByMeetingIdOrThrow(Long meetingId) {
