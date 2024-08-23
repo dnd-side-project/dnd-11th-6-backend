@@ -2,7 +2,7 @@ server:
   port: 8080
 spring:
   profiles:
-    active: dev
+    active: local
     include: secret
 jwt:
   secretKey: '${custom.jwt.secretKey}'
