@@ -1,8 +1,19 @@
 package com.dnd.snappy.domain.snap.service;
 
+import static com.dnd.snappy.domain.snap.exception.SnapErrorCode.*;
+
+import com.dnd.snappy.common.error.exception.NotFoundException;
 import com.dnd.snappy.domain.common.dto.request.CursorBasedRequestDto;
 import com.dnd.snappy.domain.common.dto.response.CursorBasedResponseDto;
+import com.dnd.snappy.domain.snap.dto.response.MissionDetailResponseDto;
+import com.dnd.snappy.domain.snap.dto.response.ParticipantDetailResponseDto;
+import com.dnd.snappy.domain.snap.dto.response.SnapDetailResponseDto;
 import com.dnd.snappy.domain.snap.dto.response.SnapResponseDto;
+import com.dnd.snappy.domain.snap.entity.MeetingMissionSnap;
+import com.dnd.snappy.domain.snap.entity.RandomMissionSnap;
+import com.dnd.snappy.domain.snap.entity.SimpleSnap;
+import com.dnd.snappy.domain.snap.entity.Snap;
+import com.dnd.snappy.domain.snap.exception.SnapErrorCode;
 import com.dnd.snappy.domain.snap.repository.SnapRepository;
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +73,13 @@ public class SnapService {
                 count,
                 cursorBasedRequestDto.limit() == snapResponse.size()
         );
+    }
+
+    public SnapDetailResponseDto findSnapById(Long snapId) {
+        Snap snap = snapRepository.findSnapByIdWithParticipant(snapId)
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_SNAP));
+
+        return SnapDetailResponseDtoFactory.createSnapDetailResponseDto(snap);
     }
 
     private Long getCursorId(Optional<Long> cursorId, Long meetingId) {

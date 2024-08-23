@@ -740,6 +740,134 @@ class SnapControllerTest extends RestDocsSupport {
 
     }
 
+    @DisplayName("snap id를 이용하여 snap을 조회한다.")
+    @Test
+    void findSnapById() throws Exception {
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Participant participant = appendParticipant(meeting, "nick", 2);
+        Snap snap = appendSimpleSnap(meeting, participant);
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/snaps/{snapId}", meeting.getId(), snap.getId())
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID"),
+                                        parameterWithName("snapId").description("snap ID")
+                                ),
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                )
+                                ,
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
+                                        fieldWithPath("data.snapId").type(JsonFieldType.NUMBER).description("snap ID"),
+                                        fieldWithPath("data.snapUrl").type(JsonFieldType.STRING).description("snap url"),
+                                        fieldWithPath("data.shootDate").type(JsonFieldType.STRING).description("snap 촬영 날짜"),
+                                        fieldWithPath("data.type").attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
+                                        fieldWithPath("data.photographer").type(JsonFieldType.OBJECT).description("snap 촬영자"),
+                                        fieldWithPath("data.photographer.participantId").type(JsonFieldType.NUMBER).description("촬영자 id"),
+                                        fieldWithPath("data.photographer.nickname").type(JsonFieldType.STRING).description("촬영자 nickname"),
+                                        fieldWithPath("data.mission").type(JsonFieldType.OBJECT).description("수행한 미션").optional(),
+                                        fieldWithPath("data.mission.missionId").type(JsonFieldType.NUMBER).description("미션 id").optional(),
+                                        fieldWithPath("data.mission.content").type(JsonFieldType.NUMBER).description("미션 내용").optional()
+                                )
+                        )
+                );
+
+    }
+
+    @DisplayName("snap id를 이용하여 random mission snap을 조회한다.")
+    @Test
+    void findRandomMissionSnapById() throws Exception {
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Participant participant = appendParticipant(meeting, "nick", 2);
+        RandomMission randomMission = appendRandomMission();
+        Snap snap = appendRandomMissionSnap(meeting, participant, randomMission);
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/snaps/{snapId}", meeting.getId(), snap.getId())
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID"),
+                                        parameterWithName("snapId").description("snap ID")
+                                ),
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                )
+                                ,
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
+                                        fieldWithPath("data.snapId").type(JsonFieldType.NUMBER).description("snap ID"),
+                                        fieldWithPath("data.snapUrl").type(JsonFieldType.STRING).description("snap url"),
+                                        fieldWithPath("data.shootDate").type(JsonFieldType.STRING).description("snap 촬영 날짜"),
+                                        fieldWithPath("data.type").attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
+                                        fieldWithPath("data.photographer").type(JsonFieldType.OBJECT).description("snap 촬영자"),
+                                        fieldWithPath("data.photographer.participantId").type(JsonFieldType.NUMBER).description("촬영자 id"),
+                                        fieldWithPath("data.photographer.nickname").type(JsonFieldType.STRING).description("촬영자 nickname"),
+                                        fieldWithPath("data.mission").type(JsonFieldType.OBJECT).description("수행한 미션").optional(),
+                                        fieldWithPath("data.mission.missionId").type(JsonFieldType.NUMBER).description("미션 id").optional(),
+                                        fieldWithPath("data.mission.content").type(JsonFieldType.STRING).description("미션 내용").optional()
+                                )
+                        )
+                );
+
+    }
+
+    @DisplayName("snap id를 이용하여 meeting mission snap을 조회한다.")
+    @Test
+    void findMeetingMissionSnapById() throws Exception {
+        Meeting meeting = appendMeeting(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        Participant participant = appendParticipant(meeting, "nick", 2);
+        Mission mission = appendMission(meeting);
+        Snap snap = appendMeetingMissionSnap(meeting, participant, mission);
+
+        mockMvc.perform(
+                        RestDocumentationRequestBuilders.get("/api/v1/meetings/{meetingId}/snaps/{snapId}", meeting.getId(), snap.getId())
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID"),
+                                        parameterWithName("snapId").description("snap ID")
+                                ),
+                                requestCookies(
+                                        cookieWithName("ACCESS_TOKEN_" + meeting.getId()).description("인증을 위한 access token")
+                                )
+                                ,
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("데이터"),
+                                        fieldWithPath("data.snapId").type(JsonFieldType.NUMBER).description("snap ID"),
+                                        fieldWithPath("data.snapUrl").type(JsonFieldType.STRING).description("snap url"),
+                                        fieldWithPath("data.shootDate").type(JsonFieldType.STRING).description("snap 촬영 날짜"),
+                                        fieldWithPath("data.type").attributes(key("format").value("SIMPLE(미션 x 기본 사진) | RANDOM_MISSION(랜덤 미션 사진) | MEETING_MISSION(모임 미션 사진)")).description("snap 타입"),
+                                        fieldWithPath("data.photographer").type(JsonFieldType.OBJECT).description("snap 촬영자"),
+                                        fieldWithPath("data.photographer.participantId").type(JsonFieldType.NUMBER).description("촬영자 id"),
+                                        fieldWithPath("data.photographer.nickname").type(JsonFieldType.STRING).description("촬영자 nickname"),
+                                        fieldWithPath("data.mission").type(JsonFieldType.OBJECT).description("수행한 미션").optional(),
+                                        fieldWithPath("data.mission.missionId").type(JsonFieldType.NUMBER).description("미션 id").optional(),
+                                        fieldWithPath("data.mission.content").type(JsonFieldType.STRING).description("미션 내용").optional()
+                                )
+                        )
+                );
+
+    }
+
     private RandomMission appendRandomMission() {
         RandomMission randomMission = RandomMission.builder().content("test random mission content").build();
         return randomMissionRepository.save(randomMission);

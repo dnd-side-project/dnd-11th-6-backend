@@ -28,7 +28,7 @@ public class AuthInfoArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        TokenInfo tokenInfo = jwtTokenStrategy.process(request, TokenType.ACCESS_TOKEN);
+        TokenInfo tokenInfo = jwtTokenStrategy.loginProcess(request);
         return new AuthInfo(tokenInfo.payload());
     }
 }

@@ -43,4 +43,12 @@ public interface SnapRepository extends JpaRepository<Snap, Long> {
             Pageable pageable
     );
 
+    @Query("""
+        select s
+        from Snap s
+        join fetch s.participant
+        where s.id = :snapId
+    """)
+    Optional<Snap> findSnapByIdWithParticipant(@Param("snapId") Long snapId);
+
 }

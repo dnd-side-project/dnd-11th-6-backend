@@ -1,6 +1,7 @@
 package com.dnd.snappy.controller.v1.auth.interceptor.config;
 
 
+import com.dnd.snappy.controller.v1.auth.interceptor.LoginInterceptor;
 import com.dnd.snappy.controller.v1.auth.interceptor.MeetingParticipationInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class InterceptorConfig implements WebMvcConfigurer {
 
     private final MeetingParticipationInterceptor meetingParticipationInterceptor;
+    private final LoginInterceptor loginInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -23,6 +25,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/**/meetings/{meetingId}/validate-leader-key")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/share")
                 .excludePathPatterns("/api/**/meetings/{meetingId}/tokens/refresh")
-                .excludePathPatterns("/api/v1/meetings/{meetingId}/participants/check-nickname");
+                .excludePathPatterns("/api/**/meetings/{meetingId}/participants/check-nickname")
+                .excludePathPatterns("/api/**/meetings/{meetingId}/auth/login");
+
+        registry.addInterceptor(loginInterceptor)
+                .addPathPatterns("/api/**/meetings/{meetingId}/auth/login");
+
     }
 }

@@ -48,4 +48,12 @@ public abstract class Snap extends BaseEntity {
         this.meeting = meeting;
         this.participant = participant;
     }
+
+    public Long getPhotographerId() {
+        return participant.getId();
+    }
+
+    public String getPhotographerNickname() {
+        return participant.getNickname();
+    }
 }

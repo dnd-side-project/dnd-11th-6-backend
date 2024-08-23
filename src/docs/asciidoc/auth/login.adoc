@@ -1,0 +1,26 @@
+=== 모임 재참여
+==== 성공
+Request
+include::{snippets}/auth-controller-test/login/http-request.adoc[]
+include::{snippets}/auth-controller-test/login/path-parameters.adoc[]
+Request Cookie
+include::{snippets}/auth-controller-test/login/request-cookies.adoc[]
+Request Body
+include::{snippets}/auth-controller-test/login/request-body.adoc[]
+include::{snippets}/auth-controller-test/login/request-fields.adoc[]
+
+Response
+include::{snippets}/auth-controller-test/login/http-response.adoc[]
+Response Cookie
+include::{snippets}/auth-controller-test/login/response-cookies.adoc[]
+
+
+==== 실패
+===== `요청 쿠키로 access token이 없는경우`
+include::{snippets}/auth-controller-test/login_no_access_token/response-body.adoc[]
+
+===== `모임의 참여자가 아닌 사용자가 로그인을 시도하는 경우`
+include::{snippets}/auth-controller-test/login_no_participation_meeting/response-body.adoc[]
+
+===== `모임의 비밀번호가 틀린 경우`
+include::{snippets}/auth-controller-test/login_incorrect_password/response-body.adoc[]
