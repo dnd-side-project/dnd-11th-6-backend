@@ -1,0 +1,22 @@
+=== snap id로 snap 상세 조회
+
+==== 성공
+
+===== Request
+include::{snippets}/snap-controller-test/find-snap-by-id/http-request.adoc[]
+===== Query Parameter
+include::{snippets}/snap-controller-test/find-snap-by-id/path-parameters.adoc[]
+===== Request Cookie
+include::{snippets}/snap-controller-test/find-snap-by-id/request-cookies.adoc[]
+
+===== Response
+SIMPLE 타입의 snap 일떄
+include::{snippets}/snap-controller-test/find-snap-by-id/http-response.adoc[]
+
+RANDOM_MISSION 타입의 snap 일떄
+include::{snippets}/snap-controller-test/find-random-mission-snap-by-id/http-response.adoc[]
+
+MEETING_MISSION 타입의 snap 일떄
+include::{snippets}/snap-controller-test/find-meeting-mission-snap-by-id/http-response.adoc[]
+
+include::{snippets}/snap-controller-test/find-snap-by-id/response-fields.adoc[]
