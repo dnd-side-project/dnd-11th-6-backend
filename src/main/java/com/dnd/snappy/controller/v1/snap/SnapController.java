@@ -9,6 +9,7 @@ import com.dnd.snappy.controller.v1.snap.request.CreateSnapRequest;
 import com.dnd.snappy.controller.v1.snap.request.CursorBasedRequest;
 import com.dnd.snappy.domain.common.dto.response.CursorBasedResponseDto;
 import com.dnd.snappy.domain.snap.dto.response.CreateSnapResponseDto;
+import com.dnd.snappy.domain.snap.dto.response.SnapDetailResponseDto;
 import com.dnd.snappy.domain.snap.dto.response.SnapResponseDto;
 import com.dnd.snappy.domain.snap.service.MeetingMissionSnapService;
 import com.dnd.snappy.domain.snap.service.RandomMissionSnapService;
@@ -104,6 +105,14 @@ public class SnapController {
             @AuthPrincipal AuthInfo authInfo
     ) {
         var data = snapService.findParticipantSnapsInMeeting(cursorBasedRequest.toCursorBasedRequestDto(), meetingId, authInfo.participantId());
+        return ResponseDto.ok(data);
+    }
+
+    @GetMapping("/{snapId}")
+    public ResponseEntity<ResponseDto<SnapDetailResponseDto>> findSnapById(
+            @PathVariable("snapId") Long snapId
+    ) {
+        var data = snapService.findSnapById(snapId);
         return ResponseDto.ok(data);
     }
 }
