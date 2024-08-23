@@ -13,8 +13,6 @@ import com.dnd.snappy.domain.mission.dto.response.LeaderMeetingMissionDetailResp
 import com.dnd.snappy.domain.mission.dto.response.MeetingMissionDetailResponseDto;
 import com.dnd.snappy.domain.mission.entity.Mission;
 import com.dnd.snappy.domain.mission.exception.MissionErrorCode;
-
-import com.dnd.snappy.domain.mission.repository.MissionParticipantRepository;
 import com.dnd.snappy.domain.mission.repository.MissionRepository;
 
 import java.util.List;
@@ -42,9 +40,6 @@ class MissionDetailServiceTest {
 
     @Mock
     private MissionValidationService missionValidationService;
-
-    @Mock
-    private MissionParticipantRepository missionParticipantRepository;
 
     @DisplayName("미션 목록을 조회한다.")
     @Test
@@ -92,8 +87,14 @@ class MissionDetailServiceTest {
 
         given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
         doNothing().when(missionValidationService).validateIsLeader(participantId, meetingId);
-        given(missionRepository.findAllByMeetingId(meetingId)).willReturn(missions);
-        given(missionParticipantRepository.existsByMissionId(anyLong())).willReturn(false);
+
+        given(missionRepository.findLeaderMeetingMissions(meetingId, participantId)).willReturn(
+                List.of(
+                        new LeaderMeetingMissionDetailResponseDto(1L, "미션 내용 1", false),
+                        new LeaderMeetingMissionDetailResponseDto(2L, "미션 내용 2", false),
+                        new LeaderMeetingMissionDetailResponseDto(3L, "미션 내용 3", false)
+                )
+        );
 
         // when
         List<LeaderMeetingMissionDetailResponseDto> result = missionDetailService.findLeaderMeetingMissions(meetingId, participantId);
