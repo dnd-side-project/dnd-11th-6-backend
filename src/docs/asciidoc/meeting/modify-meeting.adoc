@@ -1,0 +1,24 @@
+=== 모임 수정
+==== 성공
+==== 요청 형식
+
+Request
+include::{snippets}/modify-meeting-controller-test/modify-meeting/http-request.adoc[]
+include::{snippets}/modify-meeting-controller-test/modify-meeting/path-parameters.adoc[]
+
+Response
+include::{snippets}/modify-meeting-controller-test/modify-meeting/http-response.adoc[]
+include::{snippets}/modify-meeting-controller-test/modify-meeting/response-fields.adoc[]
+
+
+==== 실패
+`유효하지 않은 입력 데이터로 모임 수정 시 실패한다.`
+include::{snippets}/modify-meeting-controller-test/modify-meeting_invalid_input/http-response.adoc[]
+
+`모임 리더가 아닌 참여자가 모임 정보를 수정하려 할 때 실패한다.`
+include::{snippets}/modify-meeting-controller-test/modify-meeting_unauthorized_meeting/http-response.adoc[]
+
+`모임 정보를 수정할 때 변경된 사항이 없는 경우 실패한다.`
+include::{snippets}/modify-meeting-controller-test/modify-meeting_no_changes/http-response.adoc[]
+
+
