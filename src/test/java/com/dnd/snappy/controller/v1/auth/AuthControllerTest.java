@@ -6,6 +6,7 @@ import static org.springframework.restdocs.cookies.CookieDocumentation.requestCo
 import static org.springframework.restdocs.cookies.CookieDocumentation.responseCookies;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -170,6 +171,9 @@ class AuthControllerTest extends RestDocsSupport {
                         restDocs.document(
                                 requestCookies(
                                         cookieWithName(accessTokenCookieName).description("재발급을 위한 refresh token")
+                                ),
+                                requestFields(
+                                        fieldWithPath("password").description("모임의 비밀번호")
                                 ),
                                 pathParameters(
                                         parameterWithName("meetingId").description("모임 ID")
