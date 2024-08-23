@@ -7,7 +7,7 @@ spring:
 jwt:
   secretKey: '${custom.jwt.secretKey}'
   access-token-expire-time: 1800000 # 30분
-  refresh-token-expire-time: 3600000 # 1시간
+  refresh-token-expire-time: 86400000 # 1일 (24시간)
 
 # S3 설정
 cloud:
