@@ -33,4 +33,12 @@ public class RandomMissionSnap extends Snap {
         participant.addShootCount();
         return new RandomMissionSnap(snapUrl, shootDate, meeting, participant, randomMission);
     }
+
+    public Integer getMissionId() {
+        return randomMission.getId();
+    }
+
+    public String getMissionContent() {
+        return randomMission.getContent();
+    }
 }
