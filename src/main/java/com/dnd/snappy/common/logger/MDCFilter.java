@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@Order(1)
 public class MDCFilter implements Filter {
     private final String REQUEST_ID = "request_id";
 
