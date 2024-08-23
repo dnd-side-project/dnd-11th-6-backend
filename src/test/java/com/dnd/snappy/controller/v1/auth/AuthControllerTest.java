@@ -11,6 +11,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dnd.snappy.controller.v1.auth.request.LoginRequest;
 import com.dnd.snappy.domain.auth.service.AuthTokenCookieNameGenerator;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.operation.RequestCookie;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
@@ -146,6 +148,109 @@ class AuthControllerTest extends RestDocsSupport {
                         )
                 );
     }
+
+    @DisplayName("access token과 password를 이용하여 다시 로그인한다.")
+    @Test
+    void login() throws Exception {
+        Meeting meeting = createMeeting();
+        Participant participant = createParticipant(meeting);
+        TokenProvider fakeTokenProvider = new TokenProvider(new JwtProperties(jwtSecretKey, 1L, 1L));
+        Tokens tokens = fakeTokenProvider.issueTokens(participant.getId());
+        String accessTokenCookieName = authTokenCookieNameGenerator.generateCookieName(TokenType.ACCESS_TOKEN, meeting.getId());
+        String refreshTokenCookieName = authTokenCookieNameGenerator.generateCookieName(TokenType.REFRESH_TOKEN, meeting.getId());
+
+        mockMvc.perform(
+                        post("/api/v1/meetings/{meetingId}/auth/login", meeting.getId())
+                                .content(objectMapper.writeValueAsString(new LoginRequest(meeting.getPassword())))
+                                .cookie(new Cookie(accessTokenCookieName, tokens.accessToken()))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andDo(
+                        restDocs.document(
+                                requestCookies(
+                                        cookieWithName(accessTokenCookieName).description("재발급을 위한 refresh token")
+                                ),
+                                pathParameters(
+                                        parameterWithName("meetingId").description("모임 ID")
+                                ),
+                                responseCookies(
+                                        cookieWithName(accessTokenCookieName).description("인증에 사용되는 access token"),
+                                        cookieWithName(refreshTokenCookieName).description("재발급을 위한 refresh token")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("login시 access token이 없는 경우 예외가 발생한다.")
+    @Test
+    void login_no_access_token() throws Exception {
+        Meeting meeting = createMeeting();
+
+        mockMvc.perform(
+                        post("/api/v1/meetings/{meetingId}/auth/login", meeting.getId())
+                                .content(objectMapper.writeValueAsString(new LoginRequest("incorrect password")))
+                                .cookie(new Cookie("ACCESS_TOKEN_" + meeting.getId(), ""))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isUnauthorized())
+                .andDo(
+                        restDocs.document(
+                                getErrorResponseFields()
+                        )
+                );
+    }
+
+    @DisplayName("login시 password가 틀린 경우 예외가 발생한다.")
+    @Test
+    void login_incorrect_password() throws Exception {
+        Meeting meeting = createMeeting();
+        Participant participant = createParticipant(meeting);
+        TokenProvider fakeTokenProvider = new TokenProvider(new JwtProperties(jwtSecretKey, 1L, 1L));
+        Tokens tokens = fakeTokenProvider.issueTokens(participant.getId());
+        String accessTokenCookieName = authTokenCookieNameGenerator.generateCookieName(TokenType.ACCESS_TOKEN, meeting.getId());
+        String refreshTokenCookieName = authTokenCookieNameGenerator.generateCookieName(TokenType.REFRESH_TOKEN, meeting.getId());
+
+        mockMvc.perform(
+                        post("/api/v1/meetings/{meetingId}/auth/login", meeting.getId())
+                                .content(objectMapper.writeValueAsString(new LoginRequest("incorrect password")))
+                                .cookie(new Cookie(accessTokenCookieName, tokens.accessToken()))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isBadRequest())
+                .andDo(
+                        restDocs.document(
+                                getErrorResponseFields()
+                        )
+                );
+    }
+
+    @DisplayName("login시 해당 모임의 참가자가 아니라면 예외가 발생한다.")
+    @Test
+    void login_no_participation_meeting() throws Exception {
+        Meeting meeting = createMeeting();
+        Meeting meeting2 = createMeeting();
+        Participant participant = createParticipant(meeting);
+        TokenProvider fakeTokenProvider = new TokenProvider(new JwtProperties(jwtSecretKey, 1L, 1L));
+        Tokens tokens = fakeTokenProvider.issueTokens(participant.getId());
+        String accessTokenCookieName = authTokenCookieNameGenerator.generateCookieName(TokenType.ACCESS_TOKEN, meeting.getId());
+        String refreshTokenCookieName = authTokenCookieNameGenerator.generateCookieName(TokenType.REFRESH_TOKEN, meeting.getId());
+
+        mockMvc.perform(
+                        post("/api/v1/meetings/{meetingId}/auth/login", meeting2.getId())
+                                .content(objectMapper.writeValueAsString(new LoginRequest(meeting.getPassword())))
+                                .cookie(new Cookie(accessTokenCookieName, tokens.accessToken()))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isUnauthorized())
+                .andDo(
+                        restDocs.document(
+                                getErrorResponseFields()
+                        )
+                );
+    }
+
+
 
     private ResponseFieldsSnippet getErrorResponseFields() {
         return responseFields(

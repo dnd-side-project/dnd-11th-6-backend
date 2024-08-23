@@ -19,4 +19,10 @@ public class JwtTokenStrategy {
         Long payload = tokenProvider.extractPayload(token);
         return new TokenInfo(token, payload);
     }
+
+    public TokenInfo loginProcess(HttpServletRequest request) {
+        String token = jwtTokenExtractor.extractToken(request, TokenType.ACCESS_TOKEN);
+        Long payload = tokenProvider.extractPayloadIgnoringExpiration(token);
+        return new TokenInfo(token, payload);
+    }
 }

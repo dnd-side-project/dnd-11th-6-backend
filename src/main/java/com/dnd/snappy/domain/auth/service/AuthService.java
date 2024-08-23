@@ -1,5 +1,7 @@
 package com.dnd.snappy.domain.auth.service;
 
+import static com.dnd.snappy.domain.meeting.exception.MeetingErrorCode.MEETING_INVALIDATE_PASSWORD;
+
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.domain.auth.dto.response.ReissueTokenResponseDto;
 import com.dnd.snappy.domain.auth.exception.AuthErrorCode;
@@ -26,6 +28,19 @@ public class AuthService {
         Meeting meeting = meetingService.findByMeetingIdOrThrow(meetingId);
         if(!participantRepository.existsByIdAndMeetingId(participantId, meetingId)) {
             throw new BusinessException(AuthErrorCode.FORBIDDEN, "참여중인 모임이 아닙니다.");
+        }
+        Tokens tokens = tokenService.createTokens(participantId);
+        return new ReissueTokenResponseDto(
+                tokens.accessToken(),
+                tokens.refreshToken(),
+                meeting.getExpiredDate()
+        );
+    }
+
+    public ReissueTokenResponseDto login(Long meetingId, Long participantId, String password) {
+        Meeting meeting = meetingService.findByMeetingIdOrThrow(meetingId);
+        if(!meeting.isCorrectPassword(password)) {
+            throw new BusinessException(MEETING_INVALIDATE_PASSWORD);
         }
         Tokens tokens = tokenService.createTokens(participantId);
         return new ReissueTokenResponseDto(
