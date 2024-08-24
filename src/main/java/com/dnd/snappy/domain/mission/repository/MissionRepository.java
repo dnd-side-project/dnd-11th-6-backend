@@ -20,10 +20,9 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
     SELECT new com.dnd.snappy.domain.mission.dto.response.LeaderMeetingMissionDetailResponseDto(m.id, m.content, 
         CASE WHEN mp.id IS NOT NULL THEN TRUE ELSE FALSE END) 
     FROM Mission m 
-    LEFT JOIN MissionParticipant mp ON mp.mission.id = m.id 
-    JOIN Participant p ON p.meeting.id = m.meeting.id 
-    WHERE p.id = :participantId AND p.role = 'LEADER' AND m.meeting.id = :meetingId
+    LEFT JOIN MissionParticipant mp ON mp.mission.id = m.id
+    WHERE m.meeting.id = :meetingId
     """)
-    List<LeaderMeetingMissionDetailResponseDto> findLeaderMeetingMissions(@Param("meetingId") Long meetingId, @Param("participantId") Long participantId);
+    List<LeaderMeetingMissionDetailResponseDto> findLeaderMeetingMissions(@Param("meetingId") Long meetingId);
 
 }

@@ -38,7 +38,7 @@ public class MissionDetailService {
         findByMeetingIdOrThrow(meetingId);
         missionValidationService.validateIsLeader(participantId, meetingId);
 
-        return missionRepository.findLeaderMeetingMissions(meetingId, participantId);
+        return missionRepository.findLeaderMeetingMissions(meetingId);
     }
 
     private Meeting findByMeetingIdOrThrow(Long meetingId) {

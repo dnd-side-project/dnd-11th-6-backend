@@ -88,7 +88,7 @@ class MissionDetailServiceTest {
         given(meetingRepository.findById(meetingId)).willReturn(Optional.of(meeting));
         doNothing().when(missionValidationService).validateIsLeader(participantId, meetingId);
 
-        given(missionRepository.findLeaderMeetingMissions(meetingId, participantId)).willReturn(
+        given(missionRepository.findLeaderMeetingMissions(meetingId)).willReturn(
                 List.of(
                         new LeaderMeetingMissionDetailResponseDto(1L, "미션 내용 1", false),
                         new LeaderMeetingMissionDetailResponseDto(2L, "미션 내용 2", false),

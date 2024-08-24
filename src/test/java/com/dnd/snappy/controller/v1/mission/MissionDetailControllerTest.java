@@ -62,12 +62,19 @@ class MissionDetailControllerTest extends RestDocsSupport {
         Meeting meeting = createMeeting();
         Participant leader = createParticipant(meeting, Role.LEADER);
         Participant participant = createParticipant(meeting, Role.PARTICIPANT);
+        Participant participant2 = createParticipant(meeting, Role.PARTICIPANT);
 
         Mission mission = Mission.builder()
                 .meeting(meeting)
                 .content("미션 내용")
                 .build();
         missionRepository.save(mission);
+
+        Mission mission2 = Mission.builder()
+                .meeting(meeting)
+                .content("미션 내용2")
+                .build();
+        missionRepository.save(mission2);
 
         MissionParticipant missionParticipant = MissionParticipant.builder()
                 .participant(participant)
