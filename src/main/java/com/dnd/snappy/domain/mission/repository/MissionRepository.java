@@ -22,6 +22,7 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
     FROM Mission m 
     LEFT JOIN MissionParticipant mp ON mp.mission.id = m.id
     WHERE m.meeting.id = :meetingId
+    group by m.id
     """)
     List<LeaderMeetingMissionDetailResponseDto> findLeaderMeetingMissions(@Param("meetingId") Long meetingId);
 
