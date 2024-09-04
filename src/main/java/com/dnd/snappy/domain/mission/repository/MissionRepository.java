@@ -17,10 +17,10 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
     List<Mission> findAllByMeetingId(Long meetingId);
 
     @Query("""
-    SELECT new com.dnd.snappy.domain.mission.dto.response.LeaderMeetingMissionDetailResponseDto(m.id, m.content, 
-        CASE WHEN mp.id IS NOT NULL THEN TRUE ELSE FALSE END) 
-    FROM Mission m 
-    LEFT JOIN MissionParticipant mp ON mp.mission.id = m.id
+    SELECT new com.dnd.snappy.domain.mission.dto.response.LeaderMeetingMissionDetailResponseDto(m.id, MAX(m.content),
+        CASE WHEN MAX(mp.id) IS NOT NULL THEN TRUE ELSE FALSE END)
+    FROM Mission m
+    JOIN MissionParticipant mp ON mp.mission.id = m.id
     WHERE m.meeting.id = :meetingId
     group by m.id
     """)
