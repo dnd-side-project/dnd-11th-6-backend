@@ -11,4 +11,8 @@
         <include resource="logger/logback-spring-dev.xml"/>
     </springProfile>
 
+    <springProfile name="staging">
+        <include resource="logger/logback-spring-staging.xml"/>
+    </springProfile>
+
 </configuration>

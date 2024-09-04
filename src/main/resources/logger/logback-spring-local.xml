@@ -7,7 +7,7 @@
         <appender-ref ref="console-appender"/>
     </logger>
 
-    <logger name="com.dnd.snappy" level="TRACE">
+    <logger name="com.dnd.snappy" level="INFO">
         <appender-ref ref="console-appender"/>
     </logger>
 

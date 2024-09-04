@@ -46,6 +46,6 @@ public class RequestResponseLogger extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.contains("/docs") || path.contains("/favicon.ico");
+        return path.contains("/docs") || path.contains("/favicon.ico") || path.contains("/actuator");
     }
 }
