@@ -5,4 +5,4 @@ ENTRYPOINT ["java", \
  "-Dpinpoint.agentId=aws-ec2-1", \
  "-Dpinpoint.applicationName=api-server", \
  "-Dspring.profiles.active=staging", \
- "-jar", "/app.jar"]
+ "-jar", "project.jar"]
