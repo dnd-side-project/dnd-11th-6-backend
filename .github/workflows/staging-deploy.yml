@@ -38,7 +38,7 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: API 서버 Docker 이미지 생성
-        run: docker build -t dnd-server -f ./docker/Dockerfile .
+        run: docker build -t dnd-server -f ./docker/staging/Dockerfile .
 
       - name: Docker 이미지에 Tag 붙이기
         run: |
