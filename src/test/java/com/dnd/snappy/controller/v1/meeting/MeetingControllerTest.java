@@ -17,7 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dnd.snappy.controller.v1.meeting.request.LeaderAuthKeyValidationRequest;
 import com.dnd.snappy.controller.v1.meeting.request.PasswordValidationRequest;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
-import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.domain.participant.entity.Participant;
 import com.dnd.snappy.domain.participant.entity.Role;
 import com.dnd.snappy.domain.participant.repository.ParticipantRepository;
@@ -31,7 +30,6 @@ import jakarta.servlet.http.Cookie;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +52,6 @@ class MeetingControllerTest extends RestDocsSupport {
 
     @Autowired
     private TokenProvider tokenProvider;
-
 
     @DisplayName("모임 링크를 통해 모임 상세 정보를 조회한다.")
     @Test
@@ -110,6 +107,48 @@ class MeetingControllerTest extends RestDocsSupport {
                         get("/api/v1/meetings?meetingLink=" + meetingLink)
                 )
                 .andExpect(status().isNotFound())
+                .andDo(
+                        restDocs.document(
+                                queryParameters(
+                                        parameterWithName("meetingLink").description("모임 링크")
+                                ),
+                                responseFields(
+                                        fieldWithPath("status").type(JsonFieldType.NUMBER).description("HTTP 상태 코드"),
+                                        fieldWithPath("data").type(JsonFieldType.NULL).description("모임"),
+                                        fieldWithPath("error").type(JsonFieldType.OBJECT).description("에러"),
+                                        fieldWithPath("error.code").type(JsonFieldType.STRING).description("에러코드"),
+                                        fieldWithPath("error.message").type(JsonFieldType.STRING).description("에러 메세지")
+                                )
+                        )
+                );
+    }
+
+    @DisplayName("모임 링크가 만료된 모임은 예외가 발생한다.")
+    @Test
+    void findByMeetingLink_MEETING_LINK_EXPIRED() throws Exception {
+        String meetingLink = "expiredLink";
+
+        // 만료된 Meeting 객체 생성
+        Meeting expiredMeeting = Meeting.builder()
+                .name("Expired Meeting")
+                .description("DND 모임 입니다.")
+                .symbolColor("#FFF")
+                .thumbnailUrl("thumbnailUrl")
+                .startDate(LocalDateTime.now().minusDays(15))
+                .endDate(LocalDateTime.now().minusDays(10))
+                .meetingLink(meetingLink)
+                .password("password")
+                .leaderAuthKey("leaderAuthKey")
+                .createdAt(LocalDateTime.now().minusDays(12))
+                .updatedAt(LocalDateTime.now().minusDays(12))
+                .build();
+
+        meetingRepository.save(expiredMeeting);
+
+        mockMvc.perform(
+                        get("/api/v1/meetings?meetingLink=" + meetingLink)
+                )
+                .andExpect(status().isForbidden())
                 .andDo(
                         restDocs.document(
                                 queryParameters(
@@ -743,4 +782,3 @@ class MeetingControllerTest extends RestDocsSupport {
     }
 
 }
-

@@ -13,3 +13,6 @@ include::{snippets}/meeting-controller-test/find-by-meeting-link/response-fields
 ==== 실패
 `Query Parameter로 준 모임 코드에 해당하는 모임이 없을때 발생`
 include::{snippets}/meeting-controller-test/find-by-meeting-link_not-found/http-response.adoc[]
+
+`모임 링크가 만료되었을 때 발생`
+include::{snippets}/meeting-controller-test/find-by-meeting-link_meeting_link_expired/http-response.adoc[]

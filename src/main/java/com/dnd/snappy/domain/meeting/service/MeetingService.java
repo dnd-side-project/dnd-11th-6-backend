@@ -11,6 +11,7 @@ import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
+import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.infrastructure.uploader.ImageUploader;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,9 @@ public class MeetingService {
     @Transactional(readOnly = true)
     public MeetingDetailResponseDto findByMeetingLink(String meetingLink) {
         Meeting meeting = findByMeetingLinkOrThrow(meetingLink);
+
+        validateMeetingStatus(meeting);
+
         return new MeetingDetailResponseDto(meeting);
     }
 
@@ -80,6 +84,9 @@ public class MeetingService {
 
     public MeetingDetailResponseDto findMeetingDetailById(Long meetingId) {
         Meeting meeting = findByMeetingIdOrThrow(meetingId);
+
+        validateMeetingStatus(meeting);
+
         return new MeetingDetailResponseDto(meeting);
     }
 
@@ -91,6 +98,12 @@ public class MeetingService {
     private Meeting findByMeetingLinkOrThrow(String meetingLink) {
         return meetingRepository.findByMeetingLink(meetingLink)
                 .orElseThrow(() -> new NotFoundException(MEETING_LINK_NOT_FOUND, "[meetingLink: " + meetingLink + " is not found]"));
+    }
+
+    private void validateMeetingStatus(Meeting meeting) {
+        if (meeting.isExpired()) {
+            throw new BusinessException(MeetingErrorCode.MEETING_LINK_EXPIRED);
+        }
     }
 
     private void checkMeetingLinkDuplication(String meetingLink) {
