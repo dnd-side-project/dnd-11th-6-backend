@@ -18,7 +18,7 @@ public enum MeetingErrorCode implements ErrorCodeInterface {
     NO_IN_PROGRESS_MEETING(HttpStatus.FORBIDDEN, "NO_IN_PROGRESS_MEETING", "진행중인 모임이 아닙니다."),
     UNAUTHORIZED_MEETING(HttpStatus.FORBIDDEN, "UNAUTHORIZED_MEETING", "모임 수정 권한이 없습니다."),
     NO_MODIFICATION(HttpStatus.BAD_REQUEST, "NO_MODIFICATION", "변경된 수정 사항이 없습니다."),
-    MEETING_LINK_EXPIRED(HttpStatus.GONE, "MEETING_LINK_EXPIRED", "모임 링크가 만료되었습니다.");
+    MEETING_LINK_EXPIRED(HttpStatus.FORBIDDEN, "MEETING_LINK_EXPIRED", "모임 링크가 만료되었습니다.");
 
     private final HttpStatus status;
 

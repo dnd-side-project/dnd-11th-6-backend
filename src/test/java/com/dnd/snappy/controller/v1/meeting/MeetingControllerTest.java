@@ -148,7 +148,7 @@ class MeetingControllerTest extends RestDocsSupport {
         mockMvc.perform(
                         get("/api/v1/meetings?meetingLink=" + meetingLink)
                 )
-                .andExpect(status().isGone())
+                .andExpect(status().isForbidden())
                 .andDo(
                         restDocs.document(
                                 queryParameters(
@@ -164,7 +164,6 @@ class MeetingControllerTest extends RestDocsSupport {
                         )
                 );
     }
-
 
     @DisplayName("모임의 비밀번호가 맞는지 확인한다.")
     @Test

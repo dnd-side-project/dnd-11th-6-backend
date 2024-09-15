@@ -11,7 +11,6 @@ import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.MeetingDetailResponseDto;
 import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
-import com.dnd.snappy.domain.meeting.entity.MeetingLinkStatus;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.infrastructure.uploader.ImageUploader;
@@ -102,7 +101,7 @@ public class MeetingService {
     }
 
     private void validateMeetingStatus(Meeting meeting) {
-        if (meeting.getMeetingLinkStatus() == MeetingLinkStatus.EXPIRED) {
+        if (meeting.isExpired()) {
             throw new BusinessException(MeetingErrorCode.MEETING_LINK_EXPIRED);
         }
     }

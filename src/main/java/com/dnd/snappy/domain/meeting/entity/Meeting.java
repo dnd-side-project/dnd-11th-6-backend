@@ -98,6 +98,10 @@ public class Meeting extends BaseEntity {
         return endDate.plusDays(7);
     }
 
+    public boolean isExpired() {
+        return getMeetingLinkStatus() == MeetingLinkStatus.EXPIRED;
+    }
+
     public boolean isCorrectPassword(String password) {
         return this.password.equals(password);
     }
