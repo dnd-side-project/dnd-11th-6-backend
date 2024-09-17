@@ -5,6 +5,8 @@ import static com.dnd.snappy.domain.meeting.exception.MeetingErrorCode.*;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.common.error.exception.DuplicationException;
 import com.dnd.snappy.common.error.exception.NotFoundException;
+import com.dnd.snappy.domain.image.Folder;
+import com.dnd.snappy.domain.image.ImageFile;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingEntityDto;
 import com.dnd.snappy.domain.meeting.dto.request.CreateMeetingRequestDto;
 import com.dnd.snappy.domain.meeting.dto.response.CreateMeetingResponseDto;
@@ -13,7 +15,7 @@ import com.dnd.snappy.domain.meeting.dto.response.ShareMeetingLinkResponseDto;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.exception.MeetingErrorCode;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
-import com.dnd.snappy.infrastructure.uploader.ImageUploader;
+import com.dnd.snappy.infrastructure.image.ImageUploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,7 +120,7 @@ public class MeetingService {
 
     private String getThumbnailUrl(MultipartFile thumbnail) {
         if (thumbnail != null && !thumbnail.isEmpty()) {
-            return imageUploader.upload(thumbnail);
+            return imageUploader.upload(new ImageFile(thumbnail, Folder.DEFAULT));
         }
         return DEFAULT_THUMBNAIL_URL;
     }

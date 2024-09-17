@@ -1,5 +1,6 @@
 package com.dnd.snappy.controller.v1.snap;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dnd.snappy.controller.v1.snap.request.CreateMeetingMissionSnapRequest;
 import com.dnd.snappy.controller.v1.snap.request.CreateRandomMissionSnapRequest;
 import com.dnd.snappy.controller.v1.snap.request.CreateSnapRequest;
+import com.dnd.snappy.domain.image.ImageFile;
 import com.dnd.snappy.domain.meeting.entity.Meeting;
 import com.dnd.snappy.domain.meeting.repository.MeetingRepository;
 import com.dnd.snappy.domain.mission.entity.Mission;
@@ -82,8 +84,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateSnapRequest createSnapRequest = new CreateSnapRequest(LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/simple", meeting.getId())
@@ -127,8 +129,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateSnapRequest createSnapRequest = new CreateSnapRequest(LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/simple", meeting.getId())
@@ -160,8 +162,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateSnapRequest createSnapRequest = new CreateSnapRequest(LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/simple", meeting.getId())
@@ -194,8 +196,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateRandomMissionSnapRequest createSnapRequest = new CreateRandomMissionSnapRequest(randomMission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/random-mission", meeting.getId())
@@ -241,8 +243,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateRandomMissionSnapRequest createSnapRequest = new CreateRandomMissionSnapRequest(randomMission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/random-mission", meeting.getId())
@@ -275,8 +277,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateRandomMissionSnapRequest createSnapRequest = new CreateRandomMissionSnapRequest(randomMission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/random-mission", meeting.getId())
@@ -309,8 +311,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateMeetingMissionSnapRequest createSnapRequest = new CreateMeetingMissionSnapRequest(mission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/meeting-mission", meeting.getId())
@@ -356,8 +358,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateMeetingMissionSnapRequest createSnapRequest = new CreateMeetingMissionSnapRequest(mission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/meeting-mission", meeting.getId())
@@ -390,8 +392,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateMeetingMissionSnapRequest createSnapRequest = new CreateMeetingMissionSnapRequest(mission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/meeting-mission", meeting.getId())
@@ -425,8 +427,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateMeetingMissionSnapRequest createSnapRequest = new CreateMeetingMissionSnapRequest(mission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/meeting-mission", meeting.getId())
@@ -460,8 +462,8 @@ class SnapControllerTest extends RestDocsSupport {
         String token = tokenProvider.issueToken(participant.getId(), TokenType.ACCESS_TOKEN);
         CreateMeetingMissionSnapRequest createSnapRequest = new CreateMeetingMissionSnapRequest(mission.getId(), LocalDateTime.now());
         String request = objectMapper.writeValueAsString(createSnapRequest);
-        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{});
-        BDDMockito.given(imageUploader.upload(image)).willReturn("snapUrl.jpg");
+        MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpg", new byte[]{'a'});
+        BDDMockito.given(imageUploader.upload(any(ImageFile.class))).willReturn("snapUrl.jpg");
 
         mockMvc.perform(
                         RestDocumentationRequestBuilders.multipart("/api/v1/meetings/{meetingId}/snaps/meeting-mission", meeting.getId())
