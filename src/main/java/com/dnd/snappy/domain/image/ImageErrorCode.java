@@ -1,4 +1,4 @@
-package com.dnd.snappy.infrastructure.exception;
+package com.dnd.snappy.domain.image;
 
 import com.dnd.snappy.common.error.ErrorCode;
 import com.dnd.snappy.common.error.ErrorCodeInterface;
@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ImageErrorCode implements ErrorCodeInterface {
     EMPTY_FILE_EXCEPTION(HttpStatus.BAD_REQUEST, "IMAGE_EMPTY_FILE_EXCEPTION", "파일이 비어 있습니다."),
+    NO_IMAGE(HttpStatus.BAD_REQUEST, "NO_IMAGE", "이미지가 아닙니다."),
     NO_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "IMAGE_NO_FILE_EXTENSION", "파일 확장자가 없습니다."),
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "IMAGE_INVALID_FILE_EXTENSION", "잘못된 파일 확장자입니다."),
     IO_EXCEPTION_ON_UPLOAD(HttpStatus.INTERNAL_SERVER_ERROR, "IMAGE_IO_EXCEPTION_ON_UPLOAD", "업로드 중 오류가 발생했습니다."),
