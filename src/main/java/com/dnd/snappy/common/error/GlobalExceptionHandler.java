@@ -60,7 +60,6 @@ public class GlobalExceptionHandler {
             final Exception e,
             final HttpServletRequest request
     ) {
-        e.printStackTrace();
         log.error("[Exception] 예상치 못한 오류 발생: {} {}", e.getMessage(), request.getRequestURL(), e);
         return ResponseDto.fail(CommonErrorCode.INTERNAL_SERVER_ERROR.toErrorCode());
     }
