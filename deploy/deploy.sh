@@ -24,8 +24,8 @@ fi
 
 echo -e "그린($GREEN_PORT)과 블루($BLUE_PORT) 서버 확인 ${CONTAINER_NAME} 컨테이너를 실행합니다."
 
-docker compose pull $CONTAINER_NAME
-docker compose up -d $CONTAINER_NAME
+sudo docker compose pull $CONTAINER_NAME
+sudo docker compose up -d $CONTAINER_NAME
 
 for retry in {1..10}
 do
@@ -52,5 +52,5 @@ echo "set \$service_url $CONTAINER_NAME;" | sudo tee ./conf/service-url.inc
 sudo docker exec nginx nginx -s reload
 
 echo "$STOP_CONTAINER_NAME 컨테이너 종료"
-docker compose stop $STOP_CONTAINER_NAME
-docker compose rm -f $STOP_CONTAINER_NAME
+sudo docker compose stop $STOP_CONTAINER_NAME
+sudo docker compose rm -f $STOP_CONTAINER_NAME
