@@ -56,4 +56,5 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            bash /home/ubuntu/compose/deploy.sh
+            cd /home/ubuntu/compose
+            bash ./deploy.sh
