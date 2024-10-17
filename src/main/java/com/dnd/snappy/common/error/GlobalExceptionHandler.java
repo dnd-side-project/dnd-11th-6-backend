@@ -8,6 +8,7 @@ import java.time.format.DateTimeParseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -56,15 +57,15 @@ public class GlobalExceptionHandler {
         return ResponseDto.fail(errorCode);
     }
 
-    @ExceptionHandler(DateTimeParseException.class)
-    protected ResponseEntity<ResponseDto<?>> handleDateTimeParseException(
-            final DateTimeParseException e,
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    protected ResponseEntity<ResponseDto<?>> handleHttpMessageNotReadableException(
+            final HttpMessageNotReadableException e,
             final HttpServletRequest request
     ) {
-        ErrorCode errorCode = CommonErrorCode.DATA_TIME_PARSE_ERROR.toErrorCode();
+        ErrorCode errorCode = CommonErrorCode.INVALID_REQUEST.toErrorCode();
         errorCode.appendMessage(e.getMessage());
 
-        log.info("DateTimeParseException: {} {}", e.getMessage(), request.getRequestURL(), e);
+        log.info("HttpMessageNotReadableException: {} {}", e.getMessage(), request.getRequestURL(), e);
         return ResponseDto.fail(errorCode);
     }
 

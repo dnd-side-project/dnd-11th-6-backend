@@ -12,7 +12,7 @@ public enum CommonErrorCode implements ErrorCodeInterface {
 
     DUPLICATION(HttpStatus.CONFLICT, "COMMON_DUPLICATION", "중복된 리소스가 존재합니다."),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "유효성 검사 실패했습니다."),
-    DATA_TIME_PARSE_ERROR(HttpStatus.BAD_REQUEST, "DATA_TIME_PARSE_ERROR", "요청된 시간을 파싱할 수 없습니다."),
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", "요청 형식에 맞지 않는 요청입니다. api 문서를 다시 확인해 주세요."),
 
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", "알 수 없는 에러")
     ;
