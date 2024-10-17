@@ -51,4 +51,5 @@ public interface SnapRepository extends JpaRepository<Snap, Long> {
     """)
     Optional<Snap> findSnapByIdWithParticipant(@Param("snapId") Long snapId);
 
+
 }
