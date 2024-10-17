@@ -4,6 +4,7 @@ import com.dnd.snappy.common.dto.ResponseDto;
 import com.dnd.snappy.common.error.exception.BusinessException;
 import com.dnd.snappy.common.error.exception.ImageException;
 import jakarta.servlet.http.HttpServletRequest;
+import java.time.format.DateTimeParseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,18 @@ public class GlobalExceptionHandler {
         errorCode.appendMessage(errorMessage);
 
         log.info("ValidationException: {} {}", errorCode, request.getRequestURL());
+        return ResponseDto.fail(errorCode);
+    }
+
+    @ExceptionHandler(DateTimeParseException.class)
+    protected ResponseEntity<ResponseDto<?>> handleDateTimeParseException(
+            final DateTimeParseException e,
+            final HttpServletRequest request
+    ) {
+        ErrorCode errorCode = CommonErrorCode.DATA_TIME_PARSE_ERROR.toErrorCode();
+        errorCode.appendMessage(e.getMessage());
+
+        log.info("DateTimeParseException: {} {}", e.getMessage(), request.getRequestURL(), e);
         return ResponseDto.fail(errorCode);
     }
 
